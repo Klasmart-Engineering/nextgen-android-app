@@ -1,11 +1,9 @@
 package uk.co.kidsloop.app.features.videostream
 
-import android.content.pm.PackageManager
-import android.os.Bundle
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import android.Manifest
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +11,8 @@ import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
@@ -47,9 +47,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
                 )
             }
         }
-
         cameraExecutor = Executors.newSingleThreadExecutor()
-
     }
 
     override fun onCreateView(
@@ -63,43 +61,45 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.cameraBtn.setOnClickListener(View.OnClickListener {
-            setUpCamera()
-        })
+        binding.cameraBtn.setOnClickListener(
+            View.OnClickListener {
+                setUpCamera()
+            }
+        )
     }
 
     private fun setUpCamera() {
         val cameraProviderFuture = context?.let { ProcessCameraProvider.getInstance(it) }
 
-        cameraProviderFuture?.addListener(Runnable {
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+        cameraProviderFuture?.addListener(
+            Runnable {
+                val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+                val preview = Preview.Builder()
+                    .build()
+                    .also {
+                        it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+                    }
+
+                val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+
+                try {
+                    cameraProvider.unbindAll()
+
+                    if (!isCameraActive) {
+                        isCameraActive = true
+                        cameraProvider.bindToLifecycle(
+                            this, cameraSelector, preview
+                        )
+                    } else {
+                        isCameraActive = false
+                    }
+                } catch (exc: Exception) {
+                    Log.e(TAG, "Use case binding failed", exc)
                 }
-
-            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-
-            try {
-                cameraProvider.unbindAll()
-
-                if (!isCameraActive) {
-                    isCameraActive = true
-                    cameraProvider.bindToLifecycle(
-                        this, cameraSelector, preview
-                    )
-                } else {
-                    isCameraActive = false
-                }
-
-            } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
-            }
-
-        }, context?.let { ContextCompat.getMainExecutor(it) })
-
+            },
+            context?.let { ContextCompat.getMainExecutor(it) }
+        )
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -122,8 +122,9 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
     ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
@@ -133,5 +134,4 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
             }
         }
     }
-
 }
