@@ -5,7 +5,11 @@ import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.Manifest
+import android.content.pm.ActivityInfo
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -28,13 +32,14 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
 
     private val viewModel: LiveVideoStreamViewModel by viewModels { viewModelFactory }
     private lateinit var cameraExecutor: ExecutorService
+    private var isCameraActive = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injector.inject(this)
 
         if (allPermissionsGranted()) {
-            startCamera()
+            setUpCamera()
         } else {
             activity?.let {
                 ActivityCompat.requestPermissions(
@@ -47,7 +52,23 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
 
     }
 
-    private fun startCamera() {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.cameraBtn.setOnClickListener(View.OnClickListener {
+            setUpCamera()
+        })
+    }
+
+    private fun setUpCamera() {
         val cameraProviderFuture = context?.let { ProcessCameraProvider.getInstance(it) }
 
         cameraProviderFuture?.addListener(Runnable {
@@ -64,9 +85,14 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
             try {
                 cameraProvider.unbindAll()
 
-                cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview
-                )
+                if (!isCameraActive) {
+                    isCameraActive = true
+                    cameraProvider.bindToLifecycle(
+                        this, cameraSelector, preview
+                    )
+                } else {
+                    isCameraActive = false
+                }
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
@@ -101,7 +127,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                startCamera()
+                setUpCamera()
             } else {
                 Log.e(TAG, "Access denied")
             }
