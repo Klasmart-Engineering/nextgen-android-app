@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
       - name: Cache Gradle Files
         uses: actions/cache@v2
         with:
@@ -37,6 +39,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
+          
       - name: Run Gradle
         run: ./gradlew build check publishToMavenLocal --continue
       - name: Stop Gradle
