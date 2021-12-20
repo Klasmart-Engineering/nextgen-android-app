@@ -3,6 +3,7 @@ package uk.co.kidsloop.app.features.videostream
 import android.Manifest
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.PackageManagerCompat.LOG_TAG
 import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
@@ -20,6 +22,7 @@ import uk.co.kidsloop.app.BaseFragment
 import uk.co.kidsloop.app.viewmodel.ViewModelFactory
 import uk.co.kidsloop.databinding.LiveVideostreamFragmentBinding
 import uk.co.kidsloop.features.videostream.LiveVideoStreamViewModel
+import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -33,6 +36,8 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     private val viewModel: LiveVideoStreamViewModel by viewModels { viewModelFactory }
     private lateinit var cameraExecutor: ExecutorService
     private var isCameraActive = false
+    private var isMicRecording = false
+    private var recorder: MediaRecorder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,11 +66,45 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.cameraBtn.setOnClickListener(
-            View.OnClickListener {
-                setUpCamera()
+        binding.cameraBtn.setOnClickListener {
+            setUpCamera()
+        }
+
+        binding.microphoneBtn.setOnClickListener {
+            onRecord(isMicRecording)
+        }
+    }
+
+    private fun onRecord(start: Boolean) = if (!start) {
+        startRecording()
+        isMicRecording = true
+    } else {
+        stopRecording()
+        isMicRecording = false
+    }
+
+    private fun startRecording() {
+        recorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            print("recording started")
+            try {
+                prepare()
+            } catch (e: IOException) {
+                Log.e(LOG_TAG, "prepare() failed")
             }
-        )
+
+            start()
+        }
+    }
+
+    private fun stopRecording() {
+        recorder?.apply {
+            stop()
+            release()
+        }
+        recorder = null
     }
 
     private fun setUpCamera() {
