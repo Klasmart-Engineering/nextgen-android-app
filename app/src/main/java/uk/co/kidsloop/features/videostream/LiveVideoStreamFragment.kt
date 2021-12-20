@@ -118,7 +118,8 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     companion object {
         private const val TAG = "CameraX"
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        private val REQUIRED_PERMISSIONS =
+            arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
     }
 
     override fun onRequestPermissionsResult(
