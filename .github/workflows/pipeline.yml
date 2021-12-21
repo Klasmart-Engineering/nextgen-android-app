@@ -47,19 +47,23 @@ jobs:
         run: ./gradlew -Pci --console=plain :app:assembleRelease
 
       - name: Upload Debug APK
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: app
           path: app/build/outputs/apk/debug/app-debug.apk
+          # Set a short retention time for the initial testing phase
+          retention-days: 5
 
       - name: Create Release APK
         run: ./gradlew -Pci --console=plain :app:assembleRelease
 
       - name: Upload Debug APK
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: app
-          path: app/build/outputs/apk/release/app-release-unsigned.apk
+          path: app/build/outputs/apk/release/app-release-unsigned.apk 
+          # Set a short retention time for the initial testing phase
+          retention-days: 5
           
       - name: Stop Gradle
         run: ./gradlew --stop
