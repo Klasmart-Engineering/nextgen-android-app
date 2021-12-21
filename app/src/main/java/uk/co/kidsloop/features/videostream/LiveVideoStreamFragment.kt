@@ -1,12 +1,10 @@
 package uk.co.kidsloop.app.features.videostream
 
 import android.Manifest
-import android.content.ContentValues.TAG
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
-import android.media.AudioTrack
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
@@ -28,7 +26,6 @@ import uk.co.kidsloop.app.BaseFragment
 import uk.co.kidsloop.app.viewmodel.ViewModelFactory
 import uk.co.kidsloop.databinding.LiveVideostreamFragmentBinding
 import uk.co.kidsloop.features.videostream.LiveVideoStreamViewModel
-import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -44,11 +41,6 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     private var isCameraActive = true
     private var isMicRecording = true
 
-    val SAMPLE_RATE = 44100 // supported on all devices
-    val CHANNEL_CONFIG_IN = AudioFormat.CHANNEL_IN_MONO
-    val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_8BIT // not supported on all devices
-    val BUFFER_SIZE_RECORDING =
-        AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG_IN, AUDIO_FORMAT)
     var audioRecord: AudioRecord? = null
     var isRecordingAudio = false
 
@@ -76,7 +68,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
         }
 
         binding.microphoneBtn.setOnClickListener {
-            isMicRecording = !binding.microphoneBtn.isChecked
+            isMicRecording = binding.microphoneBtn.isChecked
             onRecord()
         }
         activityResultLauncher.launch(REQUIRED_PERMISSIONS)
@@ -113,19 +105,12 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
         if (audioRecord == null) { // safety check
 
             if (context?.let {
-                    ActivityCompat.checkSelfPermission(
+                ActivityCompat.checkSelfPermission(
                         it,
                         Manifest.permission.RECORD_AUDIO
                     )
-                } != PackageManager.PERMISSION_GRANTED
+            } != PackageManager.PERMISSION_GRANTED
             ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return
             }
             audioRecord = AudioRecord(
@@ -136,7 +121,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
                 BUFFER_SIZE_RECORDING
             )
 
-            if (audioRecord!!.getState() != AudioRecord.STATE_INITIALIZED) { // check for proper initialization
+            if (audioRecord!!.state != AudioRecord.STATE_INITIALIZED) { // check for proper initialization
                 Log.e(TAG, "error initializing AudioRecord")
                 Toast.makeText(
                     context,
@@ -209,5 +194,10 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
         private const val TAG = "CameraX"
         private val REQUIRED_PERMISSIONS =
             arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+        private const val SAMPLE_RATE = 44100
+        private const val CHANNEL_CONFIG_IN = AudioFormat.CHANNEL_IN_MONO
+        private const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_8BIT
+        private val BUFFER_SIZE_RECORDING =
+            AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG_IN, AUDIO_FORMAT)
     }
 }
