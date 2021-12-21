@@ -1,7 +1,12 @@
 package uk.co.kidsloop.app.features.videostream
 
 import android.Manifest
+import android.content.ContentValues.TAG
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
+import android.media.AudioFormat
+import android.media.AudioRecord
+import android.media.AudioTrack
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -36,8 +42,15 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     private val viewModel: LiveVideoStreamViewModel by viewModels { viewModelFactory }
     private lateinit var cameraExecutor: ExecutorService
     private var isCameraActive = true
-    private var isMicRecording = false
-    private var recorder: MediaRecorder? = null
+    private var isMicRecording = true
+
+    val SAMPLE_RATE = 44100 // supported on all devices
+    val CHANNEL_CONFIG_IN = AudioFormat.CHANNEL_IN_MONO
+    val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_8BIT // not supported on all devices
+    val BUFFER_SIZE_RECORDING =
+        AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG_IN, AUDIO_FORMAT)
+    var audioRecord: AudioRecord? = null
+    var isRecordingAudio = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +76,8 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
         }
 
         binding.microphoneBtn.setOnClickListener {
-            onRecord(isMicRecording)
+            isMicRecording = !binding.microphoneBtn.isChecked
+            onRecord()
         }
         activityResultLauncher.launch(REQUIRED_PERMISSIONS)
     }
@@ -80,41 +94,79 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
 
             if (allAreGranted) {
                 setUpCamera()
+                startRecording()
             } else {
                 Toast.makeText(context, "Permissions denied!", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    private fun onRecord(start: Boolean) = if (!start) {
-        startRecording()
-        isMicRecording = true
-    } else {
-        stopRecording()
-        isMicRecording = false
+    private fun onRecord() {
+        if (!isMicRecording) {
+            startRecording()
+        } else {
+            stopRecording()
+        }
     }
 
     private fun startRecording() {
-        recorder = MediaRecorder().apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-            try {
-                prepare()
-            } catch (e: IOException) {
-                Log.e(TAG, "prepare() failed", e)
+        if (audioRecord == null) { // safety check
+
+            if (context?.let {
+                    ActivityCompat.checkSelfPermission(
+                        it,
+                        Manifest.permission.RECORD_AUDIO
+                    )
+                } != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            audioRecord = AudioRecord(
+                MediaRecorder.AudioSource.MIC,
+                SAMPLE_RATE,
+                CHANNEL_CONFIG_IN,
+                AUDIO_FORMAT,
+                BUFFER_SIZE_RECORDING
+            )
+
+            if (audioRecord!!.getState() != AudioRecord.STATE_INITIALIZED) { // check for proper initialization
+                Log.e(TAG, "error initializing AudioRecord")
+                Toast.makeText(
+                    context,
+                    "Couldn't initialize AudioRecord, check configuration",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return
             }
 
-            start()
+            audioRecord!!.startRecording()
+            Toast.makeText(
+                context,
+                "recording started with AudioRecord",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            isRecordingAudio = true
         }
     }
 
     private fun stopRecording() {
-        recorder?.apply {
-            stop()
-            release()
+        if (audioRecord != null) {
+            Toast.makeText(
+                context,
+                "recording stopped with AudioRecord",
+                Toast.LENGTH_SHORT
+            ).show()
+            isRecordingAudio = false
+            audioRecord!!.stop()
         }
-        recorder = null
     }
 
     private fun setUpCamera() {
