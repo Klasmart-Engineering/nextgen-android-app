@@ -1,9 +1,7 @@
 package uk.co.kidsloop.app.features.videostream
 
 import android.Manifest
-import android.content.ContentValues.TAG
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
@@ -16,9 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.PackageManagerCompat.LOG_TAG
 import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
@@ -73,18 +69,18 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     }
 
     private var activityResultLauncher: ActivityResultLauncher<Array<String>>
-    init{
+    init {
         this.activityResultLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()) { result ->
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { result ->
             var allAreGranted = true
-            for(b in result.values) {
+            for (b in result.values) {
                 allAreGranted = allAreGranted && b
             }
 
-            if(allAreGranted) {
+            if (allAreGranted) {
                 setUpCamera()
-            }
-            else{
+            } else {
                 Toast.makeText(context, "Permissions denied!", Toast.LENGTH_LONG).show()
             }
         }
@@ -103,11 +99,10 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
             setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-            print("recording started")
             try {
                 prepare()
             } catch (e: IOException) {
-                //Log.e(LOG_TAG, "prepare() failed")
+                Log.e(TAG, "prepare() failed", e)
             }
 
             start()
