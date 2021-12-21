@@ -1,6 +1,7 @@
 package uk.co.kidsloop.app.features.videostream
 
 import android.Manifest
+import android.content.ContentValues.TAG
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
@@ -9,6 +10,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -35,7 +39,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
 
     private val viewModel: LiveVideoStreamViewModel by viewModels { viewModelFactory }
     private lateinit var cameraExecutor: ExecutorService
-    private var isCameraActive = false
+    private var isCameraActive = true
     private var isMicRecording = false
     private var recorder: MediaRecorder? = null
 
@@ -43,15 +47,6 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
         super.onCreate(savedInstanceState)
         injector.inject(this)
 
-        if (allPermissionsGranted()) {
-            setUpCamera()
-        } else {
-            activity?.let {
-                ActivityCompat.requestPermissions(
-                    it, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
-                )
-            }
-        }
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
@@ -67,11 +62,31 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.cameraBtn.setOnClickListener {
+            isCameraActive = !binding.cameraBtn.isChecked
             setUpCamera()
         }
 
         binding.microphoneBtn.setOnClickListener {
             onRecord(isMicRecording)
+        }
+        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
+    }
+
+    private var activityResultLauncher: ActivityResultLauncher<Array<String>>
+    init{
+        this.activityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()) { result ->
+            var allAreGranted = true
+            for(b in result.values) {
+                allAreGranted = allAreGranted && b
+            }
+
+            if(allAreGranted) {
+                setUpCamera()
+            }
+            else{
+                Toast.makeText(context, "Permissions denied!", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -92,7 +107,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
             try {
                 prepare()
             } catch (e: IOException) {
-                Log.e(LOG_TAG, "prepare() failed")
+                //Log.e(LOG_TAG, "prepare() failed")
             }
 
             start()
@@ -125,13 +140,10 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
                 try {
                     cameraProvider.unbindAll()
 
-                    if (!isCameraActive) {
-                        isCameraActive = true
+                    if (isCameraActive) {
                         cameraProvider.bindToLifecycle(
                             this, cameraSelector, preview
                         )
-                    } else {
-                        isCameraActive = false
                     }
                 } catch (exc: Exception) {
                     Log.e(TAG, "Use case binding failed", exc)
@@ -141,14 +153,6 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
         )
     }
 
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        context?.let { context ->
-            ContextCompat.checkSelfPermission(
-                context, it
-            )
-        } == PackageManager.PERMISSION_GRANTED
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
@@ -156,22 +160,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
 
     companion object {
         private const val TAG = "CameraX"
-        private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS =
             arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                setUpCamera()
-            } else {
-                Log.e(TAG, "Access denied")
-            }
-        }
     }
 }
