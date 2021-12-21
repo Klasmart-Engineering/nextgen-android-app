@@ -67,4 +67,10 @@ jobs:
           
       - name: Stop Gradle
         run: ./gradlew --stop
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: app/build/outputs/apk/release/app-release-unsigned.apk
       
