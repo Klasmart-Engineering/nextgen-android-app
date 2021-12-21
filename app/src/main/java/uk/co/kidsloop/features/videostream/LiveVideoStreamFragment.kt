@@ -19,6 +19,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
@@ -64,6 +65,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
         super.onViewCreated(view, savedInstanceState)
         binding.cameraBtn.setOnClickListener {
             isCameraActive = !binding.cameraBtn.isChecked
+            binding.noCameraTextview.isVisible = !isCameraActive
             setUpCamera()
         }
 
@@ -151,6 +153,9 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
             ).show()
             isRecordingAudio = false
             audioRecord!!.stop()
+            audioRecord!!.release()
+            audioRecord = null
+
         }
     }
 
