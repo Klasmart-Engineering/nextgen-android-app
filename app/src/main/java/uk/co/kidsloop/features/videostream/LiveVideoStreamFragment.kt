@@ -27,6 +27,7 @@ import uk.co.kidsloop.app.BaseFragment
 import uk.co.kidsloop.app.viewmodel.ViewModelFactory
 import uk.co.kidsloop.databinding.LiveVideostreamFragmentBinding
 import uk.co.kidsloop.features.videostream.LiveVideoStreamViewModel
+import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -41,8 +42,9 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     private lateinit var cameraExecutor: ExecutorService
     private var isCameraActive = true
     private var isMicRecording = true
-    private var isCameraPermissionGranted = true
-    private var isMicPermissionGranted = true
+    private var isCameraPermissionGranted = false
+    private var isMicPermissionGranted = false
+    private var recordingThread: Thread? = null
 
     var audioRecord: AudioRecord? = null
     var isRecordingAudio = false
@@ -79,6 +81,11 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
         binding.microphoneBtn.setOnClickListener {
             if (isMicPermissionGranted) {
                 isMicRecording = binding.microphoneBtn.isChecked
+                if (!isMicRecording) {
+                    binding.progressBar.visibility = View.VISIBLE
+                } else {
+                    binding.progressBar.visibility = View.INVISIBLE
+                }
                 onRecord()
             }
         }
@@ -124,10 +131,13 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
                         != PackageManager.PERMISSION_GRANTED
                     ) {
                         isMicPermissionGranted = false
+                        binding.microphoneBtn.isEnabled = false
+                        binding.progressBar.visibility = View.INVISIBLE
                         Toast.makeText(context, getString(R.string.mic_permission_denied), Toast.LENGTH_LONG).show()
                         binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_disabled)
                     } else {
                         isMicPermissionGranted = true
+                        binding.progressBar.visibility = View.VISIBLE
                         startRecording()
                     }
                 }
@@ -144,7 +154,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     }
 
     private fun startRecording() {
-        if (audioRecord == null) { // safety check
+        if (audioRecord == null) {
 
             if (context?.let {
                 ActivityCompat.checkSelfPermission(
@@ -174,27 +184,45 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
             }
 
             audioRecord!!.startRecording()
-            Toast.makeText(
-                context,
-                "recording started with AudioRecord",
-                Toast.LENGTH_SHORT
-            ).show()
 
             isRecordingAudio = true
+            recordingThread = Thread { getAudioDataToProgressBar() }
+            recordingThread!!.start()
+        }
+    }
+
+    private fun getAudioDataToProgressBar() {
+        val data =
+            ByteArray(BUFFER_SIZE_RECORDING / 2)
+
+        while (isRecordingAudio) {
+            val read = audioRecord!!.read(data, 0, data.size)
+            try {
+                var sum = 0.0
+                for (i in 0 until read) {
+                    sum += (data[i] * data[i]).toDouble() + 50
+                }
+                if (read > 0) {
+                    val amplitude = sum / read
+                    binding.progressBar.progress = Math.sqrt(amplitude).toInt()
+                }
+            } catch (e: IOException) {
+                Log.d(
+                    TAG,
+                    "Exception while recording with AudioRecord, $e"
+                )
+                e.printStackTrace()
+            }
         }
     }
 
     private fun stopRecording() {
         if (audioRecord != null) {
-            Toast.makeText(
-                context,
-                "recording stopped with AudioRecord",
-                Toast.LENGTH_SHORT
-            ).show()
             isRecordingAudio = false
             audioRecord!!.stop()
             audioRecord!!.release()
             audioRecord = null
+            recordingThread = null
         }
     }
 
