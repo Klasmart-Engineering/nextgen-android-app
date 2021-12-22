@@ -46,10 +46,12 @@ jobs:
       - name: Run Gradle
         run: ./gradlew build check --continue
 
-      - name: Create Debug APK
+      - if: ${{ !(github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
+        name: Create Debug APK
         run: ./gradlew -Pci --console=plain :app:assembleRelease
 
-      - name: Upload Debug APK
+      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
+        name: Upload Debug APK
         uses: actions/upload-artifact@v2
         with:
           name: app
@@ -57,10 +59,11 @@ jobs:
           # Set a short retention time for the initial testing phase
           retention-days: 5
 
-      - name: Create Release APK
+      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
+        name: Create Release APK
         run: ./gradlew -Pci --console=plain :app:assembleRelease
 
-      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/main'}}
+      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
         name: Upload Debug APK
         uses: actions/upload-artifact@v2
         with:
@@ -69,7 +72,8 @@ jobs:
           # Set a short retention time for the initial testing phase
           retention-days: 5
           
-      - name: Stop Gradle
+      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
+        name: Stop Gradle
         run: ./gradlew --stop
 
       - if: ${{ github.ref == 'refs/heads/main' }}
