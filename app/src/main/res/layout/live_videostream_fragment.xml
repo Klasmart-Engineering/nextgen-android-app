@@ -12,43 +12,46 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="@dimen/space_10" />
+        android:layout_margin="40dp" />
 
     <TextView
         android:id="@+id/no_camera_textview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Camera is turned off"
+        android:text="@string/camera_is_turned_off"
         android:textColor="@color/white"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="@dimen/space_10"
+        android:layout_margin="40dp"
         android:background="@color/black"
         android:visibility="gone"/>
 
     <ToggleButton
         android:id="@+id/camera_btn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         app:layout_constraintBottom_toBottomOf="@id/viewFinder"
         app:layout_constraintEnd_toStartOf="@id/microphone_btn"
         app:layout_constraintStart_toStartOf="parent"
         android:background="@drawable/ic_camera_selector"
         android:textOff=""
-        android:textOn=""/>
+        android:textOn=""
+        android:layout_marginBottom="20dp"/>
 
     <ToggleButton
         android:id="@+id/microphone_btn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/ic_mic_selector"
         app:layout_constraintBottom_toBottomOf="@id/viewFinder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/camera_btn"
-        android:background="@drawable/ic_mic_selector"
         android:textOff=""
-        android:textOn=""/>
+        android:textOn=""
+        android:layout_marginBottom="20dp"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

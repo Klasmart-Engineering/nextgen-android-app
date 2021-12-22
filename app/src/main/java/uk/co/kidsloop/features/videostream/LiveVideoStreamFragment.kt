@@ -41,6 +41,8 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     private lateinit var cameraExecutor: ExecutorService
     private var isCameraActive = true
     private var isMicRecording = true
+    private var isCameraPermissionGranted = true
+    private var isMicPermissionGranted = true
 
     var audioRecord: AudioRecord? = null
     var isRecordingAudio = false
@@ -63,17 +65,23 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
+
         binding.cameraBtn.setOnClickListener {
-            isCameraActive = !binding.cameraBtn.isChecked
-            binding.noCameraTextview.isVisible = !isCameraActive
-            setUpCamera()
+            if (isCameraPermissionGranted) {
+                isCameraActive = !binding.cameraBtn.isChecked
+                binding.noCameraTextview.isVisible = !isCameraActive
+                binding.noCameraTextview.text = getString(R.string.camera_is_turned_off)
+                setUpCamera()
+            }
         }
 
         binding.microphoneBtn.setOnClickListener {
-            isMicRecording = binding.microphoneBtn.isChecked
-            onRecord()
+            if (isMicPermissionGranted) {
+                isMicRecording = binding.microphoneBtn.isChecked
+                onRecord()
+            }
         }
-        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
     }
 
     private var activityResultLauncher: ActivityResultLauncher<Array<String>>
@@ -87,10 +95,42 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
             }
 
             if (allAreGranted) {
+                isCameraPermissionGranted = true
+                isMicPermissionGranted = true
                 setUpCamera()
                 startRecording()
             } else {
-                Toast.makeText(context, "Permissions denied!", Toast.LENGTH_LONG).show()
+                if (context?.let { ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA) }
+                    != PackageManager.PERMISSION_GRANTED && context?.let { ContextCompat.checkSelfPermission(it, Manifest.permission.RECORD_AUDIO) }
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
+                    binding.noCameraTextview.visibility = View.VISIBLE
+                    binding.noCameraTextview.text = getString(R.string.permissions_denied)
+                    binding.cameraBtn.setBackgroundResource(R.drawable.ic_cam_disabled)
+                    binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_disabled)
+                } else {
+                    if (context?.let { ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA) }
+                        != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        isCameraPermissionGranted = false
+                        binding.noCameraTextview.text = getString(R.string.camera_permission_denied)
+                        binding.noCameraTextview.visibility = View.VISIBLE
+                        binding.cameraBtn.setBackgroundResource(R.drawable.ic_cam_disabled)
+                    } else {
+                        setUpCamera()
+                        isCameraPermissionGranted = true
+                    }
+                    if (context?.let { ContextCompat.checkSelfPermission(it, Manifest.permission.RECORD_AUDIO) }
+                        != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        isMicPermissionGranted = false
+                        Toast.makeText(context, getString(R.string.mic_permission_denied), Toast.LENGTH_LONG).show()
+                        binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_disabled)
+                    } else {
+                        isMicPermissionGranted = true
+                        startRecording()
+                    }
+                }
             }
         }
     }
@@ -155,7 +195,6 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
             audioRecord!!.stop()
             audioRecord!!.release()
             audioRecord = null
-
         }
     }
 
