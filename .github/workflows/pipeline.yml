@@ -49,6 +49,17 @@ jobs:
       - name: Run Gradle
         run: ./gradlew build check --continue
 
+      - name: Run Linting
+        run: ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
+
+      - name: Upload Linting Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Lintig Checks
+          path: |
+            app/build/reports/*.xml
+            app/build/reports/*.html
+
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
         name: Create Debug APK
         run: ./gradlew -Pci --console=plain :app:assembleRelease
