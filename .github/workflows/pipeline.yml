@@ -3,9 +3,7 @@ name: Validate Gradle Wrapper
 on:
   push:
     branches:
-      - main
-      - develop
-      - feature/NEXT-296-create-build-pipeline
+      - "*"    
   pull_request:
     branches:
       - '*'
