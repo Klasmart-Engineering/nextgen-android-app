@@ -60,6 +60,12 @@ jobs:
             app/lint/reports/*.xml
             app/lint/reports/*.html
 
+      - name: Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: main
+
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
         name: Create Debug APK
         run: ./gradlew -Pci --console=plain :app:assembleRelease
