@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.CameraSelector.LENS_FACING_FRONT
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
@@ -52,8 +53,6 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injector.inject(this)
-
-        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
     override fun onCreateView(
@@ -68,26 +67,30 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activityResultLauncher.launch(REQUIRED_PERMISSIONS)
+        cameraExecutor = Executors.newSingleThreadExecutor()
 
         binding.cameraBtn.setOnClickListener {
             if (isCameraPermissionGranted) {
                 isCameraActive = !binding.cameraBtn.isChecked
-                binding.noCameraTextview.isVisible = !isCameraActive
-                binding.noCameraTextview.text = getString(R.string.camera_is_turned_off)
                 setUpCamera()
+                binding.noCameraTextview.isVisible = !isCameraActive
             }
         }
 
         binding.microphoneBtn.setOnClickListener {
             if (isMicPermissionGranted) {
                 isMicRecording = binding.microphoneBtn.isChecked
-                if (!isMicRecording) {
-                    binding.progressBar.visibility = View.VISIBLE
-                } else {
-                    binding.progressBar.visibility = View.INVISIBLE
-                }
+                binding.progressBar.setVisible(!isMicRecording)
                 onRecord()
             }
+        }
+    }
+
+    fun View.setVisible(visible: Boolean) {
+        visibility = if (visible) {
+            View.VISIBLE
+        } else {
+            View.INVISIBLE
         }
     }
 
@@ -155,7 +158,6 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
 
     private fun startRecording() {
         if (audioRecord == null) {
-
             if (context?.let {
                 ActivityCompat.checkSelfPermission(
                         it,
@@ -184,7 +186,6 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
             }
 
             audioRecord!!.startRecording()
-
             isRecordingAudio = true
             recordingThread = Thread { getAudioDataToProgressBar() }
             recordingThread!!.start()
@@ -239,7 +240,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
                         it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                     }
 
-                val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+                val cameraSelector = CameraSelector.Builder().requireLensFacing(LENS_FACING_FRONT).build()
 
                 try {
                     cameraProvider.unbindAll()
