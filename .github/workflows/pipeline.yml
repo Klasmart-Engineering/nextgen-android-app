@@ -59,12 +59,12 @@ jobs:
           path: |
             app/lint/reports/*.xml
             app/lint/reports/*.html
-            
+
       - name: ktlint
         uses: ScaCap/action-ktlint@master
         with:
           github_token: ${{ secrets.github_token }}
-          reporter: github-pr-review
+          reporter: github-check
 
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
         name: Create Debug APK
