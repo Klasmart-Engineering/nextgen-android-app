@@ -72,7 +72,7 @@ jobs:
         uses: dvdandroid/action-android-lint@master
         with:
           github_token: ${{ secrets.TOKEN_GITHUB }}
-          lint_xml_file: app/lint/reports/lint-results.xml
+          lint_xml_file: app/lint/reports/lint-results-debug.xml
       # - name: ktlint
       #   uses: ScaCap/action-ktlint@master
       #   with:
