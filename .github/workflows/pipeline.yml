@@ -71,7 +71,7 @@ jobs:
       - name: Run Android Lint
         uses: dvdandroid/action-android-lint@master
         with:
-          github_token: ${{ secrets.TOKEN_GITHUB }}
+          github_token: ${{ secrets.github_token }}
           lint_xml_file: app/lint/reports/lint-results-debug.xml
       # - name: ktlint
       #   uses: ScaCap/action-ktlint@master
