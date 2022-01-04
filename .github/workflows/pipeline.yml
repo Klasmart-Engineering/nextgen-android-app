@@ -52,19 +52,13 @@ jobs:
       - name: Run Linting
         run: ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
 
-      # - name: Upload Linting Results
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: Lintig Checks
-      #     path: |
-      #       app/lint/reports/*.xml
-      #       app/lint/reports/*.html
-
       - name: Run Android Lint
         uses: dvdandroid/action-android-lint@master
         with:
           github_token: ${{ secrets.github_token }}
           lint_xml_file: app/lint/reports/lint-results-debug.xml
+          level: warning
+
 
       - name: ktlint
         uses: ScaCap/action-ktlint@master
