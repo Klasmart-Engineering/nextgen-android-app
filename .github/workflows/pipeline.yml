@@ -56,15 +56,7 @@ jobs:
         uses: dvdandroid/action-android-lint@master
         with:
           github_token: ${{ secrets.github_token }}
-          lint_xml_file: app/lint/reports/lint-results-debug.xml
-          level: warning
-
-
-      - name: ktlint
-        uses: ScaCap/action-ktlint@master
-        with:
-          github_token: ${{ secrets.github_token }}
-          reporter: github-check
+          lint_xml_file: app/lint/reports/lint-results-debug.xml          
 
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
         name: Create Debug APK
