@@ -57,8 +57,8 @@ jobs:
           lint_xml_file: app/build/reports/lint-results.xml   
           level: warning
 
-      - if: ${{ (github.event.pull_request.base.ref == 'develop')  }}
-        name: Run Android Lint For Pull Requests
+#      - if: ${{ (github.event.pull_request.base.ref == 'develop')  }}
+      - name: Run Android Lint For Pull Requests
         uses: dvdandroid/action-android-lint@master
         with:
           github_token: ${{ secrets.github_token }}
