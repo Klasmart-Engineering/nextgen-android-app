@@ -49,14 +49,11 @@ jobs:
       - name: Run Gradle
         run: ./gradlew build check --continue
 
-      - name: Run Linting
-        run: ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
-
       - name: Run Android Lint
         uses: dvdandroid/action-android-lint@master
         with:
           github_token: ${{ secrets.github_token }}
-          lint_xml_file: app/lint/reports/lint-results-debug.xml          
+          lint_xml_file: app/build/reports/lint-results.xml          
 
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
         name: Create Debug APK
