@@ -64,6 +64,7 @@ jobs:
           lint_xml_file: app/build/reports/lint-results.xml
           reporter: github-pr-review 
 
+      # test mobsf
       - name: mobsfscan
         uses: MobSF/mobsfscan@main
         with:
