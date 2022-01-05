@@ -1,4 +1,4 @@
-name: Validate Gradle Wrapper
+name: Main Build Pipeline
 
 on:
   push:
@@ -68,17 +68,7 @@ jobs:
           github_token: ${{ secrets.github_token }}
           lint_xml_file: app/build/reports/lint-results.xml
           reporter: github-pr-review 
-
-      # test mobsf
-      - name: mobsfscan
-        uses: MobSF/mobsfscan@main
-        with:
-          args: '. --sarif --output results.sarif || true'
-      - name: Upload mobsfscan report
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: results.sarif     
-
+ 
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
         name: Create Debug APK
         run: ./gradlew -Pci --console=plain :app:assembleRelease
