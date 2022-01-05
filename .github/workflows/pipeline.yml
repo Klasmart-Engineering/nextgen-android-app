@@ -53,12 +53,12 @@ jobs:
       - name: Run Gradle
         run: ./gradlew build check --continue
 
-      - if: ${{ (github.event != 'pull_request')  }}
-        name: Run Android Lint 
-        uses: dvdandroid/action-android-lint@master
-        with:
-          github_token: ${{ secrets.github_token }}
-          lint_xml_file: app/build/reports/lint-results.xml   
+      # - if: ${{ (github.event != 'pull_request')  }}
+      #   name: Run Android Lint 
+      #   uses: dvdandroid/action-android-lint@master
+      #   with:
+      #     github_token: ${{ secrets.github_token }}
+      #     lint_xml_file: app/build/reports/lint-results.xml   
 
       - if: ${{ (github.event.pull_request)  }}
         name: Run Android Lint For Pull Requests
