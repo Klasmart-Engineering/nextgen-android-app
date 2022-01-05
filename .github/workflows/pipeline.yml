@@ -68,7 +68,11 @@ jobs:
       - name: mobsfscan
         uses: MobSF/mobsfscan@main
         with:
-          args: '. --json'      
+          args: '. --sarif --output results.sarif || true'
+      - name: Upload mobsfscan report
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results.sarif     
 
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
         name: Create Debug APK
