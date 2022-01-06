@@ -41,7 +41,7 @@ jobs:
         with:
           name: sast-results
           path: |
-            - results.html
-            - results.json
+            results.html
+            results.json
 
       
