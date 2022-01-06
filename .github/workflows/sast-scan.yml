@@ -29,12 +29,12 @@ jobs:
       - name: mobsfscan
         uses: MobSF/mobsfscan@main
         with:
-          args: '. --sarif --output results.sarif || true'
+          args: '. --html --output results.html || true'
 
       - name: Upload Scan results
         uses: actions/upload-artifact@v2
         with:
-          name: app
-          path: results.sarif 
+          name: sast-results
+          path: results.html 
 
       
