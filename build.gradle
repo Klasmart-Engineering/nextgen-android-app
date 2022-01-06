@@ -6,8 +6,9 @@ buildscript {
         dagger_version = '2.40.5'
         nav_version = '2.3.5'
         coroutines_version = '1.4.2'
-        moshiVersion = "1.12.0"
-        okHttpVersion = "4.9.2"
+        moshi_version = "1.12.0"
+        ok_http_ersion = "4.9.2"
+        cameraX_version = "1.0.1"
     }
 
     repositories {
