@@ -25,20 +25,16 @@ import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.BaseFragment
-import uk.co.kidsloop.app.viewmodel.ViewModelFactory
 import uk.co.kidsloop.databinding.LiveVideostreamFragmentBinding
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import javax.inject.Inject
 
 class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment) {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
     private val binding by viewBinding(LiveVideostreamFragmentBinding::bind)
 
-    private val viewModel: LiveVideoStreamViewModel by viewModels { viewModelFactory }
+    private val viewModel by viewModels<LiveVideoStreamViewModel>()
     private lateinit var cameraExecutor: ExecutorService
     private var isCameraActive = true
     private var isMicRecording = true
