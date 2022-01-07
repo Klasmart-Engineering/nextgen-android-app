@@ -6,11 +6,11 @@ import androidx.navigation.Navigation
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.databinding.LoginFragmentBinding
+import uk.co.kidsloop.databinding.FragmentLoginBinding
 
 class LoginFragment : BaseFragment(R.layout.fragment_login) {
 
-    private val binding by viewBinding(LoginFragmentBinding::bind)
+    private val binding by viewBinding(FragmentLoginBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

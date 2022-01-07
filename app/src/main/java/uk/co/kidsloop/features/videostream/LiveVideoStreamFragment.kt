@@ -20,18 +20,20 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.databinding.LiveVideostreamFragmentBinding
+import uk.co.kidsloop.app.utils.setVisible
+import uk.co.kidsloop.databinding.FragmentLiveVideostreamBinding
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream) {
 
-    private val binding by viewBinding(LiveVideostreamFragmentBinding::bind)
+    private val binding by viewBinding(FragmentLiveVideostreamBinding::bind)
     private val viewModel by viewModels<LiveVideoStreamViewModel>()
 
     private lateinit var cameraExecutor: ExecutorService
@@ -69,16 +71,14 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
     private fun setControls() {
         binding.cameraBtn.setOnClickListener {
             if (isCameraPermissionGranted) {
-                isCameraActive = !binding.cameraBtn.isChecked
                 setUpCamera()
-                binding.noCameraTextview.isVisible = !isCameraActive
+                binding.noCameraTextview.isVisible = binding.cameraBtn.isChecked
             }
         }
 
         binding.microphoneBtn.setOnClickListener {
             if (isMicPermissionGranted) {
-                isMicRecording = binding.microphoneBtn.isChecked
-                binding.progressBar.setVisible(!isMicRecording)
+                binding.progressBar.setVisible(!binding.microphoneBtn.isChecked)
                 onRecord()
             }
         }
