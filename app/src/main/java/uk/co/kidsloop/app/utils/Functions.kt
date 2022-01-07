@@ -48,3 +48,11 @@ fun View?.invisible() {
 fun View?.gone() {
     this?.visibility = View.GONE
 }
+
+fun View.setVisible(visible: Boolean) {
+    visibility = if (visible) {
+        View.VISIBLE
+    } else {
+        View.INVISIBLE
+    }
+}
