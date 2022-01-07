@@ -1,4 +1,4 @@
-package uk.co.kidsloop.app.features.videostream
+package uk.co.kidsloop.features.videostream
 
 import android.Manifest
 import android.content.pm.ActivityInfo
@@ -27,7 +27,6 @@ import uk.co.kidsloop.R
 import uk.co.kidsloop.app.BaseFragment
 import uk.co.kidsloop.app.viewmodel.ViewModelFactory
 import uk.co.kidsloop.databinding.LiveVideostreamFragmentBinding
-import uk.co.kidsloop.features.videostream.LiveVideoStreamViewModel
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors

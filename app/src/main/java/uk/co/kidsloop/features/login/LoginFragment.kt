@@ -1,4 +1,4 @@
-package uk.co.kidsloop.app.features.login
+package uk.co.kidsloop.features.login
 
 import android.os.Bundle
 import android.view.View

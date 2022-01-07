@@ -1,4 +1,4 @@
-package uk.co.kidsloop.app.features.splash
+package uk.co.kidsloop.features.splash
 
 import android.os.Handler
 import androidx.navigation.Navigation

@@ -23,19 +23,19 @@
 
         <fragment
             android:id="@+id/login_fragment"
-            android:name="uk.co.kidsloop.app.features.login.LoginFragment"
+            android:name="uk.co.kidsloop.features.login.LoginFragment"
             tools:layout="@layout/login_fragment" />
 
         <fragment
             android:id="@+id/splash_fragment"
-            android:name="uk.co.kidsloop.app.features.splash.SplashFragment" />
+            android:name="uk.co.kidsloop.features.splash.SplashFragment" />
     </navigation>
     <navigation
         android:id="@+id/live_videostream_graph"
         app:startDestination="@id/live_videostream_fragment">
         <fragment
             android:id="@+id/live_videostream_fragment"
-            android:name="uk.co.kidsloop.app.features.videostream.LiveVideoStreamFragment"
+            android:name="uk.co.kidsloop.features.videostream.LiveVideoStreamFragment"
             tools:layout="@layout/live_videostream_fragment" />
     </navigation>
 
