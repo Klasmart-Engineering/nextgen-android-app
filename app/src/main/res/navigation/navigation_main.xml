@@ -24,7 +24,7 @@
         <fragment
             android:id="@+id/login_fragment"
             android:name="uk.co.kidsloop.features.login.LoginFragment"
-            tools:layout="@layout/login_fragment" />
+            tools:layout="@layout/fragment_login" />
 
         <fragment
             android:id="@+id/splash_fragment"
@@ -36,7 +36,7 @@
         <fragment
             android:id="@+id/live_videostream_fragment"
             android:name="uk.co.kidsloop.features.videostream.LiveVideoStreamFragment"
-            tools:layout="@layout/live_videostream_fragment" />
+            tools:layout="@layout/fragment_live_videostream" />
     </navigation>
 
 </navigation>
