@@ -5,7 +5,7 @@ import androidx.navigation.Navigation
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
 
-class SplashFragment : BaseFragment(R.layout.splash_fragment) {
+class SplashFragment : BaseFragment(R.layout.fragment_splash) {
 
     private val handler = Handler()
 

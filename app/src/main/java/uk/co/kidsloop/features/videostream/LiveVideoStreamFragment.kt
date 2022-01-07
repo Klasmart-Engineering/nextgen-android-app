@@ -20,22 +20,20 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.app.utils.setVisible
 import uk.co.kidsloop.databinding.LiveVideostreamFragmentBinding
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment) {
+class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream) {
 
     private val binding by viewBinding(LiveVideostreamFragmentBinding::bind)
-
     private val viewModel by viewModels<LiveVideoStreamViewModel>()
+
     private lateinit var cameraExecutor: ExecutorService
     private var isCameraActive = true
     private var isMicRecording = true
@@ -65,6 +63,10 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
         activityResultLauncher.launch(REQUIRED_PERMISSIONS)
         cameraExecutor = Executors.newSingleThreadExecutor()
 
+        setControls()
+    }
+
+    private fun setControls() {
         binding.cameraBtn.setOnClickListener {
             if (isCameraPermissionGranted) {
                 isCameraActive = !binding.cameraBtn.isChecked
@@ -155,6 +157,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.live_videostream_fragment)
             ) {
                 return
             }
+
             audioRecord = AudioRecord(
                 MediaRecorder.AudioSource.MIC,
                 SAMPLE_RATE,

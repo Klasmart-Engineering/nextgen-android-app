@@ -8,7 +8,7 @@ import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.LoginFragmentBinding
 
-class LoginFragment : BaseFragment(R.layout.login_fragment) {
+class LoginFragment : BaseFragment(R.layout.fragment_login) {
 
     private val binding by viewBinding(LoginFragmentBinding::bind)
 
