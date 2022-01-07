@@ -1,4 +1,4 @@
-package uk.co.kidsloop.app
+package uk.co.kidsloop.app.structure
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

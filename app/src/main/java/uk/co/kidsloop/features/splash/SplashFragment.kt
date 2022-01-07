@@ -3,7 +3,7 @@ package uk.co.kidsloop.features.splash
 import android.os.Handler
 import androidx.navigation.Navigation
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.BaseFragment
+import uk.co.kidsloop.app.structure.BaseFragment
 
 class SplashFragment : BaseFragment(R.layout.splash_fragment) {
 

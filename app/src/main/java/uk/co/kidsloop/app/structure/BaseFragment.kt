@@ -1,7 +1,8 @@
-package uk.co.kidsloop.app
+package uk.co.kidsloop.app.structure
 
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import uk.co.kidsloop.app.KidsloopActivity
 import uk.co.kidsloop.app.di.presentation.PresentationModule
 
 /**

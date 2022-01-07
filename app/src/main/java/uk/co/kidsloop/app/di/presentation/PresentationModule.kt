@@ -1,8 +1,8 @@
 package uk.co.kidsloop.app.di.presentation
 
 import dagger.Module
-import uk.co.kidsloop.app.BaseFragment
+import uk.co.kidsloop.app.structure.BaseFragment
 
 @Module
-class PresentationModule(val fragment:BaseFragment) {
+class PresentationModule(val fragment: BaseFragment) {
 }
