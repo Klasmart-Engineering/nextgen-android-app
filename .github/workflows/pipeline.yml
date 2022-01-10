@@ -54,14 +54,14 @@ jobs:
         uses: dvdandroid/action-android-lint@master
         with:
           github_token: ${{ secrets.github_token }}
-          lint_xml_file: app/build/reports/lint-results.xml   
+          lint_xml_file: app/build/reports/lint-results-debug.xml   
 
       - if: ${{ (github.event.pull_request)  }}
         name: Run Android Lint For Pull Requests
         uses: dvdandroid/action-android-lint@master
         with:
           github_token: ${{ secrets.github_token }}
-          lint_xml_file: app/build/reports/lint-results.xml
+          lint_xml_file: app/build/reports/lint-results-debug.xml 
           reporter: github-pr-review       
 
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request) }}
