@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -25,7 +24,8 @@ import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.app.utils.setVisible
+import uk.co.kidsloop.app.utils.*
+import uk.co.kidsloop.data.enums.KidsloopPermissions
 import uk.co.kidsloop.databinding.FragmentLiveVideostreamBinding
 import java.io.IOException
 import java.util.concurrent.ExecutorService
@@ -62,9 +62,8 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
+        activityResultLauncher.launch(KidsloopPermissions.getPreviewPermissions())
         cameraExecutor = Executors.newSingleThreadExecutor()
-
         setControls()
     }
 
@@ -85,13 +84,14 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
     }
 
     private var activityResultLauncher: ActivityResultLauncher<Array<String>>
+
     init {
         this.activityResultLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { result ->
             var allAreGranted = true
-            for (b in result.values) {
-                allAreGranted = allAreGranted && b
+            for (value in result.values) {
+                allAreGranted = allAreGranted && value
             }
 
             if (allAreGranted) {
@@ -100,37 +100,48 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
                 setUpCamera()
                 startRecording()
             } else {
-                if (context?.let { ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA) }
-                    != PackageManager.PERMISSION_GRANTED && context?.let { ContextCompat.checkSelfPermission(it, Manifest.permission.RECORD_AUDIO) }
-                    != PackageManager.PERMISSION_GRANTED
+                if (isPermissionGranted(
+                        requireContext(),
+                        KidsloopPermissions.CAMERA.type
+                    ).not() &&
+                    isPermissionGranted(
+                        requireContext(),
+                        KidsloopPermissions.RECORD_AUDIO.type
+                    ).not()
                 ) {
                     binding.noCameraTextview.visibility = View.VISIBLE
                     binding.noCameraTextview.text = getString(R.string.permissions_denied)
                     binding.cameraBtn.setBackgroundResource(R.drawable.ic_cam_disabled)
                     binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_disabled)
                 } else {
-                    if (context?.let { ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA) }
-                        != PackageManager.PERMISSION_GRANTED
+                    if (isPermissionGranted(
+                            requireContext(),
+                            KidsloopPermissions.CAMERA.type
+                        ).not()
                     ) {
                         isCameraPermissionGranted = false
-                        binding.noCameraTextview.text = getString(R.string.camera_permission_denied)
-                        binding.noCameraTextview.visibility = View.VISIBLE
+                        binding.noCameraTextview.text =
+                            getString(R.string.camera_permission_denied)
+                        binding.noCameraTextview.visible()
                         binding.cameraBtn.setBackgroundResource(R.drawable.ic_cam_disabled)
                     } else {
                         setUpCamera()
                         isCameraPermissionGranted = true
                     }
-                    if (context?.let { ContextCompat.checkSelfPermission(it, Manifest.permission.RECORD_AUDIO) }
-                        != PackageManager.PERMISSION_GRANTED
+
+                    if (isPermissionGranted(
+                            requireContext(),
+                            KidsloopPermissions.RECORD_AUDIO.type
+                        ).not()
                     ) {
                         isMicPermissionGranted = false
                         binding.microphoneBtn.isEnabled = false
-                        binding.progressBar.visibility = View.INVISIBLE
-                        Toast.makeText(context, getString(R.string.mic_permission_denied), Toast.LENGTH_LONG).show()
+                        binding.progressBar.invisible()
+                        longToast(getString(R.string.mic_permission_denied))
                         binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_disabled)
                     } else {
                         isMicPermissionGranted = true
-                        binding.progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visible()
                         startRecording()
                     }
                 }
@@ -149,11 +160,11 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
     private fun startRecording() {
         if (audioRecord == null) {
             if (context?.let {
-                ActivityCompat.checkSelfPermission(
+                    ActivityCompat.checkSelfPermission(
                         it,
                         Manifest.permission.RECORD_AUDIO
                     )
-            } != PackageManager.PERMISSION_GRANTED
+                } != PackageManager.PERMISSION_GRANTED
             ) {
                 return
             }
@@ -168,11 +179,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
 
             if (audioRecord!!.state != AudioRecord.STATE_INITIALIZED) { // check for proper initialization
                 Log.e(TAG, "error initializing AudioRecord")
-                Toast.makeText(
-                    context,
-                    "Couldn't initialize AudioRecord, check configuration",
-                    Toast.LENGTH_SHORT
-                ).show()
+                shortToast("Couldn't initialize AudioRecord, check configuration")
                 return
             }
 
@@ -231,7 +238,8 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
                         it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                     }
 
-                val cameraSelector = CameraSelector.Builder().requireLensFacing(LENS_FACING_FRONT).build()
+                val cameraSelector =
+                    CameraSelector.Builder().requireLensFacing(LENS_FACING_FRONT).build()
 
                 try {
                     cameraProvider.unbindAll()
@@ -255,9 +263,7 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
     }
 
     companion object {
-        private const val TAG = "CameraX"
-        private val REQUIRED_PERMISSIONS =
-            arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+        val TAG = LiveVideoStreamFragment::class.qualifiedName
         private const val SAMPLE_RATE = 44100
         private const val CHANNEL_CONFIG_IN = AudioFormat.CHANNEL_IN_MONO
         private const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_8BIT
