@@ -8,4 +8,5 @@
     <string name="mic_permission_denied">You have denied access to the microphone.</string>
     <string name="camera_is_turned_off">You have turned off your camera.</string>
     <string name="waiting_teacher">Waiting teacher to join</string>
+    <string name="join">Join</string>
 </resources>
