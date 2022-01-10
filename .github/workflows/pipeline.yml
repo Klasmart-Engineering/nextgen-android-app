@@ -70,7 +70,7 @@ jobs:
  
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
         name: Create Debug APK
-        run: ./gradlew -Pci --console=plain :app:assembleRelease
+        run: ./gradlew -Pci --console=plain :app:assembleDebug
 
       - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
         name: Upload Debug APK
