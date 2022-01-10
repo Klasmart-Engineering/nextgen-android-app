@@ -75,11 +75,11 @@ jobs:
           name: app
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
+      - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
         name: Create Release APK
         run: ./gradlew -Pci --console=plain :app:assembleRelease
 
-      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
+      - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
         name: Upload Debug APK
         uses: actions/upload-artifact@v2
         with:
