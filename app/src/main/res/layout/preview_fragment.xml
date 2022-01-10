@@ -13,7 +13,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/math_live_class"
         android:textColor="@color/black"
-        android:textSize="28dp"
+        android:textSize="28sp"
         app:layout_constraintBottom_toTopOf="@id/setup_textview"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,7 +25,7 @@
         android:layout_marginHorizontal="32dp"
         android:text="@string/setup_your_camera_and_microphone"
         android:textColor="@color/black"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@id/viewFinder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/class_title_textview" />
@@ -107,7 +107,7 @@
         android:textColor="@color/white"
         android:textOff="@string/join"
         android:textOn=""
-        android:textSize="24dp"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

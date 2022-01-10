@@ -19,8 +19,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.BaseFragment
@@ -37,7 +37,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     lateinit var viewModelFactory: ViewModelFactory
     private val binding by viewBinding(PreviewFragmentBinding::bind)
 
-    private lateinit var viewModel: PreviewViewModel
+    private val viewModel: PreviewViewModel by viewModels { viewModelFactory }
 
     private lateinit var cameraExecutor: ExecutorService
     private var isCameraActive = true
@@ -83,7 +83,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             }
         }
 
-        viewModel = ViewModelProvider(this).get(PreviewViewModel::class.java)
         viewModel.isChecked.observe(viewLifecycleOwner, Observer {
             updateUi(it);
         })
@@ -97,8 +96,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         if (isChecked) {
             binding.joinBtn.text = getString(R.string.join)
             binding.joinBtn.isEnabled = true
-        }
-        else {
+        } else {
             binding.joinBtn.text = getString(R.string.waiting_teacher)
             binding.joinBtn.isEnabled = false
         }

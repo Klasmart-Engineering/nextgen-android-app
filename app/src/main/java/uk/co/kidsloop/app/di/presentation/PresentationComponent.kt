@@ -10,5 +10,5 @@ import uk.co.kidsloop.features.videostream.PreviewFragment
 interface PresentationComponent {
     fun inject(fragment:SplashFragment)
     fun inject(fragment:LiveVideoStreamFragment)
-    fun inject(fragment: PreviewFragment)
+    fun inject(fragment:PreviewFragment)
 }
