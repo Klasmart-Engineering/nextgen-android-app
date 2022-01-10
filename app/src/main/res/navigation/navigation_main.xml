@@ -9,6 +9,12 @@
         app:startDestination="@id/splash_fragment">
 
         <action
+            android:id="@+id/login_to_preview"
+            app:destination="@id/preview_graph"
+            app:popUpTo="@id/splash_graph"
+            app:popUpToInclusive="true" />
+
+        <action
             android:id="@+id/login_to_live_videostream"
             app:destination="@id/live_videostream_graph"
             app:popUpTo="@id/splash_graph"
@@ -37,6 +43,14 @@
             android:id="@+id/live_videostream_fragment"
             android:name="uk.co.kidsloop.app.features.videostream.LiveVideoStreamFragment"
             tools:layout="@layout/live_videostream_fragment" />
+    </navigation>
+    <navigation
+        android:id="@+id/preview_graph"
+        app:startDestination="@id/preview_fragment">
+        <fragment
+            android:id="@+id/preview_fragment"
+            android:name="uk.co.kidsloop.features.videostream.PreviewFragment"
+            tools:layout="@layout/preview_fragment" />
     </navigation>
 
 </navigation>
