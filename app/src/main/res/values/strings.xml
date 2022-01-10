@@ -3,4 +3,8 @@
     <string name="Kidsloop">Kidsloop</string>
     <string name="login">Login</string>
     <string name="live_video_stream">Live Video Stream</string>
+    <string name="permissions_denied">You have denied access to both camera and microphone</string>
+    <string name="camera_permission_denied">You have denied access to camera feed</string>
+    <string name="mic_permission_denied">You have denied access to the microphone.</string>
+    <string name="camera_is_turned_off">You have turned off your camera.</string>
 </resources>
