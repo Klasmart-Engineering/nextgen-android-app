@@ -5,8 +5,7 @@ on:
     branches:
       - main
       - develop
-      - feature/* 
-      - bugfix/*      
+      - feature/*      
   pull_request:
     branches:
       - '*'
@@ -65,11 +64,11 @@ jobs:
           lint_xml_file: app/build/reports/lint-results.xml
           reporter: github-pr-review       
 
-      - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
+      - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request) }}
         name: Create Debug APK
         run: ./gradlew -Pci --console=plain :app:assembleDebug
 
-      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
+      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request}}
         name: Upload Debug APK
         uses: actions/upload-artifact@v2
         with:
