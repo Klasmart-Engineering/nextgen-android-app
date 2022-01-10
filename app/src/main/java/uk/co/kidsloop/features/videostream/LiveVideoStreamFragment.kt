@@ -100,50 +100,41 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
                 setUpCamera()
                 startRecording()
             } else {
-                if (isPermissionGranted(
-                        requireContext(),
-                        KidsloopPermissions.CAMERA.type
-                    ).not() &&
-                    isPermissionGranted(
-                        requireContext(),
-                        KidsloopPermissions.RECORD_AUDIO.type
-                    ).not()
-                ) {
-                    binding.noCameraTextview.visibility = View.VISIBLE
-                    binding.noCameraTextview.text = getString(R.string.permissions_denied)
-                    binding.cameraBtn.setBackgroundResource(R.drawable.ic_cam_disabled)
-                    binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_disabled)
-                } else {
-                    if (isPermissionGranted(
-                            requireContext(),
-                            KidsloopPermissions.CAMERA.type
-                        ).not()
-                    ) {
-                        isCameraPermissionGranted = false
-                        binding.noCameraTextview.text =
-                            getString(R.string.camera_permission_denied)
-                        binding.noCameraTextview.visible()
-                        binding.cameraBtn.setBackgroundResource(R.drawable.ic_cam_disabled)
-                    } else {
-                        setUpCamera()
+                when(isPermissionGranted(
+                    requireContext(),
+                    KidsloopPermissions.CAMERA.type
+                )) {
+                    true -> {
                         isCameraPermissionGranted = true
+                        setUpCamera()
                     }
+                    false -> {
+                        isCameraPermissionGranted = false
+                        binding.cameraBtn.setBackgroundResource(R.drawable.ic_cam_disabled)
+                    }
+                }
 
-                    if (isPermissionGranted(
-                            requireContext(),
-                            KidsloopPermissions.RECORD_AUDIO.type
-                        ).not()
-                    ) {
+                when(isPermissionGranted(
+                    requireContext(),
+                    KidsloopPermissions.RECORD_AUDIO.type
+                )) {
+                    true -> {
+                        isMicPermissionGranted = true
+                        binding.progressBar.visible()
+                        startRecording()
+                    }
+                    false -> {
                         isMicPermissionGranted = false
                         binding.microphoneBtn.isEnabled = false
                         binding.progressBar.invisible()
                         longToast(getString(R.string.mic_permission_denied))
                         binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_disabled)
-                    } else {
-                        isMicPermissionGranted = true
-                        binding.progressBar.visible()
-                        startRecording()
                     }
+                }
+
+                if(isCameraPermissionGranted.not() && isMicPermissionGranted.not()) {
+                    binding.noCameraTextview.visibility = View.VISIBLE
+                    binding.noCameraTextview.text = getString(R.string.permissions_denied)
                 }
             }
         }
