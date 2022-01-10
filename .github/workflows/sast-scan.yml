@@ -1,0 +1,47 @@
+name: SAST Scan Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/NEXT-213-SAST
+  pull_request:
+    branches:
+      - main
+      - develop 
+      - feature/NEXT-213-SAST
+  schedule:
+    - cron: '30 1 * * *'
+
+jobs:
+  sast:
+    name: SAST scanning
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: mobsfscan
+        uses: MobSF/mobsfscan@main
+        with:
+          args: '. --html --output results.html || true'
+      
+      - name: mobsfscan
+        uses: MobSF/mobsfscan@main
+        with:
+          args: '. --json --output results.json || true'
+
+      - name: Upload Scan results
+        uses: actions/upload-artifact@v2
+        with:
+          name: sast-results
+          path: |
+            results.html
+            results.json
+
+      
