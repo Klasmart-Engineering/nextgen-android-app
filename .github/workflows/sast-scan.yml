@@ -5,12 +5,14 @@ on:
     branches:
       - main
       - develop
-      - feature/NEXT-213-SAST
+      - feature/*
+      - bugfix/*
   pull_request:
     branches:
       - main
       - develop 
-      - feature/NEXT-213-SAST
+      - feature/*
+      - bugfix/*
   schedule:
     - cron: '30 1 * * *'
 
