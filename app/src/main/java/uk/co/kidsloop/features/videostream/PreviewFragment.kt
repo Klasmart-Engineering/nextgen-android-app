@@ -1,6 +1,7 @@
 package uk.co.kidsloop.features.videostream
 
 import android.Manifest
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -59,12 +60,13 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityResultLauncher.launch(PreviewFragment.REQUIRED_PERMISSIONS)
+        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         binding.cameraBtn.setOnClickListener {
