@@ -110,6 +110,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/progress_bar" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
