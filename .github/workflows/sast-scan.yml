@@ -51,7 +51,8 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          fields: repo,commit,message,author,ref,pullRequest,eventName,workflow
+          job_name: Test
+          fields: repo,commit,message,author,ref,pullRequest,eventName,workflow,took
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEB_HOOK }} 
           MATRIX_CONTEXT: ${{ toJson(matrix) }}  
