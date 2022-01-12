@@ -1,11 +1,14 @@
-package uk.co.kidsloop.app.di.app
+package uk.co.kidsloop.app.di
 
 import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,24 +16,22 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 @Module
-class AppModule(private val application:Application) {
+@InstallIn(SingletonComponent::class)
+object AppModule {
 
     @Provides
-    fun providesApplication(): Application = application
+    fun providesApplication(app: Application): Context = app
 
     @Provides
     fun providesResources(app: Application): Resources = app.resources
 
     @Provides
-    @AppScope
     fun providesSharedPref(app: Application): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(app)
 
     @Provides
-    @AppScope
     fun providesMoshiConverterFactory(): MoshiConverterFactory = MoshiConverterFactory.create()
 
     @Provides
-    @AppScope
     fun providesOkHttpClient(): OkHttpClient {
         val timeout = 10L
         val timeUnit = TimeUnit.SECONDS
@@ -49,7 +50,6 @@ class AppModule(private val application:Application) {
     }
 
     @Provides
-    @AppScope
     fun providesRetrofit(
         moshiConverterFactory: MoshiConverterFactory,
         okHttpClient: OkHttpClient
