@@ -26,8 +26,6 @@ import uk.co.kidsloop.R
 import uk.co.kidsloop.app.BaseFragment
 import uk.co.kidsloop.databinding.PreviewFragmentBinding
 import java.io.IOException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 @AndroidEntryPoint
 class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
@@ -36,7 +34,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     private val viewModel: PreviewViewModel by viewModels<PreviewViewModel>()
 
-    private lateinit var cameraExecutor: ExecutorService
     private var isCameraActive = true
     private var isMicRecording = true
     private var isCameraPermissionGranted = false
@@ -49,7 +46,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activityResultLauncher.launch(PreviewFragment.REQUIRED_PERMISSIONS)
-        cameraExecutor = Executors.newSingleThreadExecutor()
 
         binding.cameraBtn.setOnClickListener {
             if (isCameraPermissionGranted) {
@@ -117,7 +113,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             if (allAreGranted) {
                 isCameraPermissionGranted = true
                 isMicPermissionGranted = true
-                setUpCamera()
+                //setUpCamera()
                 startRecording()
             } else {
                 if (context?.let {
@@ -293,11 +289,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             },
             context?.let { ContextCompat.getMainExecutor(it) }
         )
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
     }
 
     companion object {
