@@ -19,25 +19,20 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.BaseFragment
-import uk.co.kidsloop.app.viewmodel.ViewModelFactory
-import uk.co.kidsloop.databinding.PreviewFragmentBinding
+import uk.co.kidsloop.app.structure.BaseFragment
+import uk.co.kidsloop.databinding.FragmentPreviewBinding
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import javax.inject.Inject
 
-class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
+class PreviewFragment : BaseFragment(R.layout.fragment_preview) {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val binding by viewBinding(PreviewFragmentBinding::bind)
-
-    private val viewModel: PreviewViewModel by viewModels { viewModelFactory }
+    private lateinit var binding: FragmentPreviewBinding
+    private val viewModel by viewModels<PreviewViewModel>()
 
     private lateinit var cameraExecutor: ExecutorService
     private var isCameraActive = true
@@ -59,7 +54,9 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_preview, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
