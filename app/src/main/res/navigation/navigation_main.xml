@@ -15,12 +15,6 @@
             app:popUpToInclusive="true" />
 
         <action
-            android:id="@+id/login_to_live_videostream"
-            app:destination="@id/live_videostream_graph"
-            app:popUpTo="@id/splash_graph"
-            app:popUpToInclusive="true" />
-
-        <action
             android:id="@+id/splash_to_login"
             app:destination="@id/login_fragment"
             app:launchSingleTop="true"
@@ -37,20 +31,28 @@
             android:name="uk.co.kidsloop.app.features.splash.SplashFragment" />
     </navigation>
     <navigation
-        android:id="@+id/live_videostream_graph"
-        app:startDestination="@id/live_videostream_fragment">
+        android:id="@+id/live_class_graph"
+        app:startDestination="@id/live_class_fragment">
         <fragment
-            android:id="@+id/live_videostream_fragment"
-            android:name="uk.co.kidsloop.app.features.videostream.LiveVideoStreamFragment"
-            tools:layout="@layout/live_videostream_fragment" />
+            android:id="@+id/live_class_fragment"
+            android:name="uk.co.kidsloop.features.liveclass.LiveClassFragment"
+            tools:layout="@layout/live_class_fragment" />
     </navigation>
     <navigation
         android:id="@+id/preview_graph"
         app:startDestination="@id/preview_fragment">
+
+        <action
+            android:id="@+id/preview_to_liveclass"
+            app:destination="@id/live_class_graph"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/preview_fragment"
+            app:popUpToInclusive="true" />
+
         <fragment
             android:id="@+id/preview_fragment"
-            android:name="uk.co.kidsloop.features.videostream.PreviewFragment"
+            android:name="uk.co.kidsloop.features.preview.PreviewFragment"
             tools:layout="@layout/preview_fragment" />
-    </navigation>
 
+    </navigation>
 </navigation>
