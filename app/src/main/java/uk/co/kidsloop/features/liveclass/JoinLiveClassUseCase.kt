@@ -13,7 +13,7 @@ import javax.inject.Inject
 class JoinLiveClassUseCase @Inject constructor(private val liveClassManager: LiveClassManager) {
 
     fun joinAsync(): Future<Array<Channel>> {
-        val client = Client(Config.gatewayUrl, Config.applicationId, Config.userId, Config.deviceId, null, null)
+        val client = Client(Config.gatewayUrl, Config.applicationId)
         val token = Token.generateClientRegisterToken(
             Config.applicationId, client.userId, client.deviceId, client.id,
             arrayOf(ChannelClaim(Config.channelId)), Config.sharedSecret

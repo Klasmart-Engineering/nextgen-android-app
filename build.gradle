@@ -3,7 +3,7 @@ buildscript {
     ext {
         kotlin_version = "1.5.31"
         view_binding_delegate_version = '1.0.0'
-        dagger_version = '2.37'
+        hilt_version = '2.37'
         nav_version = '2.3.5'
         coroutines_version = '1.4.2'
         moshi_version = "1.12.0"
@@ -21,7 +21,7 @@ buildscript {
         // Moshi's codegen doesn't compile on > 1.5.x versions
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
-        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.37'
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

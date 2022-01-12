@@ -83,14 +83,14 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     implementation "com.github.Zhuinden:fragmentviewbindingdelegate-kt:$view_binding_delegate_version"
 
-    implementation "com.google.dagger:dagger:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation "com.google.dagger:dagger:$hilt_version"
+    kapt "com.google.dagger:dagger-compiler:$hilt_version"
 
     // hilt
-    implementation "com.google.dagger:hilt-android:$dagger_version"
-    kapt "com.google.dagger:hilt-android-compiler:$dagger_version"
-    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$dagger_version"
-    kaptTest "com.google.dagger:hilt-android-compiler:$dagger_version"
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
     kapt 'androidx.hilt:hilt-compiler:1.0.0'
 
     // Retrofit
