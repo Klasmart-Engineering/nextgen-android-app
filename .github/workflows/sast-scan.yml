@@ -28,23 +28,23 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
-      - name: mobsfscan
-        uses: MobSF/mobsfscan@main
-        with:
-          args: '. --html --output results.html || true'
+      # - name: mobsfscan
+      #   uses: MobSF/mobsfscan@main
+      #   with:
+      #     args: '. --html --output results.html || true'
       
-      - name: mobsfscan
-        uses: MobSF/mobsfscan@main
-        with:
-          args: '. --json --output results.json || true'
+      # - name: mobsfscan
+      #   uses: MobSF/mobsfscan@main
+      #   with:
+      #     args: '. --json --output results.json || true'
 
-      - name: Upload Scan results
-        uses: actions/upload-artifact@v2
-        with:
-          name: sast-results
-          path: |
-            results.html
-            results.json
+      # - name: Upload Scan results
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: sast-results
+      #     path: |
+      #       results.html
+      #       results.json
       
       - name: Publish to Slack 
         if: always()
@@ -53,4 +53,5 @@ jobs:
           status: ${{ job.status }}
           fields: all
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEB_HOOK }}   
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEB_HOOK }} 
+          MATRIX_CONTEXT: ${{ toJson(matrix) }}  
