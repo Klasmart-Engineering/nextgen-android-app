@@ -1,4 +1,4 @@
-package uk.co.kidsloop.app.utils
+package uk.co.kidsloop.app.utils.permissions
 
 import android.content.Context
 import android.content.Intent
@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -17,20 +18,6 @@ import uk.co.kidsloop.data.enums.KidsloopPermissions
  *  Created by paulbisioc on 07.01.2022
  */
 
-const val PERMISSION_REQUEST_CODE = 1000
-
-fun AppCompatActivity.requestPermission(permission: String, rationaleTitle: String, rationaleMessage: String) {
-    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission).not()) {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(permission),
-            PERMISSION_REQUEST_CODE
-        )
-    } else {
-        showRationaleDialog(this, permission, rationaleTitle, rationaleMessage)
-    }
-}
-
 fun AppCompatActivity.isPermissionGranted(permission: String): Boolean {
     return isPermissionGrantedImpl(this, permission)
 }
@@ -38,11 +25,6 @@ fun AppCompatActivity.isPermissionGranted(permission: String): Boolean {
 fun Fragment.isPermissionGranted(context: Context, permission: String): Boolean {
     return isPermissionGrantedImpl(context, permission)
 }
-
-fun hasAllPermissions(context: Context) =
-    arrayOf(KidsloopPermissions.RECORD_AUDIO.type, KidsloopPermissions.CAMERA.type).all {
-        isPermissionGrantedImpl(context, it)
-    }
 
 private fun isPermissionGrantedImpl(context: Context, permission: String): Boolean {
     val isAndroidQOrLater: Boolean =
@@ -55,25 +37,6 @@ private fun isPermissionGrantedImpl(context: Context, permission: String): Boole
             context,
             permission
         )
-    }
-}
-
-private fun showRationaleDialog(activity: AppCompatActivity, permission: String, title: String,  message: String) {
-    AlertDialog.Builder(activity).apply {
-        setTitle(title)
-        setMessage(message)
-        setPositiveButton(R.string.permission_rationale_dialog_positive_button_text) { _, _ ->
-            ActivityCompat.requestPermissions(
-                activity, arrayOf(permission),
-                PERMISSION_REQUEST_CODE
-            )
-        }
-        setNegativeButton(R.string.permission_rationale_dialog_negative_button_text) { dialog, _ ->
-            dialog.dismiss()
-        }
-    }.run {
-        create()
-        show()
     }
 }
 

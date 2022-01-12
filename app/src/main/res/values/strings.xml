@@ -2,15 +2,16 @@
     <string name="app_name">Kidsloop Android</string>
     <string name="Kidsloop">Kidsloop</string>
     <string name="login">Login</string>
+    <string name="allow">Allow</string>
     <string name="live_video_stream">Live Video Stream</string>
     <string name="permissions_denied">You have denied access to both camera and microphone</string>
     <string name="camera_permission_denied">You have denied access to camera feed</string>
     <string name="mic_permission_denied">You have denied access to the microphone.</string>
     <string name="camera_is_turned_off">You have turned off your camera.</string>
 
-    <string name="permission_rationale_dialog_title">Permission Needed</string>
-    <string name="permission_rationale_dialog_message">We need it for this reason:…</string>
-    <string name="permission_rationale_dialog_positive_button_text">Request a permission</string>
+    <string name="permission_rationale_dialog_title">Permissions Needed</string>
+    <string name="permission_rationale_dialog_message">We need permissions to camera and microphone in order to use the app.</string>
+    <string name="permission_rationale_dialog_positive_button_text">Allow</string>
     <string name="permission_rationale_dialog_negative_button_text">No thanks</string>
 
     <string name="settings_dialog_title">Permission Needed</string>

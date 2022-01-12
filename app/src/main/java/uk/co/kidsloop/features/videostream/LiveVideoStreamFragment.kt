@@ -1,8 +1,7 @@
 package uk.co.kidsloop.features.videostream
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
@@ -17,14 +16,16 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraSelector.LENS_FACING_FRONT
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
-import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
+import uk.co.kidsloop.app.KidsloopActivity
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.app.utils.*
+import uk.co.kidsloop.app.utils.permissions.isPermissionGranted
+import uk.co.kidsloop.app.utils.permissions.showSettingsDialog
 import uk.co.kidsloop.data.enums.KidsloopPermissions
 import uk.co.kidsloop.databinding.FragmentLiveVideostreamBinding
 import java.io.IOException
@@ -33,14 +34,14 @@ import java.util.concurrent.Executors
 
 class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream) {
 
-    private val binding by viewBinding(FragmentLiveVideostreamBinding::bind)
+    private lateinit var binding: FragmentLiveVideostreamBinding
     private val viewModel by viewModels<LiveVideoStreamViewModel>()
+
+    private var requestPermissionsLauncher: ActivityResultLauncher<Array<String>>
 
     private lateinit var cameraExecutor: ExecutorService
     private var isCameraActive = true
     private var isMicRecording = true
-    private var isCameraPermissionGranted = false
-    private var isMicPermissionGranted = false
     private var recordingThread: Thread? = null
 
     var audioRecord: AudioRecord? = null
@@ -57,36 +58,110 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
         savedInstanceState: Bundle?
     ): View? {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-        return super.onCreateView(inflater, container, savedInstanceState)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_live_videostream, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityResultLauncher.launch(KidsloopPermissions.getPreviewPermissions())
+        // 1. Check if both are granted
+        // 2. Check if CAMERA is not granted, in this case show rationale if you should
+        // 3. Check if RECORD_AUDIO is not granted, in this case show rationale if you should
+        // 4. Request the initial permissions
+        when {
+            isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type) &&
+                    isPermissionGranted(
+                        requireContext(),
+                        KidsloopPermissions.RECORD_AUDIO.type
+                    ) -> {
+                viewModel.isCameraGranted = true
+                viewModel.isMicGranted = true
+                setUpCamera()
+                startRecording()
+                handleNoPermissionViews()
+                handleToggles()
+            }
+            isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type).not() ||
+                    isPermissionGranted(
+                        requireContext(),
+                        KidsloopPermissions.RECORD_AUDIO.type
+                    ).not() -> {
+                if (shouldShowRequestPermissionRationale(KidsloopPermissions.CAMERA.type) ||
+                    shouldShowRequestPermissionRationale(KidsloopPermissions.RECORD_AUDIO.type)
+                ) {
+                    showRationaleDialog(
+                        KidsloopPermissions.getPreviewPermissions(),
+                        getString(R.string.permission_rationale_dialog_title),
+                        getString(R.string.permission_rationale_dialog_message)
+                    )
+                } else
+                    requestPermissionsLauncher.launch(KidsloopPermissions.getPreviewPermissions()) // Asking for @Permissions directly
+            }
+            else -> {
+                requestPermissionsLauncher.launch(KidsloopPermissions.getPreviewPermissions()) // Asking for @Permissions directly
+            }
+        }
+
         cameraExecutor = Executors.newSingleThreadExecutor()
         setControls()
+        observe()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Handle return in the app from settings without impacting somehow the rest
+        if (isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type) &&
+            isPermissionGranted(
+                requireContext(),
+                KidsloopPermissions.RECORD_AUDIO.type
+            )
+        ) {
+            viewModel.isCameraGranted = true
+            viewModel.isMicGranted = true
+            setUpCamera()
+            startRecording()
+            handleNoPermissionViews()
+            handleToggles()
+        }
     }
 
     private fun setControls() {
         binding.cameraBtn.setOnClickListener {
-            if (isCameraPermissionGranted) {
-                setUpCamera()
-                binding.noCameraTextview.isVisible = binding.cameraBtn.isChecked
+            setUpCamera()
+            when (binding.cameraBtn.isChecked) {
+                true -> {
+                    binding.viewFinder.invisible()
+                    binding.noCameraTextview.isVisible = true
+                }
+                false -> {
+                    binding.viewFinder.visible()
+                    binding.noCameraTextview.isVisible = false
+                }
             }
         }
 
         binding.microphoneBtn.setOnClickListener {
-            if (isMicPermissionGranted) {
-                binding.progressBar.setVisible(!binding.microphoneBtn.isChecked)
-                onRecord()
+            binding.progressBar.setVisible(!binding.microphoneBtn.isChecked)
+            onRecord()
+        }
+
+        binding.allowBtn.setOnClickListener {
+            if (shouldShowRequestPermissionRationale(KidsloopPermissions.CAMERA.type) ||
+                shouldShowRequestPermissionRationale(KidsloopPermissions.RECORD_AUDIO.type)
+            )
+                requestPermissionsLauncher.launch(KidsloopPermissions.getPreviewPermissions())
+            else {
+                showSettingsDialog(activity as KidsloopActivity)
             }
         }
     }
 
-    private var activityResultLauncher: ActivityResultLauncher<Array<String>>
+    private fun observe() = with(viewModel) {}
 
     init {
-        this.activityResultLauncher = registerForActivityResult(
+        // this is a callback that handles permissions results
+        this.requestPermissionsLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { result ->
             var allAreGranted = true
@@ -95,47 +170,101 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
             }
 
             if (allAreGranted) {
-                isCameraPermissionGranted = true
-                isMicPermissionGranted = true
+                viewModel.isCameraGranted = true
+                viewModel.isMicGranted = true
                 setUpCamera()
                 startRecording()
             } else {
-                when(isPermissionGranted(
+                if (shouldShowRequestPermissionRationale(KidsloopPermissions.CAMERA.type) ||
+                    shouldShowRequestPermissionRationale(KidsloopPermissions.RECORD_AUDIO.type)
+                ) {
+                    showRationaleDialog(
+                        KidsloopPermissions.getPreviewPermissions(),
+                        getString(R.string.permission_rationale_dialog_title),
+                        getString(R.string.permission_rationale_dialog_message)
+                    )
+                }
+
+                // Handle UI
+                when (isPermissionGranted(
                     requireContext(),
                     KidsloopPermissions.CAMERA.type
                 )) {
                     true -> {
-                        isCameraPermissionGranted = true
+                        viewModel.isCameraGranted = true
                         setUpCamera()
                     }
                     false -> {
-                        isCameraPermissionGranted = false
-                        binding.cameraBtn.setBackgroundResource(R.drawable.ic_cam_disabled)
+                        viewModel.isCameraGranted = false
                     }
                 }
 
-                when(isPermissionGranted(
+                when (isPermissionGranted(
                     requireContext(),
                     KidsloopPermissions.RECORD_AUDIO.type
                 )) {
                     true -> {
-                        isMicPermissionGranted = true
-                        binding.progressBar.visible()
+                        viewModel.isMicGranted = true
                         startRecording()
                     }
                     false -> {
-                        isMicPermissionGranted = false
-                        binding.microphoneBtn.isEnabled = false
-                        binding.progressBar.invisible()
-                        longToast(getString(R.string.mic_permission_denied))
-                        binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_disabled)
+                        viewModel.isMicGranted = false
                     }
                 }
+            }
 
-                if(isCameraPermissionGranted.not() && isMicPermissionGranted.not()) {
-                    binding.noCameraTextview.visibility = View.VISIBLE
-                    binding.noCameraTextview.text = getString(R.string.permissions_denied)
-                }
+            handleNoPermissionViews()
+            handleToggles()
+        }
+    }
+
+    override fun onAllowClicked(permissions: Array<String>) {
+        super.onAllowClicked(permissions)
+        requestPermissionsLauncher.launch(permissions)
+    }
+
+    override fun onDenyClicked(permissions: Array<String>) {
+        super.onDenyClicked(permissions)
+        viewModel.isCameraGranted = false
+        viewModel.isMicGranted = false
+    }
+
+    private fun handleNoPermissionViews() {
+        if (!viewModel.isCameraGranted && !viewModel.isMicGranted) {
+            binding.viewFinder.invisible()
+            binding.permissionsLayout.visible()
+            binding.permissionsTextview.text = getString(R.string.permissions_denied)
+            return
+        } else if (!viewModel.isCameraGranted) {
+            binding.viewFinder.invisible()
+            binding.permissionsLayout.visible()
+            binding.permissionsTextview.text = getString(R.string.camera_permission_denied)
+            return
+        } else if (!viewModel.isMicGranted) {
+            binding.viewFinder.invisible()
+            binding.permissionsLayout.visible()
+            binding.permissionsTextview.text = getString(R.string.mic_permission_denied)
+        } else {
+            binding.viewFinder.visible()
+            binding.permissionsLayout.gone()
+        }
+    }
+
+    private fun handleToggles() {
+        // In one of the permissions is not enabled, do not enable any toggle
+        if(!viewModel.isMicGranted || !viewModel.isCameraGranted) {
+            binding.cameraBtn.isEnabled = false
+            binding.microphoneBtn.isEnabled = false
+            binding.progressBar.invisible()
+        } else {
+            binding.cameraBtn.isEnabled = viewModel.isCameraGranted
+
+            if (viewModel.isMicGranted) {
+                binding.microphoneBtn.isEnabled = true
+                binding.progressBar.visible()
+            } else {
+                binding.microphoneBtn.isEnabled = false
+                binding.progressBar.invisible()
             }
         }
     }
@@ -148,17 +277,11 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun startRecording() {
         if (audioRecord == null) {
-            if (context?.let {
-                    ActivityCompat.checkSelfPermission(
-                        it,
-                        Manifest.permission.RECORD_AUDIO
-                    )
-                } != PackageManager.PERMISSION_GRANTED
-            ) {
+            if (isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type).not())
                 return
-            }
 
             audioRecord = AudioRecord(
                 MediaRecorder.AudioSource.MIC,
@@ -219,31 +342,30 @@ class LiveVideoStreamFragment : BaseFragment(R.layout.fragment_live_videostream)
     private fun setUpCamera() {
         val cameraProviderFuture = context?.let { ProcessCameraProvider.getInstance(it) }
 
-        cameraProviderFuture?.addListener(
-            Runnable {
-                val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+        cameraProviderFuture?.addListener({
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-                val preview = Preview.Builder()
-                    .build()
-                    .also {
-                        it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
-                    }
-
-                val cameraSelector =
-                    CameraSelector.Builder().requireLensFacing(LENS_FACING_FRONT).build()
-
-                try {
-                    cameraProvider.unbindAll()
-
-                    if (isCameraActive) {
-                        cameraProvider.bindToLifecycle(
-                            this, cameraSelector, preview
-                        )
-                    }
-                } catch (exc: Exception) {
-                    Log.e(TAG, "Use case binding failed", exc)
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
-            },
+
+            val cameraSelector =
+                CameraSelector.Builder().requireLensFacing(LENS_FACING_FRONT).build()
+
+            try {
+                cameraProvider.unbindAll()
+
+                if (isCameraActive) {
+                    cameraProvider.bindToLifecycle(
+                        this, cameraSelector, preview
+                    )
+                }
+            } catch (exc: Exception) {
+                Log.e(TAG, "Use case binding failed", exc)
+            }
+        },
             context?.let { ContextCompat.getMainExecutor(it) }
         )
     }
