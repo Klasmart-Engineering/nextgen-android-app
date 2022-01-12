@@ -60,7 +60,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
