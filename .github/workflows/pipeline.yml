@@ -91,6 +91,15 @@ jobs:
         name: Stop Gradle
         run: ./gradlew --stop
 
+      - name: Publish to Slack 
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: all
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEB_HOOK }}
+
       - if: ${{ github.ref == 'refs/heads/main' }}
         name: Create Release
         uses: softprops/action-gh-release@v1
