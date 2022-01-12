@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - develop
-      #- feature/*
+      - feature/*
       - bugfix/*      
   pull_request:
     branches:
@@ -91,15 +91,6 @@ jobs:
         name: Stop Gradle
         run: ./gradlew --stop
 
-      - name: Publish to Slack 
-        if: always()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: all
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEB_HOOK }}
-
       - if: ${{ github.ref == 'refs/heads/main' }}
         name: Create Release
         uses: softprops/action-gh-release@v1
@@ -107,4 +98,12 @@ jobs:
           draft: false
           tag_name: latest
           files: app/build/outputs/apk/release/app-release-unsigned.apk
-      
+
+      - name: Publish to Slack 
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,commit,message,author,ref,pullRequest,eventName,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEB_HOOK }}      
