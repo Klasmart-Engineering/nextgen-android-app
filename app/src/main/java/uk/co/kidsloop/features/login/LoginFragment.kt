@@ -16,7 +16,7 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         binding.loginBtn.setOnClickListener {
             Navigation.findNavController(requireView())
-                .navigate(LoginFragmentDirections.loginToLiveVideostream())
+                .navigate(LoginFragmentDirections.loginToPreview())
         }
     }
 }

@@ -1,11 +1,11 @@
-name: Validate Gradle Wrapper
+name: Main Build Pipeline
 
 on:
   push:
     branches:
       - main
       - develop
-      - feature/* 
+      - feature/*
       - bugfix/*      
   pull_request:
     branches:
@@ -50,22 +50,37 @@ jobs:
       - name: Run Gradle
         run: ./gradlew build check --continue
 
-      - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
-        name: Create Debug APK
-        run: ./gradlew -Pci --console=plain :app:assembleRelease
+      - if: ${{ (github.event != 'pull_request')  }}
+        name: Run Android Lint 
+        uses: dvdandroid/action-android-lint@master        
+        with:
+          github_token: ${{ secrets.github_token }}
+          lint_xml_file: app/build/reports/lint-results-debug.xml   
 
-      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
+      - if: ${{ (github.event.pull_request)  }}
+        name: Run Android Lint For Pull Requests
+        uses: dvdandroid/action-android-lint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          lint_xml_file: app/build/reports/lint-results-debug.xml 
+          reporter: github-pr-review       
+
+      - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
+        name: Create Debug APK
+        run: ./gradlew -Pci --console=plain :app:assembleDebug
+
+      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
         name: Upload Debug APK
         uses: actions/upload-artifact@v2
         with:
           name: app
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
+      - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
         name: Create Release APK
         run: ./gradlew -Pci --console=plain :app:assembleRelease
 
-      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
+      - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
         name: Upload Debug APK
         uses: actions/upload-artifact@v2
         with:
