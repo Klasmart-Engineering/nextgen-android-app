@@ -117,6 +117,10 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         for (connectionInfo in channel.remoteUpstreamConnectionInfos) {
             openSfuDownstreamConnection(connectionInfo, channel)
         }
+
+        channel.addOnRemoteUpstreamConnectionOpen { connectionInfo ->
+            openSfuDownstreamConnection(connectionInfo, channel)
+        }
     }
 
     private fun stopLocalMedia() {
