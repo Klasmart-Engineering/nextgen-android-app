@@ -1,5 +1,6 @@
 package uk.co.kidsloop.features.liveclass
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -18,7 +19,6 @@ import uk.co.kidsloop.app.BaseFragment
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import fm.liveswitch.LocalMedia
 import fm.liveswitch.ManagedConnection
-import fm.liveswitch.Promise
 import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.VideoStream
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
@@ -40,8 +40,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         layoutManager = LayoutManager(binding.videoContainer)
         layoutManager?.localView = localMedia?.view
 
-        localMedia?.start()?.then({ localMedia -> }, { exception -> })
-
         viewModel.joinLiveClass()
 
         viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
@@ -52,6 +50,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
                 is LiveClassViewModel.LiveClassState.FailedToJoiningLiveClass -> handleFailures()
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        localMedia?.start()?.then({ localMedia -> }, { exception -> })
     }
 
     override fun onPause() {
@@ -125,12 +128,16 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
     private fun stopLocalMedia() {
         localMedia?.stop()?.then(IAction1 { result ->
-            layoutManager?.removeRemoteViews()
-            layoutManager?.unsetLocalView()
-            layoutManager = null
-
-            localMedia?.destroy()
-            localMedia = null
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        layoutManager?.removeRemoteViews()
+        layoutManager?.unsetLocalView()
+        layoutManager = null
+
+        localMedia?.destroy()
+        localMedia = null
     }
 }
