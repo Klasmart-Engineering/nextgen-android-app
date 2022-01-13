@@ -21,7 +21,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,31 +74,9 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             }
         }
 
-        viewModel.joinClassroomStateLiveData.observe(viewLifecycleOwner, Observer {
-            //updateUi(it);
-            when (it) {
-                is PreviewViewModel.JoinStatus.SuccessJoiningClassRoom -> {
-                    Navigation.findNavController(requireView())
-                        .navigate(PreviewFragmentDirections.previewToLiveclass())
-                }
-                else -> {
-                    Toast.makeText(requireContext(), "Failed to join live class", Toast.LENGTH_LONG).show()
-                }
-            }
-        })
-
         binding.joinBtn.setOnClickListener {
-            viewModel.joinLiveClass()
-        }
-    }
-
-    private fun updateUi(isChecked: Boolean) {
-        if (isChecked) {
-            binding.joinBtn.text = getString(R.string.join)
-            binding.joinBtn.isEnabled = true
-        } else {
-            binding.joinBtn.text = getString(R.string.waiting_teacher)
-            binding.joinBtn.isEnabled = false
+            Navigation.findNavController(requireView())
+                .navigate(PreviewFragmentDirections.previewToLiveclass())
         }
     }
 
