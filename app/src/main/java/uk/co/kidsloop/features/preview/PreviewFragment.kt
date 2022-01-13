@@ -62,7 +62,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         binding.cameraBtn.setOnClickListener {
             if (isCameraPermissionGranted) {
                 isCameraActive = !binding.cameraBtn.isChecked
-                setUpCamera()
+                displayCameraPreview()
                 binding.noCameraTextview.isVisible = !isCameraActive
             }
         }
@@ -125,7 +125,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             if (allAreGranted) {
                 isCameraPermissionGranted = true
                 isMicPermissionGranted = true
-                //setUpCamera()
+                displayCameraPreview()
                 startRecording()
             } else {
                 if (context?.let {
@@ -160,7 +160,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                         binding.noCameraTextview.visibility = View.VISIBLE
                         binding.cameraBtn.setBackgroundResource(R.drawable.ic_student_camera_d)
                     } else {
-                        setUpCamera()
+                        displayCameraPreview()
                         isCameraPermissionGranted = true
                     }
                     if (context?.let {
@@ -270,37 +270,20 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         }
     }
 
-    private fun setUpCamera() {
-        val cameraProviderFuture = context?.let { ProcessCameraProvider.getInstance(it) }
+    private fun displayCameraPreview() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-        cameraProviderFuture?.addListener(
-            Runnable {
-                val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-                val preview = Preview.Builder()
-                    .build()
-                    .also {
-                        it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
-                    }
-
-                val cameraSelector =
-                    CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT)
-                        .build()
-
-                try {
-                    cameraProvider.unbindAll()
-
-                    if (isCameraActive) {
-                        cameraProvider.bindToLifecycle(
-                            this, cameraSelector, preview
-                        )
-                    }
-                } catch (exc: Exception) {
-                    Log.e(TAG, "Use case binding failed", exc)
+        cameraProviderFuture.addListener(Runnable {
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
                 }
-            },
-            context?.let { ContextCompat.getMainExecutor(it) }
-        )
+
+            val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
+            cameraProvider.bindToLifecycle(viewLifecycleOwner, cameraSelector, preview)
+        }, ContextCompat.getMainExecutor(requireContext()))
     }
 
     companion object {

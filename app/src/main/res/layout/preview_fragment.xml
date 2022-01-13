@@ -26,13 +26,13 @@
         android:text="@string/setup_your_camera_and_microphone"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/viewFinder"
+        app:layout_constraintBottom_toTopOf="@id/camera_preview"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/class_title_textview" />
 
 
     <androidx.camera.view.PreviewView
-        android:id="@+id/viewFinder"
+        android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="32dp"
@@ -67,9 +67,9 @@
         android:background="@drawable/ic_student_mic_n"
         android:textOff=""
         android:textOn=""
-        app:layout_constraintBottom_toBottomOf="@id/viewFinder"
+        app:layout_constraintBottom_toBottomOf="@id/camera_preview"
         app:layout_constraintEnd_toStartOf="@id/progress_bar"
-        app:layout_constraintStart_toStartOf="@id/viewFinder" />
+        app:layout_constraintStart_toStartOf="@id/camera_preview" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -79,7 +79,7 @@
         android:layout_marginBottom="@dimen/space_30"
         android:max="250"
         android:progressDrawable="@drawable/progressbar"
-        app:layout_constraintBottom_toBottomOf="@id/viewFinder"
+        app:layout_constraintBottom_toBottomOf="@id/camera_preview"
         app:layout_constraintEnd_toStartOf="@id/microphone_btn"
         app:layout_constraintStart_toEndOf="@id/camera_btn" />
 
@@ -92,8 +92,8 @@
         android:background="@drawable/ic_student_camera_n"
         android:textOff=""
         android:textOn=""
-        app:layout_constraintBottom_toBottomOf="@id/viewFinder"
-        app:layout_constraintEnd_toEndOf="@id/viewFinder"
+        app:layout_constraintBottom_toBottomOf="@id/camera_preview"
+        app:layout_constraintEnd_toEndOf="@id/camera_preview"
         app:layout_constraintStart_toEndOf="@id/progress_bar" />
 
     <ToggleButton
@@ -111,6 +111,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewFinder" />
+        app:layout_constraintTop_toBottomOf="@id/camera_preview" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
