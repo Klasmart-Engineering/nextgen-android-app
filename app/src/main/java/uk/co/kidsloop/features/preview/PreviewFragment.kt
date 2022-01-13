@@ -1,16 +1,13 @@
 package uk.co.kidsloop.features.preview
 
 import android.Manifest
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -44,15 +41,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     var audioRecord: AudioRecord? = null
     var isRecordingAudio = false
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

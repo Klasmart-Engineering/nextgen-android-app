@@ -1,6 +1,5 @@
 package uk.co.kidsloop.features.liveclass
 
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -64,8 +63,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
     fun openSfuDownstreamConnection(remoteConnectionInfo: ConnectionInfo, channel: Channel): SfuDownstreamConnection {
         // Create remote media.
-        val remoteMedia = SFURemoteMedia(requireContext(), false, false, AecContext())
 
+        val remoteMedia = SFURemoteMedia(requireContext(), false, false, AecContext())
         // Adding remote view to UI.
         layoutManager?.addRemoteView(remoteMedia.id, remoteMedia.view)
 
@@ -128,16 +127,12 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
     private fun stopLocalMedia() {
         localMedia?.stop()?.then(IAction1 { result ->
+            layoutManager?.removeRemoteViews()
+            layoutManager?.unsetLocalView()
+            layoutManager = null
+
+            localMedia?.destroy()
+            localMedia = null
         })
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        layoutManager?.removeRemoteViews()
-        layoutManager?.unsetLocalView()
-        layoutManager = null
-
-        localMedia?.destroy()
-        localMedia = null
     }
 }
