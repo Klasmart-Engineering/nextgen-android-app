@@ -1,7 +1,10 @@
 package uk.co.kidsloop.features.liveclass
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +41,15 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         localMedia = CameraLocalMedia(requireContext(), false, false, AecContext())
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         layoutManager = LayoutManager(binding.videoContainer)
@@ -52,10 +64,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
     fun openSfuDownstreamConnection(remoteConnectionInfo: ConnectionInfo): SfuDownstreamConnection {
         // Create remote media.
-        val remoteMedia = SFURemoteMedia(requireContext(), false, false, AecContext())
 
+        val remoteMedia = SFURemoteMedia(requireContext(), false, false, AecContext())
         // Adding remote view to UI.
         layoutManager.addRemoteView(remoteMedia.id, remoteMedia.view)
+
 
         // Create audio and video streams from remote media.
         val audioStream: AudioStream? = if (remoteConnectionInfo.hasAudio) AudioStream(remoteMedia) else null
