@@ -19,8 +19,6 @@ import uk.co.kidsloop.app.BaseFragment
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.VideoStream
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
@@ -44,7 +42,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         layoutManager = LayoutManager(binding.videoContainer)
         layoutManager?.localView = localMedia?.view
         startLocalMedia()
-        //viewModel.joinLiveClass()
 
         viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
         {
@@ -62,7 +59,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         val remoteMedia = SFURemoteMedia(requireContext(), false, false, AecContext())
         // Adding remote view to UI.
         layoutManager?.alignment = LayoutAlignment.BottomRight
-        layoutManager
         layoutManager?.addRemoteView(remoteMedia.id, remoteMedia.view)
 
         // Create audio and video streams from remote media.
@@ -114,13 +110,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
         // Check for existing remote upstream connections and open a downstream connection for
         // each of them.
-        for (connectionInfo in channel.remoteUpstreamConnectionInfos) {
-            openSfuDownstreamConnection(connectionInfo, channel)
-        }
-
-        channel.addOnRemoteUpstreamConnectionOpen { connectionInfo ->
-            openSfuDownstreamConnection(connectionInfo, channel)
-        }
+//        for (connectionInfo in channel.remoteUpstreamConnectionInfos) {
+//            openSfuDownstreamConnection(connectionInfo, channel)
+//        }
+//
+//        channel.addOnRemoteUpstreamConnectionOpen { connectionInfo ->
+//            openSfuDownstreamConnection(connectionInfo, channel)
+//        }
     }
 
     private fun stopLocalMedia() {
