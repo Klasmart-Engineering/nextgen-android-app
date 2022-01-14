@@ -12,7 +12,6 @@ import fm.liveswitch.AudioStream
 import fm.liveswitch.Channel
 import fm.liveswitch.ConnectionInfo
 import fm.liveswitch.IAction1
-import fm.liveswitch.LayoutAlignment
 import fm.liveswitch.android.LayoutManager
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.BaseFragment
@@ -58,7 +57,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
         val remoteMedia = SFURemoteMedia(requireContext(), false, false, AecContext())
         // Adding remote view to UI.
-        layoutManager?.alignment = LayoutAlignment.BottomRight
+       // layoutManager?.alignment = LayoutAlignment.BottomRight
         layoutManager?.addRemoteView(remoteMedia.id, remoteMedia.view)
 
         // Create audio and video streams from remote media.
@@ -110,13 +109,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
         // Check for existing remote upstream connections and open a downstream connection for
         // each of them.
-//        for (connectionInfo in channel.remoteUpstreamConnectionInfos) {
-//            openSfuDownstreamConnection(connectionInfo, channel)
-//        }
-//
-//        channel.addOnRemoteUpstreamConnectionOpen { connectionInfo ->
-//            openSfuDownstreamConnection(connectionInfo, channel)
-//        }
+        for (connectionInfo in channel.remoteUpstreamConnectionInfos) {
+            openSfuDownstreamConnection(connectionInfo, channel)
+        }
+
+        channel.addOnRemoteUpstreamConnectionOpen { connectionInfo ->
+            openSfuDownstreamConnection(connectionInfo, channel)
+        }
     }
 
     private fun stopLocalMedia() {
