@@ -27,7 +27,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
-    @Inject lateinit var appContext: Context
+    @Inject
+    lateinit var appContext: Context
 
     private val binding by viewBinding(LiveClassFragmentBinding::bind)
     private var layoutManager: LayoutManager? = null
@@ -46,26 +47,34 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         {
             when (it) {
                 is LiveClassViewModel.LiveClassState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassState.RegistrationSuccessful -> onClientRegistered(it.channel)
+                is LiveClassViewModel.LiveClassState.RegistrationSuccessful -> onClientRegistered(
+                    it.channel
+                )
                 is LiveClassViewModel.LiveClassState.FailedToJoiningLiveClass -> handleFailures()
             }
         })
     }
 
-    fun openSfuDownstreamConnection(remoteConnectionInfo: ConnectionInfo, channel: Channel): SfuDownstreamConnection {
+    private fun openSfuDownstreamConnection(
+        remoteConnectionInfo: ConnectionInfo,
+        channel: Channel
+    ): SfuDownstreamConnection {
         // Create remote media.
 
         val remoteMedia = SFURemoteMedia(requireContext(), false, false, AecContext())
         // Adding remote view to UI.
-       // layoutManager?.alignment = LayoutAlignment.BottomRight
+        // layoutManager?.alignment = LayoutAlignment.BottomRight
         layoutManager?.addRemoteView(remoteMedia.id, remoteMedia.view)
 
         // Create audio and video streams from remote media.
-        val audioStream: AudioStream? = if (remoteConnectionInfo.hasAudio) AudioStream(remoteMedia) else null
-        val videoStream = if (remoteConnectionInfo.hasVideo) VideoStream(remoteMedia) else null
+        val audioStream: AudioStream? =
+            if (remoteConnectionInfo.hasAudio) AudioStream(remoteMedia) else null
+        val videoStream: VideoStream? =
+            if (remoteConnectionInfo.hasVideo) VideoStream(remoteMedia) else null
 
         // Create a SFU downstream connection with remote audio and video and data streams.
-        val connection: SfuDownstreamConnection = channel.createSfuDownstreamConnection(remoteConnectionInfo, audioStream, videoStream)
+        val connection: SfuDownstreamConnection =
+            channel.createSfuDownstreamConnection(remoteConnectionInfo, audioStream, videoStream)
 
         // Store the downstream connection.
         //liveClassManager.saveDownStreamConnections(remoteMedia.id, connection)
@@ -104,7 +113,10 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
     private fun onClientRegistered(channel: Channel) {
         Log.d("LiveClassManager", "onClientRegistered")
-        val upstreamConnection = viewModel.openSfuUpstreamConnection(getAudioStream(localMedia), getVideoStream(localMedia))
+        val upstreamConnection = viewModel.openSfuUpstreamConnection(
+            getAudioStream(localMedia),
+            getVideoStream(localMedia)
+        )
         upstreamConnection.open()
 
         // Check for existing remote upstream connections and open a downstream connection for
@@ -130,10 +142,10 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     }
 
     private fun startLocalMedia() {
-        localMedia?.start()?.then({ localMedia ->
-                                      requireActivity().runOnUiThread {
-                                            viewModel.joinLiveClass()
-                                      }
-                                  }, { exception -> })
+        localMedia?.start()?.then({
+            requireActivity().runOnUiThread {
+                viewModel.joinLiveClass()
+            }
+        }, { exception -> })
     }
 }

@@ -17,8 +17,12 @@ import fm.liveswitch.android.OpenGLSink
 import fm.liveswitch.opus.Decoder
 import fm.liveswitch.yuv.ImageConverter
 
-class SFURemoteMedia(private val context: Context, disableAudio:Boolean, disableVideo:Boolean, aecContext: AecContext)
-    : RtcRemoteMedia<FrameLayout>(disableAudio, disableVideo, aecContext) {
+class SFURemoteMedia(
+    private val context: Context,
+    disableAudio: Boolean,
+    disableVideo: Boolean,
+    aecContext: AecContext
+) : RtcRemoteMedia<FrameLayout>(disableAudio, disableVideo, aecContext) {
 
     init {
         super.initialize()
@@ -33,7 +37,7 @@ class SFURemoteMedia(private val context: Context, disableAudio:Boolean, disable
     }
 
     override fun createOpusDecoder(audioConfig: AudioConfig?): AudioDecoder {
-        return Decoder()
+        return Decoder(audioConfig)
     }
 
     // Remote Video
