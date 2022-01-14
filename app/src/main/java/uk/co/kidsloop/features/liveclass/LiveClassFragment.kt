@@ -61,7 +61,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     ): SfuDownstreamConnection {
         // Create remote media.
 
-        val remoteMedia = SFURemoteMedia(requireContext(), false, false, AecContext())
+        val remoteMedia = SFURemoteMedia(requireContext(),
+            disableAudio = false,
+            disableVideo = false,
+            aecContext = AecContext()
+        )
         // Adding remote view to UI.
         // layoutManager?.alignment = LayoutAlignment.BottomRight
         layoutManager?.addRemoteView(remoteMedia.id, remoteMedia.view)

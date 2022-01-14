@@ -37,7 +37,7 @@ class SFURemoteMedia(
     }
 
     override fun createOpusDecoder(audioConfig: AudioConfig?): AudioDecoder {
-        return Decoder(audioConfig)
+        return Decoder()
     }
 
     // Remote Video
