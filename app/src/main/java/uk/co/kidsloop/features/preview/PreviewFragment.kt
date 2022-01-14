@@ -30,17 +30,14 @@ import java.io.IOException
 class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     private val binding by viewBinding(PreviewFragmentBinding::bind)
-
     private val viewModel: PreviewViewModel by viewModels<PreviewViewModel>()
-
     private var isCameraActive = true
     private var isMicRecording = true
     private var isCameraPermissionGranted = false
     private var isMicPermissionGranted = false
     private var recordingThread: Thread? = null
-
-    var audioRecord: AudioRecord? = null
-    var isRecordingAudio = false
+    private var audioRecord: AudioRecord? = null
+    private var isRecordingAudio = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -57,7 +54,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         binding.microphoneBtn.setOnClickListener {
             if (isMicPermissionGranted) {
                 isMicRecording = binding.microphoneBtn.isChecked
-                binding.progressBar.setVisible(!isMicRecording)
                 onRecord()
             }
         }
@@ -68,7 +64,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         }
     }
 
-    fun View.setVisible(visible: Boolean) {
+    private fun View.setVisible(visible: Boolean) {
         visibility = if (visible) {
             View.VISIBLE
         } else {
@@ -109,8 +105,8 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 ) {
                     binding.noCameraTextview.visibility = View.VISIBLE
                     binding.noCameraTextview.text = getString(R.string.permissions_denied)
-                    binding.cameraBtn.setBackgroundResource(R.drawable.ic_student_camera_d)
-                    binding.microphoneBtn.setBackgroundResource(R.drawable.ic_student_mic_d)
+                    binding.cameraBtn.setBackgroundResource(R.drawable.ic_camera_off)
+                    binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_off)
                 } else {
                     if (context?.let {
                             ContextCompat.checkSelfPermission(
@@ -123,7 +119,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                         isCameraPermissionGranted = false
                         binding.noCameraTextview.text = getString(R.string.camera_permission_denied)
                         binding.noCameraTextview.visibility = View.VISIBLE
-                        binding.cameraBtn.setBackgroundResource(R.drawable.ic_student_camera_d)
+                        binding.cameraBtn.setBackgroundResource(R.drawable.ic_camera_off)
                     } else {
                         displayCameraPreview()
                         isCameraPermissionGranted = true
@@ -138,16 +134,14 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                     ) {
                         isMicPermissionGranted = false
                         binding.microphoneBtn.isEnabled = false
-                        binding.progressBar.visibility = View.INVISIBLE
                         Toast.makeText(
                             context,
                             getString(R.string.mic_permission_denied),
                             Toast.LENGTH_LONG
                         ).show()
-                        binding.microphoneBtn.setBackgroundResource(R.drawable.ic_student_mic_d)
+                        binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_off)
                     } else {
                         isMicPermissionGranted = true
-                        binding.progressBar.visibility = View.VISIBLE
                         startRecording()
                     }
                 }
@@ -252,7 +246,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     }
 
     companion object {
-
         private const val TAG = "CameraX"
         private val REQUIRED_PERMISSIONS =
             arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
