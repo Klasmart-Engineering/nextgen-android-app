@@ -109,8 +109,8 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 ) {
                     binding.noCameraTextview.visibility = View.VISIBLE
                     binding.noCameraTextview.text = getString(R.string.permissions_denied)
-                    binding.cameraBtn.setBackgroundResource(R.drawable.ic_student_camera_d)
-                    binding.microphoneBtn.setBackgroundResource(R.drawable.ic_student_mic_d)
+                    binding.cameraBtn.setBackgroundResource(R.drawable.ic_camera_off)
+                    binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_off)
                 } else {
                     if (context?.let {
                             ContextCompat.checkSelfPermission(
@@ -123,7 +123,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                         isCameraPermissionGranted = false
                         binding.noCameraTextview.text = getString(R.string.camera_permission_denied)
                         binding.noCameraTextview.visibility = View.VISIBLE
-                        binding.cameraBtn.setBackgroundResource(R.drawable.ic_student_camera_d)
+                        binding.cameraBtn.setBackgroundResource(R.drawable.ic_camera_off)
                     } else {
                         displayCameraPreview()
                         isCameraPermissionGranted = true
@@ -144,7 +144,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                             getString(R.string.mic_permission_denied),
                             Toast.LENGTH_LONG
                         ).show()
-                        binding.microphoneBtn.setBackgroundResource(R.drawable.ic_student_mic_d)
+                        binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_off)
                     } else {
                         isMicPermissionGranted = true
                         binding.progressBar.visibility = View.VISIBLE
