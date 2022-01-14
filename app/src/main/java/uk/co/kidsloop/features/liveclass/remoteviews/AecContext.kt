@@ -15,7 +15,7 @@ class AecContext : AecContext() {
     }
 
     override fun createProcessor(): AecPipe {
-        val config = AudioConfig(4800, 2)
+        val config = AudioConfig(48000, 2)
         return AecProcessor(config, AudioTrackSink.getBufferDelay(config) + AudioRecordSource.getBufferDelay(config))
     }
 }
