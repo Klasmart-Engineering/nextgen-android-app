@@ -45,7 +45,7 @@ abstract class LocalMedia<TView>(private val context: Context, disableAudio:Bool
     }
 
     override fun createH264Encoder(): VideoEncoder? {
-        return fm.liveswitch.openh264.Encoder();
+        return null
     }
 
     override fun createImageConverter(videoFormat: VideoFormat): VideoPipe {
