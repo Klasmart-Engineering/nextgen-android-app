@@ -39,8 +39,8 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     private var isMicPermissionGranted = false
     private var recordingThread: Thread? = null
 
-    var audioRecord: AudioRecord? = null
-    var isRecordingAudio = false
+    private var audioRecord: AudioRecord? = null
+    private var isRecordingAudio = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,7 +68,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         }
     }
 
-    fun View.setVisible(visible: Boolean) {
+    private fun View.setVisible(visible: Boolean) {
         visibility = if (visible) {
             View.VISIBLE
         } else {
@@ -252,7 +252,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     }
 
     companion object {
-
         private const val TAG = "CameraX"
         private val REQUIRED_PERMISSIONS =
             arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
