@@ -3,11 +3,14 @@ package uk.co.kidsloop.features.liveclass
 import fm.liveswitch.Channel
 import fm.liveswitch.Client
 import fm.liveswitch.SfuDownstreamConnection
+import fm.liveswitch.SfuUpstreamConnection
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class LiveClassManager @Inject constructor() {
+
+    private var upstreamConnection: SfuUpstreamConnection? = null
 
     private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection>()
 
@@ -45,5 +48,13 @@ class LiveClassManager @Inject constructor() {
 
     fun removeDownStreamConnection(remoteId: String) {
         downstreamConnectionsMap.remove(remoteId)
+    }
+
+    fun setUpstreamConnection(upstreamConnection: SfuUpstreamConnection) {
+        this.upstreamConnection = upstreamConnection
+    }
+
+    fun getUpstreamConnection(): SfuUpstreamConnection? {
+        return upstreamConnection
     }
 }

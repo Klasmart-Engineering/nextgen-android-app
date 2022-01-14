@@ -15,7 +15,7 @@
         android:layout_centerInParent="true">
 
         <ToggleButton
-            android:id="@+id/microphone_btn"
+            android:id="@+id/toggle_audio_btn"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginEnd="@dimen/space_20"
@@ -25,7 +25,7 @@
             android:textOn="" />
 
         <ToggleButton
-            android:id="@+id/camera_btn"
+            android:id="@+id/toggle_video_btn"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginStart="@dimen/space_20"

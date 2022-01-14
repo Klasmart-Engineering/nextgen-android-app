@@ -50,6 +50,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
                 is LiveClassViewModel.LiveClassState.FailedToJoiningLiveClass -> handleFailures()
             }
         })
+
+        binding.toggleAudioBtn.setOnClickListener {
+            viewModel.toggleLocalAudio()
+        }
+        binding.toggleVideoBtn.setOnClickListener {
+            viewModel.toggleLocalVideo()
+        }
     }
 
     fun openSfuDownstreamConnection(remoteConnectionInfo: ConnectionInfo, channel: Channel): SfuDownstreamConnection {
@@ -105,7 +112,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     private fun onClientRegistered(channel: Channel) {
         Log.d("LiveClassManager", "onClientRegistered")
         val upstreamConnection = viewModel.openSfuUpstreamConnection(getAudioStream(localMedia), getVideoStream(localMedia))
-        upstreamConnection.open()
 
         // Check for existing remote upstream connections and open a downstream connection for
         // each of them.
