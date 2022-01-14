@@ -10,7 +10,7 @@ import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import fm.liveswitch.ViewSink
 import fm.liveswitch.android.Camera2Source
 
-class CameraLocalMedia(private val context: Context, disableAudio: Boolean, disableVideo: Boolean, aecContext: AecContext) :
+class CameraLocalMedia(context: Context, disableAudio: Boolean, disableVideo: Boolean, aecContext: AecContext) :
     LocalMedia<View>(context, disableAudio, disableVideo, aecContext) {
 
     private var viewSink: CameraPreview
