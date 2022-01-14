@@ -56,9 +56,9 @@
             android:background="@drawable/ic_mic_selector"
             android:textOff=""
             android:textOn=""
-            app:layout_constraintBottom_toBottomOf="@id/viewFinder"
+            app:layout_constraintBottom_toBottomOf="@id/camera_preview"
             app:layout_constraintEnd_toStartOf="@id/camera_btn"
-            app:layout_constraintStart_toStartOf="@id/viewFinder" />
+            app:layout_constraintStart_toStartOf="@id/camera_preview" />
 
         <ToggleButton
             android:id="@+id/camera_btn"
@@ -68,8 +68,8 @@
             android:background="@drawable/ic_camera_selector"
             android:textOff=""
             android:textOn=""
-            app:layout_constraintBottom_toBottomOf="@id/viewFinder"
-            app:layout_constraintEnd_toEndOf="@id/viewFinder"
+            app:layout_constraintBottom_toBottomOf="@id/camera_preview"
+            app:layout_constraintEnd_toEndOf="@id/camera_preview"
             app:layout_constraintStart_toEndOf="@id/microphone_btn" />
 
         <ToggleButton
