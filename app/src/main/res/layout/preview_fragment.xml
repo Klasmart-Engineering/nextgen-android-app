@@ -3,40 +3,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/class_title_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/math_live_class"
-        android:textColor="@color/black"
-        android:textSize="28sp"
-        app:layout_constraintBottom_toTopOf="@id/setup_textview"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/setup_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        android:text="@string/setup_your_camera_and_microphone"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/camera_preview"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/class_title_textview" />
-
+    android:layout_height="match_parent"
+    android:background="@color/dark_purple">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginVertical="180dp"
+        android:layout_marginStart="@dimen/space_100"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="@dimen/space_100"
+        android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,8 +23,10 @@
         android:id="@+id/no_camera_textview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginVertical="180dp"
+        android:layout_marginStart="@dimen/space_100"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="@dimen/space_100"
+        android:layout_marginBottom="60dp"
         android:background="@color/black"
         android:gravity="center"
         android:text="@string/camera_is_turned_off"
@@ -58,59 +37,52 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ToggleButton
-        android:id="@+id/microphone_btn"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginEnd="@dimen/space_20"
-        android:layout_marginBottom="@dimen/space_20"
-        android:background="@drawable/ic_mic_selector"
-        android:textOff=""
-        android:textOn=""
-        app:layout_constraintBottom_toBottomOf="@id/camera_preview"
-        app:layout_constraintEnd_toStartOf="@id/progress_bar"
-        app:layout_constraintStart_toStartOf="@id/camera_preview" />
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="60dp"
-        android:layout_height="20dp"
-        android:layout_marginBottom="@dimen/space_30"
-        android:max="250"
-        android:progressDrawable="@drawable/progressbar"
-        app:layout_constraintBottom_toBottomOf="@id/camera_preview"
-        app:layout_constraintEnd_toStartOf="@id/microphone_btn"
-        app:layout_constraintStart_toEndOf="@id/camera_btn" />
-
-    <ToggleButton
-        android:id="@+id/camera_btn"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="@dimen/space_20"
-        android:layout_marginBottom="@dimen/space_20"
-        android:background="@drawable/ic_camera_selector"
-        android:textOff=""
-        android:textOn=""
-        app:layout_constraintBottom_toBottomOf="@id/camera_preview"
-        app:layout_constraintEnd_toEndOf="@id/camera_preview"
-        app:layout_constraintStart_toEndOf="@id/progress_bar" />
-
-    <ToggleButton
-        android:id="@+id/join_btn"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginBottom="@dimen/space_20"
-        android:background="@drawable/ic_btn_join"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textOff="@string/join"
-        android:textOn=""
-        android:textSize="24sp"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/buttons_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_5"
+        android:gravity="center"
+        android:paddingBottom="@dimen/space_30"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/camera_preview" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ToggleButton
+            android:id="@+id/microphone_btn"
+            android:layout_width="@dimen/space_64"
+            android:layout_height="@dimen/space_64"
+            android:layout_marginEnd="@dimen/space_20"
+            android:background="@drawable/ic_mic_selector"
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintBottom_toBottomOf="@id/viewFinder"
+            app:layout_constraintEnd_toStartOf="@id/camera_btn"
+            app:layout_constraintStart_toStartOf="@id/viewFinder" />
+
+        <ToggleButton
+            android:id="@+id/camera_btn"
+            android:layout_width="@dimen/space_64"
+            android:layout_height="@dimen/space_64"
+            android:layout_marginEnd="@dimen/space_30"
+            android:background="@drawable/ic_camera_selector"
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintBottom_toBottomOf="@id/viewFinder"
+            app:layout_constraintEnd_toEndOf="@id/viewFinder"
+            app:layout_constraintStart_toEndOf="@id/microphone_btn" />
+
+        <ToggleButton
+            android:id="@+id/join_btn"
+            android:layout_width="118dp"
+            android:layout_height="56dp"
+            android:background="@drawable/rounded_button"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textOff="@string/join"
+            android:textOn=""
+            android:textSize="24sp" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 

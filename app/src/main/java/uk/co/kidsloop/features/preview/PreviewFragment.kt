@@ -54,7 +54,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         binding.microphoneBtn.setOnClickListener {
             if (isMicPermissionGranted) {
                 isMicRecording = binding.microphoneBtn.isChecked
-                binding.progressBar.setVisible(!isMicRecording)
                 onRecord()
             }
         }
@@ -135,7 +134,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                     ) {
                         isMicPermissionGranted = false
                         binding.microphoneBtn.isEnabled = false
-                        binding.progressBar.visibility = View.INVISIBLE
                         Toast.makeText(
                             context,
                             getString(R.string.mic_permission_denied),
@@ -144,7 +142,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                         binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_off)
                     } else {
                         isMicPermissionGranted = true
-                        binding.progressBar.visibility = View.VISIBLE
                         startRecording()
                     }
                 }
