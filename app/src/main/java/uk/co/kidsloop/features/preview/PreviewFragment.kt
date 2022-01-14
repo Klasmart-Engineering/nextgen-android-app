@@ -1,16 +1,13 @@
 package uk.co.kidsloop.features.preview
 
 import android.Manifest
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,7 +18,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,15 +42,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     var audioRecord: AudioRecord? = null
     var isRecordingAudio = false
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activityResultLauncher.launch(REQUIRED_PERMISSIONS)
@@ -62,7 +49,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         binding.cameraBtn.setOnClickListener {
             if (isCameraPermissionGranted) {
                 isCameraActive = !binding.cameraBtn.isChecked
-                setUpCamera()
+                displayCameraPreview()
                 binding.noCameraTextview.isVisible = !isCameraActive
             }
         }
@@ -75,31 +62,9 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             }
         }
 
-        viewModel.joinClassroomStateLiveData.observe(viewLifecycleOwner, Observer {
-            //updateUi(it);
-            when (it) {
-                is PreviewViewModel.JoinStatus.SuccessJoiningClassRoom -> {
-                    Navigation.findNavController(requireView())
-                        .navigate(PreviewFragmentDirections.previewToLiveclass())
-                }
-                else -> {
-                    Toast.makeText(requireContext(), "Failed to join live class", Toast.LENGTH_LONG).show()
-                }
-            }
-        })
-
         binding.joinBtn.setOnClickListener {
-            viewModel.joinLiveClass()
-        }
-    }
-
-    private fun updateUi(isChecked: Boolean) {
-        if (isChecked) {
-            binding.joinBtn.text = getString(R.string.join)
-            binding.joinBtn.isEnabled = true
-        } else {
-            binding.joinBtn.text = getString(R.string.waiting_teacher)
-            binding.joinBtn.isEnabled = false
+            Navigation.findNavController(requireView())
+                .navigate(PreviewFragmentDirections.previewToLiveclass())
         }
     }
 
@@ -125,7 +90,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             if (allAreGranted) {
                 isCameraPermissionGranted = true
                 isMicPermissionGranted = true
-                //setUpCamera()
+                displayCameraPreview()
                 startRecording()
             } else {
                 if (context?.let {
@@ -160,7 +125,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                         binding.noCameraTextview.visibility = View.VISIBLE
                         binding.cameraBtn.setBackgroundResource(R.drawable.ic_student_camera_d)
                     } else {
-                        setUpCamera()
+                        displayCameraPreview()
                         isCameraPermissionGranted = true
                     }
                     if (context?.let {
@@ -270,37 +235,20 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         }
     }
 
-    private fun setUpCamera() {
-        val cameraProviderFuture = context?.let { ProcessCameraProvider.getInstance(it) }
+    private fun displayCameraPreview() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-        cameraProviderFuture?.addListener(
-            Runnable {
-                val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-                val preview = Preview.Builder()
-                    .build()
-                    .also {
-                        it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
-                    }
-
-                val cameraSelector =
-                    CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT)
-                        .build()
-
-                try {
-                    cameraProvider.unbindAll()
-
-                    if (isCameraActive) {
-                        cameraProvider.bindToLifecycle(
-                            this, cameraSelector, preview
-                        )
-                    }
-                } catch (exc: Exception) {
-                    Log.e(TAG, "Use case binding failed", exc)
+        cameraProviderFuture.addListener(Runnable {
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
                 }
-            },
-            context?.let { ContextCompat.getMainExecutor(it) }
-        )
+
+            val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
+            cameraProvider.bindToLifecycle(viewLifecycleOwner, cameraSelector, preview)
+        }, ContextCompat.getMainExecutor(requireContext()))
     }
 
     companion object {

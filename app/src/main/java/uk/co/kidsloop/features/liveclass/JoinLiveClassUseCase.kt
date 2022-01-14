@@ -29,10 +29,6 @@ class JoinLiveClassUseCase @Inject constructor(private val liveClassManager: Liv
                 }
             }
         }
-        return client.register(token).then { channel -> onClientRegistered(channel) }
-    }
-
-    private fun onClientRegistered(channels: Array<Channel>) {
-        liveClassManager.setChannel(channels[0])
+        return client.register(token).then { channels -> liveClassManager.setChannel(channels[0]) }
     }
 }

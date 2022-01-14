@@ -2,20 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uk.co.kidsloop">
 
-    <uses-feature android:name="android.hardware.camera.any" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <application
+        android:name=".app.KidsloopApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".app.KidsloopApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.KidsloopAndroid.NoActionBar">
-        <activity android:name=".app.KidsloopActivity">
+        <activity
+            android:name=".app.KidsloopActivity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,5 +20,13 @@
             </intent-filter>
         </activity>
     </application>
+
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
 
 </manifest>

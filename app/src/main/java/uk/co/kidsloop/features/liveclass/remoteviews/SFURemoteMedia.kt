@@ -25,7 +25,7 @@ class SFURemoteMedia(private val context: Context, disableAudio:Boolean, disable
     }
 
     override fun createAudioRecorder(audioFormat: AudioFormat): AudioSink {
-        return fm.liveswitch.matroska.AudioSink(id + "-remote-audio-" + audioFormat.name.toLowerCase() + ".mkv")
+        return fm.liveswitch.matroska.AudioSink(id + "-remote-audio-" + audioFormat.name.lowercase() + ".mkv")
     }
 
     override fun createAudioSink(audioConfig: AudioConfig?): AudioSink {
