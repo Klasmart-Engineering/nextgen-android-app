@@ -12,6 +12,7 @@
     <dimen name="space_10">10dp</dimen>
     <dimen name="space_20">20dp</dimen>
     <dimen name="space_30">30dp</dimen>
+    <dimen name="space_64">64dp</dimen>
     <dimen name="space_100">100dp</dimen>
 
 </resources>
