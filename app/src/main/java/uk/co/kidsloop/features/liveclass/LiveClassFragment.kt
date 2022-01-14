@@ -12,6 +12,8 @@ import fm.liveswitch.Channel
 import fm.liveswitch.ConnectionInfo
 import fm.liveswitch.ConnectionState
 import fm.liveswitch.IAction1
+import fm.liveswitch.IViewableMedia
+import fm.liveswitch.LayoutAlignment
 import fm.liveswitch.android.LayoutManager
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.BaseFragment
@@ -38,7 +40,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         localMedia = CameraLocalMedia(requireActivity(), false, false, AecContext())
         layoutManager = LayoutManager(binding.videoContainer)
         layoutManager?.localView = localMedia?.view
-
+        startLocalMedia()
         viewModel.joinLiveClass()
 
         viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
@@ -51,21 +53,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         })
     }
 
-    override fun onResume() {
-        super.onResume()
-        localMedia?.start()?.then({ localMedia -> }, { exception -> })
-    }
-
-    override fun onPause() {
-        super.onPause()
-        stopLocalMedia()
-    }
-
     fun openSfuDownstreamConnection(remoteConnectionInfo: ConnectionInfo, channel: Channel): SfuDownstreamConnection {
         // Create remote media.
 
         val remoteMedia = SFURemoteMedia(requireContext(), false, false, AecContext())
         // Adding remote view to UI.
+        layoutManager?.alignment = LayoutAlignment.BottomRight
+        layoutManager
         layoutManager?.addRemoteView(remoteMedia.id, remoteMedia.view)
 
         // Create audio and video streams from remote media.
@@ -77,18 +71,18 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
         // Store the downstream connection.
         //liveClassManager.saveDownStreamConnections(remoteMedia.id, connection)
-        connection.addOnStateChange { conn: ManagedConnection ->
-            if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
-
-                // Removing remote view from UI.
-                layoutManager?.removeRemoteView(remoteMedia.id)
-                remoteMedia.destroy()
-                //liveClassManager.removeDownStreamConnection(remoteMedia.id)
-            } else if (conn.state == ConnectionState.Failed) {
-                // Reconnect if the connection failed.
-                // openSfuDownstreamConnection(remoteConnectionInfo)
-            }
-        }
+//        connection.addOnStateChange { conn: ManagedConnection ->
+//            if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
+//
+//                // Removing remote view from UI.
+//                layoutManager?.removeRemoteView(remoteMedia.id)
+//                remoteMedia.destroy()
+//                //liveClassManager.removeDownStreamConnection(remoteMedia.id)
+//            } else if (conn.state == ConnectionState.Failed) {
+//                // Reconnect if the connection failed.
+//                // openSfuDownstreamConnection(remoteConnectionInfo)
+//            }
+//        }
         connection.open()
         return connection
     }
@@ -134,5 +128,9 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
             localMedia?.destroy()
             localMedia = null
         })
+    }
+
+    private fun startLocalMedia(){
+        localMedia?.start()?.then({ localMedia -> }, { exception -> })
     }
 }
