@@ -30,15 +30,12 @@ import java.io.IOException
 class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     private val binding by viewBinding(PreviewFragmentBinding::bind)
-
     private val viewModel: PreviewViewModel by viewModels<PreviewViewModel>()
-
     private var isCameraActive = true
     private var isMicRecording = true
     private var isCameraPermissionGranted = false
     private var isMicPermissionGranted = false
     private var recordingThread: Thread? = null
-
     private var audioRecord: AudioRecord? = null
     private var isRecordingAudio = false
 
