@@ -299,9 +299,11 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     private fun displayCameraPreview() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-
         cameraProviderFuture.addListener(Runnable {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            if(isCameraActive){
+                cameraProvider.unbindAll()
+            }
             val preview = Preview.Builder()
                 .build()
                 .also {
