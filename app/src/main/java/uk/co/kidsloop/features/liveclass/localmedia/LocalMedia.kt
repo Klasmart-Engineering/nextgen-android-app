@@ -20,7 +20,7 @@ abstract class LocalMedia<TView>(private val context: Context, disableAudio:Bool
     : RtcLocalMedia<TView>(disableAudio, disableVideo, aecContext) {
 
     override fun createAudioRecorder(audioFormat: AudioFormat): AudioSink? {
-        return fm.liveswitch.matroska.AudioSink(id + "-local-audio-" + audioFormat.name.toLowerCase() + ".mkv")
+        return fm.liveswitch.matroska.AudioSink(id + "-local-audio-" + audioFormat.name.lowercase() + ".mkv")
     }
 
     override fun createAudioSource(audioConfig: AudioConfig?): AudioSource {
