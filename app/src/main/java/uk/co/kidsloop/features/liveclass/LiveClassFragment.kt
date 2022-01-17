@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.RelativeLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -56,9 +57,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        localMedia = CameraLocalMedia(appContext, false, false, AecContext())
+        binding.toggleVideoBtn.isChecked = isCameraTurnedOn.not()
+        binding.toggleAudioBtn.isChecked = isMicrophoneTurnedOn.not()
+
+        localMedia = CameraLocalMedia(appContext, isMicrophoneTurnedOn.not(), isCameraTurnedOn.not(), AecContext())
         layoutManager = LayoutManager(binding.videoContainer)
-        layoutManager?.localView = localMedia?.view
         startLocalMedia()
 
         viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
@@ -69,12 +72,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
                     it.channel
                 )
                 is LiveClassViewModel.LiveClassState.FailedToJoiningLiveClass -> handleFailures()
-                is LiveClassViewModel.LiveClassState.LocalMediaTurnedOn -> {
-                    localMedia?.start()
-                }
-                is LiveClassViewModel.LiveClassState.LocalMediaTurnedOff -> {
-                    localMedia?.stop()
-                }
+                is LiveClassViewModel.LiveClassState.LocalMediaTurnedOn -> turnOnLocalMedia()
+                is LiveClassViewModel.LiveClassState.LocalMediaTurnedOff -> turnOffLocalMedia()
                 is LiveClassViewModel.LiveClassState.UnregisterSuccessful -> {
                     stopLocalMedia()
                 }
@@ -177,9 +176,20 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     private fun startLocalMedia() {
         localMedia?.start()?.then({
                                       requireActivity().runOnUiThread {
+                                          layoutManager?.localView = localMedia?.view
                                           viewModel.joinLiveClass()
                                       }
                                   }, { exception -> })
+    }
+
+    private fun turnOnLocalMedia(){
+        layoutManager?.localView = localMedia?.view
+    }
+
+    private fun turnOffLocalMedia(){
+        val view = RelativeLayout(requireActivity())
+        view.setBackgroundResource(R.drawable.camera_off)
+        layoutManager?.localView = view
     }
 
     private fun openSfuUpstreamConnection() {
