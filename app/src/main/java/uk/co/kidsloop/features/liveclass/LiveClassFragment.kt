@@ -15,9 +15,9 @@ import fm.liveswitch.IAction1
 import fm.liveswitch.android.LayoutManager
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.BaseFragment
-import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.VideoStream
+import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
@@ -34,7 +34,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     private var layoutManager: LayoutManager? = null
     private var localMedia: LocalMedia<View>? = null
 
-    private val viewModel: LiveClassViewModel by viewModels<LiveClassViewModel>()
+    private val viewModel by viewModels<LiveClassViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

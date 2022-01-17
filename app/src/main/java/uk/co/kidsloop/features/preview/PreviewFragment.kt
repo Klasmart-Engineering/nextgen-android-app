@@ -7,7 +7,6 @@ import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -16,8 +15,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.Navigation
-import androidx.lifecycle.Observer
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.R
@@ -27,14 +24,14 @@ import uk.co.kidsloop.app.utils.*
 import uk.co.kidsloop.app.utils.permissions.isPermissionGranted
 import uk.co.kidsloop.app.utils.permissions.showSettingsDialog
 import uk.co.kidsloop.data.enums.KidsloopPermissions
-import uk.co.kidsloop.databinding.FragmentPreviewBinding
+import uk.co.kidsloop.databinding.PreviewFragmentBinding
 import java.io.IOException
 
 @AndroidEntryPoint
 class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     private val binding by viewBinding(PreviewFragmentBinding::bind)
-    private val viewModel: PreviewViewModel by viewModels<PreviewViewModel>()
+    private val viewModel by viewModels<PreviewViewModel>()
     private var requestPermissionsLauncher: ActivityResultLauncher<Array<String>>
     private var isCameraActive = true
     private var isMicRecording = true
@@ -56,7 +53,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                     ) -> {
                 viewModel.isCameraGranted = true
                 viewModel.isMicGranted = true
-                setUpCamera()
+                displayCameraPreview()
                 startRecording()
                 handleNoPermissionViews()
                 handleToggles()
@@ -97,7 +94,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         ) {
             viewModel.isCameraGranted = true
             viewModel.isMicGranted = true
-            setUpCamera()
+            displayCameraPreview()
             startRecording()
             handleNoPermissionViews()
             handleToggles()
@@ -109,18 +106,17 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 displayCameraPreview()
             when (binding.cameraBtn.isChecked) {
                 true -> {
-                    binding.viewFinder.invisible()
+                    binding.cameraPreview.invisible()
                     binding.noCameraTextview.isVisible = true
                 }
                 false -> {
-                    binding.viewFinder.visible()
+                    binding.cameraPreview.visible()
                     binding.noCameraTextview.isVisible = false
                 }
             }
         }
 
         binding.microphoneBtn.setOnClickListener {
-            binding.progressBar.setVisible(!binding.microphoneBtn.isChecked)
             onRecord()
         }
 
@@ -137,23 +133,24 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     private fun observe() = with(viewModel) {
     }
+
     private fun handleNoPermissionViews() {
         if (!viewModel.isCameraGranted && !viewModel.isMicGranted) {
-            binding.viewFinder.invisible()
+            binding.cameraPreview.invisible()
             binding.permissionsLayout.visible()
             binding.permissionsTextview.text = getString(R.string.permissions_denied)
             return
         } else if (!viewModel.isCameraGranted) {
-            binding.viewFinder.invisible()
+            binding.cameraPreview.invisible()
             binding.permissionsLayout.visible()
             binding.permissionsTextview.text = getString(R.string.camera_permission_denied)
             return
         } else if (!viewModel.isMicGranted) {
-            binding.viewFinder.invisible()
+            binding.cameraPreview.invisible()
             binding.permissionsLayout.visible()
             binding.permissionsTextview.text = getString(R.string.mic_permission_denied)
         } else {
-            binding.viewFinder.visible()
+            binding.cameraPreview.visible()
             binding.permissionsLayout.gone()
         }
     }
@@ -163,17 +160,9 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         if (!viewModel.isMicGranted || !viewModel.isCameraGranted) {
             binding.cameraBtn.isEnabled = false
             binding.microphoneBtn.isEnabled = false
-            binding.progressBar.invisible()
         } else {
             binding.cameraBtn.isEnabled = viewModel.isCameraGranted
-
-            if (viewModel.isMicGranted) {
-                binding.microphoneBtn.isEnabled = true
-                binding.progressBar.visible()
-            } else {
-                binding.microphoneBtn.isEnabled = false
-                binding.progressBar.invisible()
-            }
+            binding.microphoneBtn.isEnabled = viewModel.isMicGranted
         }
     }
 
@@ -210,6 +199,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 )) {
                     true -> {
                         viewModel.isCameraGranted = true
+                        displayCameraPreview()
                     }
                     false -> {
                         viewModel.isCameraGranted = false
@@ -258,7 +248,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             )
 
             if (audioRecord!!.state != AudioRecord.STATE_INITIALIZED) { // check for proper initialization
-                Log.e(LiveVideoStreamFragment.TAG, "error initializing AudioRecord")
+                Log.e(TAG, "error initializing AudioRecord")
                 shortToast("Couldn't initialize AudioRecord, check configuration")
                 return
             }
@@ -283,7 +273,8 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 }
                 if (read > 0) {
                     val amplitude = sum / read
-                    //this is commented for now....It crashes the app
+                    // This is commented for now....It crashes the app
+                    // Moreover, be advised that we no longer have a progressBar inside the layout!
                     //binding.progressBar.progress = Math.sqrt(amplitude).toInt()
                 }
             } catch (e: IOException) {

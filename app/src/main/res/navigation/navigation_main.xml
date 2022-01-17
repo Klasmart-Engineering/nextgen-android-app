@@ -24,11 +24,11 @@
         <fragment
             android:id="@+id/login_fragment"
             android:name="uk.co.kidsloop.app.features.login.LoginFragment"
-            tools:layout="@layout/login_fragment" />
+            tools:layout="@layout/fragment_login" />
 
         <fragment
             android:id="@+id/splash_fragment"
-            android:name="uk.co.kidsloop.app.features.splash.SplashFragment" />
+            android:name="uk.co.kidsloop.features.splash.SplashFragment" />
     </navigation>
     <navigation
         android:id="@+id/live_class_graph"
