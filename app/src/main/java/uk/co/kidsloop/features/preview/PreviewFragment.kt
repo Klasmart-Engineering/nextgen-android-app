@@ -60,7 +60,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
         binding.joinBtn.setOnClickListener {
             Navigation.findNavController(requireView())
-                .navigate(PreviewFragmentDirections.previewToLiveclass())
+                .navigate(PreviewFragmentDirections.previewToLiveclass(binding.cameraBtn.isEnabled, binding.microphoneBtn.isEnabled))
         }
     }
 

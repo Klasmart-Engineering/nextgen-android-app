@@ -6,9 +6,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fm.liveswitch.AudioStream
 import fm.liveswitch.Channel
-import fm.liveswitch.Future
 import fm.liveswitch.IAction1
-import fm.liveswitch.Promise
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
 import javax.inject.Inject
@@ -25,8 +23,11 @@ class LiveClassViewModel @Inject constructor(
 
     sealed class LiveClassState {
         object Loading : LiveClassState()
+        object LocalMediaTurnedOn : LiveClassState()
+        object LocalMediaTurnedOff : LiveClassState()
         data class RegistrationSuccessful(val channel: Channel) : LiveClassState()
         data class FailedToJoiningLiveClass(val message: String?) : LiveClassState()
+        object UnregisterSuccessful : LiveClassState()
     }
 
     fun joinLiveClass() {
@@ -39,27 +40,37 @@ class LiveClassViewModel @Inject constructor(
     }
 
     fun openSfuUpstreamConnection(audioStream: AudioStream?, videoStream: VideoStream?): SfuUpstreamConnection {
-        val upstreamConnection =  openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream)
+        val upstreamConnection = openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream)
         upstreamConnection.open()
         liveClassManager.setUpstreamConnection(upstreamConnection)
         return upstreamConnection
     }
 
-    fun toggleLocalAudio(): Future<Any> {
+    fun toggleLocalAudio() {
         liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
             val config = upstreamConnection.config
             config.localAudioMuted = !config.localAudioMuted
-            return upstreamConnection.update(config)
+            upstreamConnection.update(config)
         }
-        return Promise.resolveNow()
     }
 
-    fun toggleLocalVideo(): Future<Any> {
+    fun toggleLocalVideo() {
         liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
             val config = upstreamConnection.config
             config.localVideoMuted = !config.localVideoMuted
-            return upstreamConnection.update(config)
+            upstreamConnection.update(config)
+            _classroomStateLiveData.value = if(config.localVideoMuted) LiveClassState.LocalMediaTurnedOff else LiveClassState.LocalMediaTurnedOn
         }
-        return Promise.resolveNow()
+    }
+
+    fun leaveLiveClass(){
+        val client = liveClassManager.getClient()
+        if(client != null){
+            client.unregister().then(IAction1 {
+                _classroomStateLiveData.value = LiveClassState.UnregisterSuccessful
+            }).fail(IAction1 { exception ->
+
+            })
+        }
     }
 }
