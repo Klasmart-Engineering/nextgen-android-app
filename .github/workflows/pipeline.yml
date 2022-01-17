@@ -98,4 +98,12 @@ jobs:
           draft: false
           tag_name: latest
           files: app/build/outputs/apk/release/app-release-unsigned.apk
-      
+
+      - name: Publish to Slack 
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,commit,message,author,ref,pullRequest,eventName,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEB_HOOK }}      

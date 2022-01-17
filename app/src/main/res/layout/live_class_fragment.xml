@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/video_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true">
+
+        <ToggleButton
+            android:id="@+id/microphone_btn"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginEnd="@dimen/space_20"
+            android:layout_marginBottom="@dimen/space_20"
+            android:background="@drawable/ic_mic_selector"
+            android:textOff=""
+            android:textOn="" />
+
+        <ToggleButton
+            android:id="@+id/camera_btn"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="@dimen/space_20"
+            android:layout_marginBottom="@dimen/space_20"
+            android:background="@drawable/ic_camera_selector"
+            android:textOff=""
+            android:textOn="" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</RelativeLayout>

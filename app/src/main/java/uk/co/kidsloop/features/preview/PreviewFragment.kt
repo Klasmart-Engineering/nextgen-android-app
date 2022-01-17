@@ -1,4 +1,4 @@
-package uk.co.kidsloop.features.videostream
+package uk.co.kidsloop.features.preview
 
 import android.annotation.SuppressLint
 import android.media.AudioFormat
@@ -6,7 +6,6 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
@@ -16,9 +15,11 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.lifecycle.Observer
+import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.KidsloopActivity
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -28,38 +29,18 @@ import uk.co.kidsloop.app.utils.permissions.showSettingsDialog
 import uk.co.kidsloop.data.enums.KidsloopPermissions
 import uk.co.kidsloop.databinding.FragmentPreviewBinding
 import java.io.IOException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
-class PreviewFragment : BaseFragment(R.layout.fragment_preview) {
+@AndroidEntryPoint
+class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
-    private lateinit var binding: FragmentPreviewBinding
-    private val viewModel by viewModels<PreviewViewModel>()
-
+    private val binding by viewBinding(PreviewFragmentBinding::bind)
+    private val viewModel: PreviewViewModel by viewModels<PreviewViewModel>()
     private var requestPermissionsLauncher: ActivityResultLauncher<Array<String>>
-
-    private lateinit var cameraExecutor: ExecutorService
     private var isCameraActive = true
     private var isMicRecording = true
     private var recordingThread: Thread? = null
-
-    var audioRecord: AudioRecord? = null
-    var isRecordingAudio = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        injector.inject(this)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_preview, container, false)
-        return binding.root
-    }
+    private var audioRecord: AudioRecord? = null
+    private var isRecordingAudio = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -101,7 +82,6 @@ class PreviewFragment : BaseFragment(R.layout.fragment_preview) {
             }
         }
 
-        cameraExecutor = Executors.newSingleThreadExecutor()
         setControls()
         observe()
     }
@@ -126,7 +106,7 @@ class PreviewFragment : BaseFragment(R.layout.fragment_preview) {
 
     private fun setControls() {
         binding.cameraBtn.setOnClickListener {
-            setUpCamera()
+                displayCameraPreview()
             when (binding.cameraBtn.isChecked) {
                 true -> {
                     binding.viewFinder.invisible()
@@ -153,18 +133,10 @@ class PreviewFragment : BaseFragment(R.layout.fragment_preview) {
                 showSettingsDialog(activity as KidsloopActivity)
             }
         }
-
-        binding.joinBtn.setOnClickListener {
-            viewModel.onChange()
-        }
     }
 
     private fun observe() = with(viewModel) {
-        viewModel.isChecked.observe(viewLifecycleOwner, Observer {
-            updateUi(it);
-        })
     }
-
     private fun handleNoPermissionViews() {
         if (!viewModel.isCameraGranted && !viewModel.isMicGranted) {
             binding.viewFinder.invisible()
@@ -205,16 +177,6 @@ class PreviewFragment : BaseFragment(R.layout.fragment_preview) {
         }
     }
 
-    private fun updateUi(isChecked: Boolean) {
-        if (isChecked) {
-            binding.joinBtn.text = getString(R.string.join)
-            binding.joinBtn.isEnabled = true
-        } else {
-            binding.joinBtn.text = getString(R.string.waiting_teacher)
-            binding.joinBtn.isEnabled = false
-        }
-    }
-
     init {
         // this is a callback that handles permissions results
         this.requestPermissionsLauncher = registerForActivityResult(
@@ -228,7 +190,7 @@ class PreviewFragment : BaseFragment(R.layout.fragment_preview) {
             if (allAreGranted) {
                 viewModel.isCameraGranted = true
                 viewModel.isMicGranted = true
-                setUpCamera()
+                displayCameraPreview()
                 startRecording()
             } else {
                 if (shouldShowRequestPermissionRationale(KidsloopPermissions.CAMERA.type) ||
@@ -248,7 +210,6 @@ class PreviewFragment : BaseFragment(R.layout.fragment_preview) {
                 )) {
                     true -> {
                         viewModel.isCameraGranted = true
-                        setUpCamera()
                     }
                     false -> {
                         viewModel.isCameraGranted = false
@@ -322,7 +283,8 @@ class PreviewFragment : BaseFragment(R.layout.fragment_preview) {
                 }
                 if (read > 0) {
                     val amplitude = sum / read
-                    binding.progressBar.progress = Math.sqrt(amplitude).toInt()
+                    //this is commented for now....It crashes the app
+                    //binding.progressBar.progress = Math.sqrt(amplitude).toInt()
                 }
             } catch (e: IOException) {
                 Log.d(
@@ -344,40 +306,20 @@ class PreviewFragment : BaseFragment(R.layout.fragment_preview) {
         }
     }
 
-    private fun setUpCamera() {
-        val cameraProviderFuture = context?.let { ProcessCameraProvider.getInstance(it) }
+    private fun displayCameraPreview() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-        cameraProviderFuture?.addListener({
+        cameraProviderFuture.addListener(Runnable {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
             val preview = Preview.Builder()
                 .build()
                 .also {
-                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+                    it.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
                 }
 
-            val cameraSelector =
-                CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
-
-            try {
-                cameraProvider.unbindAll()
-
-                if (isCameraActive) {
-                    cameraProvider.bindToLifecycle(
-                        this, cameraSelector, preview
-                    )
-                }
-            } catch (exc: Exception) {
-                Log.e(LiveVideoStreamFragment.TAG, "Use case binding failed", exc)
-            }
-        },
-            context?.let { ContextCompat.getMainExecutor(it) }
-        )
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
+            val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
+            cameraProvider.bindToLifecycle(viewLifecycleOwner, cameraSelector, preview)
+        }, ContextCompat.getMainExecutor(requireContext()))
     }
 
     override fun onAllowClicked(permissions: Array<String>) {

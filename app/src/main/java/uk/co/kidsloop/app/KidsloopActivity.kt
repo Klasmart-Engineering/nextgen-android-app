@@ -2,17 +2,11 @@ package uk.co.kidsloop.app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.databinding.ActivityMainBinding
 
+@AndroidEntryPoint
 class KidsloopActivity : AppCompatActivity() {
-
-    private val appComponent get() = (application as KidsloopApplication).appComponent
-
-    val activityComponent by lazy {
-        appComponent.newActivityComponentBuilder()
-            .activity(this)
-            .build()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
