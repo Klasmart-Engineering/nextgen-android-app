@@ -278,9 +278,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 }
                 if (read > 0) {
                     val amplitude = sum / read
-                    // This is commented for now....It crashes the app
-                    // Moreover, be advised that we no longer have a progressBar inside the layout!
-                    //binding.progressBar.progress = Math.sqrt(amplitude).toInt()
+                    binding.progressBar.progress = Math.sqrt(amplitude).toInt()
                 }
             } catch (e: IOException) {
                 Log.d(
@@ -291,7 +289,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             }
         }
     }
-
     private fun stopRecording() {
         if (audioRecord != null) {
             isRecordingAudio = false
