@@ -129,11 +129,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     }
 
     private fun getAudioStream(localMedia: LocalMedia<View>?): AudioStream? {
-        return if (localMedia?.audioTrack != null && isMicrophoneTurnedOn) AudioStream(localMedia.audioTrack) else null
+        return if (localMedia?.audioTrack != null) AudioStream(localMedia.audioTrack) else null
     }
 
     private fun getVideoStream(localMedia: LocalMedia<View>?): VideoStream? {
-        return if (localMedia?.videoTrack != null && isCameraTurnedOn) VideoStream(localMedia.videoTrack) else null
+        return if (localMedia?.videoTrack != null) VideoStream(localMedia.videoTrack) else null
     }
 
     private fun showLoading() {
@@ -190,7 +190,9 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     private fun openSfuUpstreamConnection() {
         val upstreamConnection = viewModel.openSfuUpstreamConnection(
             getAudioStream(localMedia),
-            getVideoStream(localMedia)
+            getVideoStream(localMedia),
+            isMicrophoneTurnedOn,
+            isCameraTurnedOn
         )
         upstreamConnection?.open()
     }
