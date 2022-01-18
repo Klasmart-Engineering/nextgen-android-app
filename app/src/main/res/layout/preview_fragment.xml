@@ -92,8 +92,8 @@
         android:layout_marginTop="25dp"
         android:max="250"
         android:progressDrawable="@drawable/progress_bar"
-        app:layout_constraintStart_toStartOf="@id/camera_preview"
-        app:layout_constraintTop_toTopOf="@id/camera_preview" />
+        app:layout_constraintStart_toStartOf="@id/camera_preview_container"
+        app:layout_constraintTop_toTopOf="@id/camera_preview_container" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/buttons_layout"
