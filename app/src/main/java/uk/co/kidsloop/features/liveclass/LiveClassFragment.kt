@@ -83,6 +83,10 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         binding.toggleVideoBtn.setOnClickListener {
             viewModel.toggleLocalVideo()
         }
+
+        binding.toggleCloseBtn.setOnClickListener {
+            viewModel.leaveLiveClass()
+        }
     }
 
     private fun openSfuDownstreamConnection(
@@ -167,6 +171,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
             localMedia?.destroy()
             localMedia = null
+            requireActivity().finish()
         })
     }
 
@@ -195,10 +200,5 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
             isCameraTurnedOn
         )
         upstreamConnection?.open()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.leaveLiveClass()
     }
 }

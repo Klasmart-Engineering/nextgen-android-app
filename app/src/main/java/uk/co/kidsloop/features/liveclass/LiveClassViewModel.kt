@@ -28,6 +28,7 @@ class LiveClassViewModel @Inject constructor(
         data class RegistrationSuccessful(val channel: Channel) : LiveClassState()
         data class FailedToJoiningLiveClass(val message: String?) : LiveClassState()
         object UnregisterSuccessful : LiveClassState()
+        object UnregisterFailed : LiveClassState()
     }
 
     fun joinLiveClass() {
@@ -72,10 +73,10 @@ class LiveClassViewModel @Inject constructor(
         val client = liveClassManager.getClient()
         if (client != null) {
             client.unregister().then(IAction1 {
-                _classroomStateLiveData.value = LiveClassState.UnregisterSuccessful
                 liveClassManager.cleanConnection()
+                _classroomStateLiveData.postValue(LiveClassState.UnregisterSuccessful)
             }).fail(IAction1 { exception ->
-
+                _classroomStateLiveData.postValue(LiveClassState.UnregisterFailed)
             })
         }
     }
