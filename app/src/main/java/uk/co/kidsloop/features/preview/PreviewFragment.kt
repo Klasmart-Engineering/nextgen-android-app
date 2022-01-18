@@ -263,6 +263,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
             audioRecord!!.startRecording()
             isRecordingAudio = true
+            isMicRecording = true
             recordingThread = Thread { getAudioDataToProgressBar() }
             recordingThread!!.start()
         }
@@ -296,6 +297,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     private fun stopRecording() {
         if (audioRecord != null) {
             isRecordingAudio = false
+            isMicRecording = false
             audioRecord!!.stop()
             audioRecord!!.release()
             audioRecord = null
