@@ -1,11 +1,13 @@
-package uk.co.kidsloop.app.features.splash
+package uk.co.kidsloop.features.splash
 
 import android.os.Handler
 import androidx.navigation.Navigation
+import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.BaseFragment
+import uk.co.kidsloop.app.structure.BaseFragment
 
-class SplashFragment : BaseFragment(R.layout.splash_fragment) {
+@AndroidEntryPoint
+class SplashFragment : BaseFragment(R.layout.fragment_splash) {
 
     private val handler = Handler()
 

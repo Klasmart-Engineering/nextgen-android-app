@@ -6,8 +6,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PreviewViewModel @Inject constructor() : ViewModel() {
-
-   init{
-
-   }
+   var isCameraGranted: Boolean = false
+   var isMicGranted: Boolean = false
+   var havePermissionsBeenPreviouslyDenied = false
 }
