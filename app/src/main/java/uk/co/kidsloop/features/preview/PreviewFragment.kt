@@ -106,16 +106,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     private fun setControls() {
         binding.cameraBtn.setOnClickListener {
-            when (binding.cameraBtn.isChecked) {
-                true -> {
-                    binding.cameraPreview.invisible()
-                    binding.noCameraTextview.isVisible = true
-                }
-                false -> {
-                    binding.cameraPreview.visible()
-                    binding.noCameraTextview.isVisible = false
-                }
-            }
+            binding.noCameraTextview.isVisible = binding.cameraBtn.isChecked
             handleCameraFeed()
         }
 
