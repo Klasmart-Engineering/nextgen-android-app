@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/dark_purple">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -11,14 +11,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="@id/camera_preview"
-        app:layout_constraintEnd_toEndOf="@id/camera_preview"
-        app:layout_constraintStart_toStartOf="@id/camera_preview"
-        app:layout_constraintTop_toTopOf="@id/camera_preview">
+        app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
+        app:layout_constraintEnd_toEndOf="@id/camera_preview_container"
+        app:layout_constraintStart_toStartOf="@id/camera_preview_container"
+        app:layout_constraintTop_toTopOf="@id/camera_preview_container">
 
         <TextView
             android:id="@+id/permissions_textview"
-            tools:visibility="visible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="40dp"
@@ -31,11 +30,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:visibility="visible" />
 
         <Button
             android:id="@+id/allow_btn"
-            tools:visibility="visible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/allow"
@@ -43,21 +42,28 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/permissions_textview" />
+            app:layout_constraintTop_toBottomOf="@id/permissions_textview"
+            tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.camera.view.PreviewView
-        android:id="@+id/camera_preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <FrameLayout
+        android:id="@+id/camera_preview_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/space_100"
         android:layout_marginStart="@dimen/space_100"
         android:layout_marginTop="48dp"
-        android:layout_marginEnd="@dimen/space_100"
         android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/camera_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/no_camera_textview"
@@ -96,9 +102,9 @@
             android:background="@drawable/ic_mic_selector"
             android:textOff=""
             android:textOn=""
-            app:layout_constraintBottom_toBottomOf="@id/camera_preview"
+            app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
             app:layout_constraintEnd_toStartOf="@id/camera_btn"
-            app:layout_constraintStart_toStartOf="@id/camera_preview" />
+            app:layout_constraintStart_toStartOf="@id/camera_preview_container" />
 
         <ToggleButton
             android:id="@+id/camera_btn"
@@ -108,8 +114,8 @@
             android:background="@drawable/ic_camera_selector"
             android:textOff=""
             android:textOn=""
-            app:layout_constraintBottom_toBottomOf="@id/camera_preview"
-            app:layout_constraintEnd_toEndOf="@id/camera_preview"
+            app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
+            app:layout_constraintEnd_toEndOf="@id/camera_preview_container"
             app:layout_constraintStart_toEndOf="@id/microphone_btn" />
 
         <ToggleButton

@@ -34,7 +34,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     private val binding by viewBinding(PreviewFragmentBinding::bind)
     private val viewModel by viewModels<PreviewViewModel>()
     private var requestPermissionsLauncher: ActivityResultLauncher<Array<String>>
-    private var isCameraActive = true
+    private var isCameraActive = false
     private var isMicRecording = true
     private var recordingThread: Thread? = null
     private var audioRecord: AudioRecord? = null
@@ -54,7 +54,8 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                     ) -> {
                 viewModel.isCameraGranted = true
                 viewModel.isMicGranted = true
-                displayCameraPreview()
+                viewModel.havePermissionsBeenPreviouslyDenied = false
+                handleCameraFeed()
                 startRecording()
                 handleNoPermissionViews()
                 handleToggles()
@@ -86,16 +87,17 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     override fun onResume() {
         super.onResume()
-        // Handle return in the app from settings without impacting somehow the rest
+        // Handle return in the app from settings only when the user has previously denied the permissions
         if (isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type) &&
             isPermissionGranted(
                 requireContext(),
                 KidsloopPermissions.RECORD_AUDIO.type
-            )
+            ) && viewModel.havePermissionsBeenPreviouslyDenied
         ) {
             viewModel.isCameraGranted = true
             viewModel.isMicGranted = true
-            displayCameraPreview()
+            viewModel.havePermissionsBeenPreviouslyDenied = false
+            handleCameraFeed()
             startRecording()
             handleNoPermissionViews()
             handleToggles()
@@ -114,6 +116,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                     binding.noCameraTextview.isVisible = false
                 }
             }
+            handleCameraFeed()
         }
 
         binding.microphoneBtn.setOnClickListener {
@@ -184,7 +187,8 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             if (allAreGranted) {
                 viewModel.isCameraGranted = true
                 viewModel.isMicGranted = true
-                displayCameraPreview()
+                viewModel.havePermissionsBeenPreviouslyDenied = false
+                handleCameraFeed()
                 startRecording()
             } else {
                 if (shouldShowRequestPermissionRationale(KidsloopPermissions.CAMERA.type) ||
@@ -204,10 +208,12 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 )) {
                     true -> {
                         viewModel.isCameraGranted = true
-                        displayCameraPreview()
+                        viewModel.havePermissionsBeenPreviouslyDenied = false
+                        handleCameraFeed()
                     }
                     false -> {
                         viewModel.isCameraGranted = false
+                        viewModel.havePermissionsBeenPreviouslyDenied = true
                     }
                 }
 
@@ -221,6 +227,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                     }
                     false -> {
                         viewModel.isMicGranted = false
+                        viewModel.havePermissionsBeenPreviouslyDenied = true
                     }
                 }
             }
@@ -302,21 +309,33 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         }
     }
 
-    private fun displayCameraPreview() {
+    private fun handleCameraFeed() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-        cameraProviderFuture.addListener(Runnable {
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-            if(isCameraActive){
-                cameraProvider.unbindAll()
-            }
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
+        cameraProviderFuture.addListener({
+            val cameraProvider = cameraProviderFuture.get()
+            when (isCameraActive) {
+                true -> {
+                    cameraProvider.unbindAll()
+                    binding.cameraPreviewContainer.removeAllViews()
+                    isCameraActive = false
                 }
+                false -> {
+                    cameraProvider.unbindAll()
+                    binding.cameraPreviewContainer.removeAllViews()
+                    binding.cameraPreviewContainer.addView(binding.cameraPreview)
+                    val preview = Preview.Builder()
+                        .build()
+                        .also {
+                            it.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
+                        }
 
-            val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
-            cameraProvider.bindToLifecycle(viewLifecycleOwner, cameraSelector, preview)
+                    val cameraSelector =
+                        CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT)
+                            .build()
+                    cameraProvider.bindToLifecycle(viewLifecycleOwner, cameraSelector, preview)
+                    isCameraActive = true
+                }
+            }
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
@@ -329,6 +348,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         super.onDenyClicked(permissions)
         viewModel.isCameraGranted = false
         viewModel.isMicGranted = false
+        viewModel.havePermissionsBeenPreviouslyDenied = true
     }
 
     companion object {
