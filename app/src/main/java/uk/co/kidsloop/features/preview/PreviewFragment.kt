@@ -111,6 +111,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         }
 
         binding.microphoneBtn.setOnClickListener {
+            binding.progressBar.isVisible = !binding.microphoneBtn.isChecked
             onRecord()
         }
 
@@ -160,8 +161,10 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         // In one of the permissions is not enabled, do not enable any toggle
         if (!viewModel.isMicGranted || !viewModel.isCameraGranted) {
             binding.cameraBtn.isEnabled = false
+            binding.progressBar.isVisible = false
             binding.microphoneBtn.isEnabled = false
         } else {
+            binding.progressBar.isVisible = viewModel.isMicGranted
             binding.cameraBtn.isEnabled = viewModel.isCameraGranted
             binding.microphoneBtn.isEnabled = viewModel.isMicGranted
         }
@@ -289,6 +292,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             }
         }
     }
+
     private fun stopRecording() {
         if (audioRecord != null) {
             isRecordingAudio = false
