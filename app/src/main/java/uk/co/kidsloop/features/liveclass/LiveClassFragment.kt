@@ -74,6 +74,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
                 is LiveClassViewModel.LiveClassState.LocalMediaTurnedOn -> turnOnLocalMedia()
                 is LiveClassViewModel.LiveClassState.LocalMediaTurnedOff -> turnOffLocalMedia()
                 is LiveClassViewModel.LiveClassState.UnregisterSuccessful -> stopLocalMedia()
+                is LiveClassViewModel.LiveClassState.UnregisterFailed -> stopLocalMedia()
             }
         })
 
@@ -82,6 +83,10 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         }
         binding.toggleVideoBtn.setOnClickListener {
             viewModel.toggleLocalVideo()
+        }
+
+        binding.toggleCloseBtn.setOnClickListener {
+            viewModel.leaveLiveClass()
         }
     }
 
@@ -129,11 +134,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     }
 
     private fun getAudioStream(localMedia: LocalMedia<View>?): AudioStream? {
-        return if (localMedia?.audioTrack != null && isMicrophoneTurnedOn) AudioStream(localMedia.audioTrack) else null
+        return if (localMedia?.audioTrack != null) AudioStream(localMedia.audioTrack) else null
     }
 
     private fun getVideoStream(localMedia: LocalMedia<View>?): VideoStream? {
-        return if (localMedia?.videoTrack != null && isCameraTurnedOn) VideoStream(localMedia.videoTrack) else null
+        return if (localMedia?.videoTrack != null) VideoStream(localMedia.videoTrack) else null
     }
 
     private fun showLoading() {
@@ -167,6 +172,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
             localMedia?.destroy()
             localMedia = null
+            //TODO This is added for testing purpouse and it will be removed later on
+            requireActivity().finish()
         })
     }
 
@@ -190,13 +197,10 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     private fun openSfuUpstreamConnection() {
         val upstreamConnection = viewModel.openSfuUpstreamConnection(
             getAudioStream(localMedia),
-            getVideoStream(localMedia)
+            getVideoStream(localMedia),
+            isMicrophoneTurnedOn,
+            isCameraTurnedOn
         )
         upstreamConnection?.open()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.leaveLiveClass()
     }
 }

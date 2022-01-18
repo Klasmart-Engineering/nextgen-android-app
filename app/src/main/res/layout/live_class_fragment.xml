@@ -8,16 +8,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true">
 
         <ToggleButton
             android:id="@+id/toggle_audio_btn"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="@dimen/space_80"
+            android:layout_height="@dimen/space_80"
             android:layout_marginEnd="@dimen/space_20"
             android:layout_marginBottom="@dimen/space_20"
             android:background="@drawable/ic_mic_selector"
@@ -26,13 +27,23 @@
 
         <ToggleButton
             android:id="@+id/toggle_video_btn"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="@dimen/space_80"
+            android:layout_height="@dimen/space_80"
             android:layout_marginStart="@dimen/space_20"
             android:layout_marginBottom="@dimen/space_20"
             android:background="@drawable/ic_camera_selector"
             android:textOff=""
             android:textOn="" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <ToggleButton
+            android:id="@+id/toggle_close_btn"
+            android:layout_width="@dimen/space_80"
+            android:layout_height="@dimen/space_80"
+            android:layout_marginStart="@dimen/space_40"
+            android:layout_marginBottom="@dimen/space_20"
+            android:background="@drawable/ic_close_selector"
+            android:textOff=""
+            android:textOn=""/>
+    </LinearLayout>
 
 </RelativeLayout>

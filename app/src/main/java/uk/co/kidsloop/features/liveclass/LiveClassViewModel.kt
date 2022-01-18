@@ -28,6 +28,7 @@ class LiveClassViewModel @Inject constructor(
         data class RegistrationSuccessful(val channel: Channel) : LiveClassState()
         data class FailedToJoiningLiveClass(val message: String?) : LiveClassState()
         object UnregisterSuccessful : LiveClassState()
+        object UnregisterFailed : LiveClassState()
     }
 
     fun joinLiveClass() {
@@ -39,11 +40,15 @@ class LiveClassViewModel @Inject constructor(
         })
     }
 
-    fun openSfuUpstreamConnection(audioStream: AudioStream?, videoStream: VideoStream?): SfuUpstreamConnection? {
+    fun openSfuUpstreamConnection(audioStream: AudioStream?, videoStream: VideoStream?, isAudioTurnedOn:Boolean, isVideoTurnedOn:Boolean): SfuUpstreamConnection? {
         val upstreamConnection = openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream)
         upstreamConnection?.let {
             liveClassManager.setUpstreamConnection(it)
         }
+        val config = upstreamConnection?.config
+        config?.localVideoMuted = !isVideoTurnedOn
+        config?.localAudioMuted = !isAudioTurnedOn
+        upstreamConnection?.update(config)
         return upstreamConnection
     }
 
@@ -68,10 +73,10 @@ class LiveClassViewModel @Inject constructor(
         val client = liveClassManager.getClient()
         if (client != null) {
             client.unregister().then(IAction1 {
-                _classroomStateLiveData.value = LiveClassState.UnregisterSuccessful
                 liveClassManager.cleanConnection()
+                _classroomStateLiveData.postValue(LiveClassState.UnregisterSuccessful)
             }).fail(IAction1 { exception ->
-
+                _classroomStateLiveData.postValue(LiveClassState.UnregisterFailed)
             })
         }
     }
