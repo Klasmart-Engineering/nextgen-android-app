@@ -347,6 +347,11 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         viewModel.havePermissionsBeenPreviouslyDenied = true
     }
 
+    override fun onStop() {
+        super.onStop()
+        isRecordingAudio = false
+    }
+
     companion object {
         val TAG = PreviewFragment::class.qualifiedName
         private const val SAMPLE_RATE = 44100
