@@ -74,6 +74,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
                 is LiveClassViewModel.LiveClassState.LocalMediaTurnedOn -> turnOnLocalMedia()
                 is LiveClassViewModel.LiveClassState.LocalMediaTurnedOff -> turnOffLocalMedia()
                 is LiveClassViewModel.LiveClassState.UnregisterSuccessful -> stopLocalMedia()
+                is LiveClassViewModel.LiveClassState.UnregisterFailed -> stopLocalMedia()
             }
         })
 
@@ -171,6 +172,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
             localMedia?.destroy()
             localMedia = null
+            //TODO This is added for testing purpouse and it will be removed later on
             requireActivity().finish()
         })
     }
