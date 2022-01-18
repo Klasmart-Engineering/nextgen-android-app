@@ -111,6 +111,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         }
 
         binding.microphoneBtn.setOnClickListener {
+            binding.progressBar.isVisible = !binding.microphoneBtn.isChecked
             onRecord()
         }
 
@@ -160,8 +161,10 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         // In one of the permissions is not enabled, do not enable any toggle
         if (!viewModel.isMicGranted || !viewModel.isCameraGranted) {
             binding.cameraBtn.isEnabled = false
+            binding.progressBar.isVisible = false
             binding.microphoneBtn.isEnabled = false
         } else {
+            binding.progressBar.isVisible = viewModel.isMicGranted
             binding.cameraBtn.isEnabled = viewModel.isCameraGranted
             binding.microphoneBtn.isEnabled = viewModel.isMicGranted
         }
@@ -260,6 +263,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
             audioRecord!!.startRecording()
             isRecordingAudio = true
+            isMicRecording = true
             recordingThread = Thread { getAudioDataToProgressBar() }
             recordingThread!!.start()
         }
@@ -278,9 +282,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 }
                 if (read > 0) {
                     val amplitude = sum / read
-                    // This is commented for now....It crashes the app
-                    // Moreover, be advised that we no longer have a progressBar inside the layout!
-                    //binding.progressBar.progress = Math.sqrt(amplitude).toInt()
+                    binding.progressBar.progress = Math.sqrt(amplitude).toInt()
                 }
             } catch (e: IOException) {
                 Log.d(
@@ -295,6 +297,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     private fun stopRecording() {
         if (audioRecord != null) {
             isRecordingAudio = false
+            isMicRecording = false
             audioRecord!!.stop()
             audioRecord!!.release()
             audioRecord = null
