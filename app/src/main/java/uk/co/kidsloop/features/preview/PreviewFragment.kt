@@ -59,8 +59,10 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         }
 
         binding.joinBtn.setOnClickListener {
+            val isCameraTurnedOn = binding.cameraBtn.isChecked.not()
+            val isMicrophoneTurnedOn = binding.microphoneBtn.isChecked.not()
             Navigation.findNavController(requireView())
-                .navigate(PreviewFragmentDirections.previewToLiveclass())
+                .navigate(PreviewFragmentDirections.previewToLiveclass(isCameraTurnedOn, isMicrophoneTurnedOn))
         }
     }
 
