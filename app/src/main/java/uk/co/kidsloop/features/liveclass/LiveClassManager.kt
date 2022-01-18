@@ -14,15 +14,15 @@ class LiveClassManager @Inject constructor() {
 
     private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection>()
 
-    private lateinit var token: String
-    private lateinit var remoteChannel: Channel
-    private lateinit var client: Client
+    private var token: String? = null
+    private var remoteChannel: Channel? = null
+    private var client: Client? = null
 
     fun setToken(token: String) {
         this.token = token
     }
 
-    fun getToken(): String {
+    fun getToken(): String? {
         return token
     }
 
@@ -30,7 +30,7 @@ class LiveClassManager @Inject constructor() {
         remoteChannel = channel
     }
 
-    fun getChannel(): Channel {
+    fun getChannel(): Channel? {
         return remoteChannel
     }
 
@@ -38,7 +38,7 @@ class LiveClassManager @Inject constructor() {
         this.client = client
     }
 
-    fun getClient(): Client {
+    fun getClient(): Client? {
         return client
     }
 
@@ -56,5 +56,12 @@ class LiveClassManager @Inject constructor() {
 
     fun getUpstreamConnection(): SfuUpstreamConnection? {
         return upstreamConnection
+    }
+
+    fun cleanConnection(){
+        client = null
+        remoteChannel = null
+        upstreamConnection = null
+        token = null
     }
 }

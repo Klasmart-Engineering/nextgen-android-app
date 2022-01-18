@@ -39,10 +39,11 @@ class LiveClassViewModel @Inject constructor(
         })
     }
 
-    fun openSfuUpstreamConnection(audioStream: AudioStream?, videoStream: VideoStream?): SfuUpstreamConnection {
+    fun openSfuUpstreamConnection(audioStream: AudioStream?, videoStream: VideoStream?): SfuUpstreamConnection? {
         val upstreamConnection = openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream)
-        upstreamConnection.open()
-        liveClassManager.setUpstreamConnection(upstreamConnection)
+        upstreamConnection?.let {
+            liveClassManager.setUpstreamConnection(it)
+        }
         return upstreamConnection
     }
 
@@ -59,15 +60,16 @@ class LiveClassViewModel @Inject constructor(
             val config = upstreamConnection.config
             config.localVideoMuted = !config.localVideoMuted
             upstreamConnection.update(config)
-            _classroomStateLiveData.value = if(config.localVideoMuted) LiveClassState.LocalMediaTurnedOff else LiveClassState.LocalMediaTurnedOn
+            _classroomStateLiveData.value = if (config.localVideoMuted) LiveClassState.LocalMediaTurnedOff else LiveClassState.LocalMediaTurnedOn
         }
     }
 
-    fun leaveLiveClass(){
+    fun leaveLiveClass() {
         val client = liveClassManager.getClient()
-        if(client != null){
+        if (client != null) {
             client.unregister().then(IAction1 {
                 _classroomStateLiveData.value = LiveClassState.UnregisterSuccessful
+                liveClassManager.cleanConnection()
             }).fail(IAction1 { exception ->
 
             })

@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.RelativeLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -60,7 +59,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         binding.toggleVideoBtn.isChecked = isCameraTurnedOn.not()
         binding.toggleAudioBtn.isChecked = isMicrophoneTurnedOn.not()
 
-        localMedia = CameraLocalMedia(appContext, isMicrophoneTurnedOn.not(), isCameraTurnedOn.not(), AecContext())
+        localMedia = CameraLocalMedia(appContext, false, false, AecContext())
         layoutManager = LayoutManager(binding.videoContainer)
         startLocalMedia()
 
@@ -74,9 +73,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
                 is LiveClassViewModel.LiveClassState.FailedToJoiningLiveClass -> handleFailures()
                 is LiveClassViewModel.LiveClassState.LocalMediaTurnedOn -> turnOnLocalMedia()
                 is LiveClassViewModel.LiveClassState.LocalMediaTurnedOff -> turnOffLocalMedia()
-                is LiveClassViewModel.LiveClassState.UnregisterSuccessful -> {
-                    stopLocalMedia()
-                }
+                is LiveClassViewModel.LiveClassState.UnregisterSuccessful -> stopLocalMedia()
             }
         })
 
@@ -182,14 +179,12 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
                                   }, { exception -> })
     }
 
-    private fun turnOnLocalMedia(){
-        layoutManager?.localView = localMedia?.view
+    private fun turnOnLocalMedia() {
+        //here we should add functionality in order to turn on camera for yourself
     }
 
-    private fun turnOffLocalMedia(){
-        val view = RelativeLayout(requireActivity())
-        view.setBackgroundResource(R.drawable.camera_off)
-        layoutManager?.localView = view
+    private fun turnOffLocalMedia() {
+        //here we should add functionality in order to turn off local media
     }
 
     private fun openSfuUpstreamConnection() {
@@ -197,11 +192,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
             getAudioStream(localMedia),
             getVideoStream(localMedia)
         )
-        upstreamConnection.open()
+        upstreamConnection?.open()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onStop() {
+        super.onStop()
         viewModel.leaveLiveClass()
     }
 }
