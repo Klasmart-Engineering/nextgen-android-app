@@ -50,7 +50,7 @@ jobs:
       - name: Decode Keystore
         env:
             ENCODED_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE  }}
-            SIGNING_PROPERTIES: ${{ DEBUG_PROPERTIES }}
+            SIGNING_PROPERTIES: ${{ secrets.DEBUG_PROPERTIES }}
         run: |            
             echo $ENCODED_STRING | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
             echo $SIGNING_PROPERTIES > ${GITHUB_WORKSPACE}"/keystore.properties
@@ -105,7 +105,7 @@ jobs:
         name: Cleanup Keystore        
         run: |            
             rm -rf  "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
-            rm -rf  ${GITHUB_WORKSPACE}"/keystore.properties
+            rm -rf  "${GITHUB_WORKSPACE}"/keystore.properties
             pwd
             ls -l
 
