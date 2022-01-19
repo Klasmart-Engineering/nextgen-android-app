@@ -33,16 +33,6 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
       
-      - name: Decode Keystore
-        env:
-            ENCODED_KEYSTORE: ${{ secrets.DEBUG_PROPERTIES  }}
-            SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
-        run: |            
-            echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
-            echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties
-            pwd
-            ls -l 
-
       - name: Cache Gradle Files
         uses: actions/cache@v2
         with:
@@ -71,8 +61,8 @@ jobs:
             echo "app level"
             ls -l app/
           
-      # - name: Run Gradle
-      #   run: ./gradlew build check --continue
+      - name: Run Gradle
+        run: ./gradlew build check --continue
 
       # - if: ${{ (github.event != 'pull_request')  }}
       #   name: Run Android Lint 
