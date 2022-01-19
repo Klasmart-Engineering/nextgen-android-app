@@ -63,8 +63,8 @@ jobs:
             echo "app level"
             ls -l app/
           
-      # - name: Run Gradle
-      #   run: ./gradlew build check --continue
+      - name: Run Gradle
+        run: ./gradlew build check --continue
 
       # - if: ${{ (github.event != 'pull_request')  }}
       #   name: Run Android Lint 
