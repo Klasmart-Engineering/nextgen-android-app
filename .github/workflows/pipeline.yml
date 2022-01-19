@@ -60,7 +60,7 @@ jobs:
             diff keystore.properties1 keystore.properties
             echo "checksums?"
             sum keystore.properties1
-            sum keystore.properties1
+            sum keystore.properties
             echo "current dir"
             pwd
             echo "root level"           
