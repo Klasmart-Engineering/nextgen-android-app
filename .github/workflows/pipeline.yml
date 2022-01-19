@@ -73,13 +73,11 @@ jobs:
           lint_xml_file: app/build/reports/lint-results-debug.xml 
           reporter: github-pr-review       
 
-      - if: always()
-        #if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
+      - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
         name: Create Debug APK
         run: ./gradlew -Pci --console=plain :app:assembleDebug
 
-      - if: always()
-        #if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
+      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
         name: Upload Debug APK
         uses: actions/upload-artifact@v2
         with:
