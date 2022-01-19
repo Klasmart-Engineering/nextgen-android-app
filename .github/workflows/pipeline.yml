@@ -32,6 +32,16 @@ jobs:
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
+      
+      - name: Decode Keystore
+        env:
+            ENCODED_KEYSTORE: ${{ secrets.DEBUG_PROPERTIES  }}
+            SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
+        run: |            
+            echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
+            echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties
+            pwd
+            ls -l 
 
       - name: Cache Gradle Files
         uses: actions/cache@v2
@@ -53,7 +63,7 @@ jobs:
             SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
         run: |            
             echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
-            echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties
+            echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/app/keystore.properties
             pwd
             ls -l 
           
