@@ -54,8 +54,13 @@ jobs:
         run: |            
             echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
             echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties
-            # sed '$d' "${GITHUB_WORKSPACE}"/keystore.properties1 > "${GITHUB_WORKSPACE}"/keystore.properties
+            # sed '$d' "${GITHUB_WORKSPACE}"/keystore.properties1 > "${GITHUB_WORKSPACE}"/keystore.properties1
             # echo "storeFile=kidsloopdebug.jks" >> "${GITHUB_WORKSPACE}"/app/keystore.properties
+            echo "any diff?"
+            diff keystore.properties1 keystore.properties
+            echo "checksums?"
+            sum keystore.properties1
+            sum keystore.properties1
             echo "current dir"
             pwd
             echo "root level"           
@@ -63,8 +68,8 @@ jobs:
             echo "app level"
             ls -l app/
           
-      - name: Run Gradle
-        run: ./gradlew build check --continue
+      # - name: Run Gradle
+      #   run: ./gradlew build check --continue
 
       # - if: ${{ (github.event != 'pull_request')  }}
       #   name: Run Android Lint 
@@ -81,17 +86,17 @@ jobs:
       #     lint_xml_file: app/build/reports/lint-results-debug.xml 
       #     reporter: github-pr-review       
 
-      - if: always()
-        #if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
-        name: Create Debug APK
-        run: ./gradlew -Pci --console=plain :app:assembleDebug
+      # - if: always()
+      #   #if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
+      #   name: Create Debug APK
+      #   run: ./gradlew -Pci --console=plain :app:assembleDebug
 
-      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
-        name: Upload Debug APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: app
-          path: app/build/outputs/apk/debug/app-debug.apk
+      # - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
+      #   name: Upload Debug APK
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: app
+      #     path: app/build/outputs/apk/debug/app-debug.apk
 
       # - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
       #   name: Create Release APK
