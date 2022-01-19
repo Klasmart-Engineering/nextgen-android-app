@@ -53,7 +53,7 @@ jobs:
             SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
         run: |            
             echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
-            echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties
+            echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties1
             # sed '$d' "${GITHUB_WORKSPACE}"/keystore.properties1 > "${GITHUB_WORKSPACE}"/keystore.properties1
             # echo "storeFile=kidsloopdebug.jks" >> "${GITHUB_WORKSPACE}"/app/keystore.properties
             echo "any diff?"
