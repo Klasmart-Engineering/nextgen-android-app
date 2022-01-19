@@ -47,19 +47,19 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
 
-      - name: Decode Keystore
-        env:
-            ENCODED_KEYSTORE: ${{ secrets.DEBUG_PROPERTIES  }}
-            SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
-        run: |            
-            echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/app/kidsloopdebug.jks
-            echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties1
-            sed '$d' "${GITHUB_WORKSPACE}"/keystore.properties1 > "${GITHUB_WORKSPACE}"/keystore.properties
-            echo "storeFile=kidsloopdebug.jks" >> "${GITHUB_WORKSPACE}"/app/keystore.properties
-            echo "root level"           
-            ls -l 
-            echo "app level"
-            ls -l app/
+      # - name: Decode Keystore
+      #   env:
+      #       ENCODED_KEYSTORE: ${{ secrets.DEBUG_PROPERTIES  }}
+      #       SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
+      #   run: |            
+      #       echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/app/kidsloopdebug.jks
+      #       echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties1
+      #       sed '$d' "${GITHUB_WORKSPACE}"/keystore.properties1 > "${GITHUB_WORKSPACE}"/keystore.properties
+      #       echo "storeFile=kidsloopdebug.jks" >> "${GITHUB_WORKSPACE}"/app/keystore.properties
+      #       echo "root level"           
+      #       ls -l 
+      #       echo "app level"
+      #       ls -l app/
           
       - name: Run Gradle
         run: ./gradlew build check --continue
@@ -79,10 +79,10 @@ jobs:
       #     lint_xml_file: app/build/reports/lint-results-debug.xml 
       #     reporter: github-pr-review       
 
-      # - if: always()
-      #   #if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
-      #   name: Create Debug APK
-      #   run: ./gradlew -Pci --console=plain :app:assembleDebug
+      - if: always()
+        #if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
+        name: Create Debug APK
+        run: ./gradlew -Pci --console=plain :app:assembleDebug
 
       # - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
       #   name: Upload Debug APK
