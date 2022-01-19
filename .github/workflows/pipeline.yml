@@ -66,11 +66,11 @@ jobs:
             echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties1
             sed '$d' "${GITHUB_WORKSPACE}"/keystore.properties1 > "${GITHUB_WORKSPACE}"/keystore.properties
             echo "storeFile=kidsloopdebug.jks" >> "${GITHUB_WORKSPACE}"/keystore.properties
-            cat "${GITHUB_WORKSPACE}"/keystore.properties
+            echo "$(keystore.properties)"
             ls -l 
           
-      - name: Run Gradle
-        run: ./gradlew build check --continue
+      # - name: Run Gradle
+      #   run: ./gradlew build check --continue
 
       # - if: ${{ (github.event != 'pull_request')  }}
       #   name: Run Android Lint 
