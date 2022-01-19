@@ -48,9 +48,9 @@ jobs:
           java-version: '11'
 
       - name: Decode Keystore
-        # env:
-        #     ENCODED_KEYSTORE: ${{ secrets.DEBUG_PROPERTIES  }}
-        #     SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
+        env:
+            ENCODED_KEYSTORE: ${{ secrets.DEBUG_PROPERTIES  }}
+            SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
         run: |            
             echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
             # echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties1
