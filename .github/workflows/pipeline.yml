@@ -53,7 +53,7 @@ jobs:
             SIGNING_PROPERTIES: ${{ secrets.DEBUG_PROPERTIES }}
         run: |            
             echo $ENCODED_STRING | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
-            echo $SIGNING_PROPERTIES > ${GITHUB_WORKSPACE}"/keystore.properties
+            echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties
             pwd
             ls -l 
           
