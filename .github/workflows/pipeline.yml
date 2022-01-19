@@ -55,7 +55,11 @@ jobs:
             echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
             echo $SIGNING_PROPERTIES > "${GITHUB_WORKSPACE}"/keystore.properties1
             # sed '$d' "${GITHUB_WORKSPACE}"/keystore.properties1 > "${GITHUB_WORKSPACE}"/keystore.properties1
-            # echo "storeFile=kidsloopdebug.jks" >> "${GITHUB_WORKSPACE}"/app/keystore.properties               
+            # echo "storeFile=kidsloopdebug.jks" >> "${GITHUB_WORKSPACE}"/app/keystore.properties 
+            echo "lines"
+            wc -l keystore.properties
+            echo "lines" 
+            wc -l keystore.properties1              
             echo "current dir"
             pwd
             echo "root level"           
