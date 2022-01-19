@@ -57,10 +57,7 @@ jobs:
             # sed '$d' "${GITHUB_WORKSPACE}"/keystore.properties1 > "${GITHUB_WORKSPACE}"/keystore.properties1
             # echo "storeFile=kidsloopdebug.jks" >> "${GITHUB_WORKSPACE}"/app/keystore.properties
             echo "any diff?"
-            diff keystore.properties1 keystore.properties
-            echo "checksums?"
-            sum keystore.properties1
-            sum keystore.properties
+            diff keystore.properties1 keystore.properties           
             echo "current dir"
             pwd
             echo "root level"           
