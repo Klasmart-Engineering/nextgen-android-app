@@ -69,7 +69,7 @@ jobs:
             echo "root level"           
             ls -l 
             echo "app level"
-            ls -l 
+            ls -l app/
           
       # - name: Run Gradle
       #   run: ./gradlew build check --continue
