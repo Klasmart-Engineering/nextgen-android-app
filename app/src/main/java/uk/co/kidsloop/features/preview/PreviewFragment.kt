@@ -73,6 +73,8 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                         getString(R.string.permission_rationale_dialog_title),
                         getString(R.string.permission_rationale_dialog_message)
                     )
+                    handleNoPermissionViews()
+                    handleToggles()
                 } else
                     requestPermissionsLauncher.launch(KidsloopPermissions.getPreviewPermissions()) // Asking for @Permissions directly
             }
@@ -80,7 +82,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 requestPermissionsLauncher.launch(KidsloopPermissions.getPreviewPermissions()) // Asking for @Permissions directly
             }
         }
-
+        
         setControls()
         observe()
     }
@@ -129,7 +131,12 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             val isCameraTurnedOn = binding.cameraBtn.isChecked.not()
             val isMicrophoneTurnedOn = binding.microphoneBtn.isChecked.not()
             Navigation.findNavController(requireView())
-                .navigate(PreviewFragmentDirections.previewToLiveclass(isCameraTurnedOn, isMicrophoneTurnedOn))
+                .navigate(
+                    PreviewFragmentDirections.previewToLiveclass(
+                        isCameraTurnedOn,
+                        isMicrophoneTurnedOn
+                    )
+                )
         }
     }
 
@@ -160,13 +167,15 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     private fun handleToggles() {
         // In one of the permissions is not enabled, do not enable any toggle
         if (!viewModel.isMicGranted || !viewModel.isCameraGranted) {
-            binding.cameraBtn.isEnabled = false
-            binding.progressBar.isVisible = false
             binding.microphoneBtn.isEnabled = false
+            binding.progressBar.isVisible = false
+            binding.cameraBtn.isEnabled = false
+            binding.joinBtn.isEnabled = false
         } else {
+            binding.microphoneBtn.isEnabled = viewModel.isMicGranted
             binding.progressBar.isVisible = viewModel.isMicGranted
             binding.cameraBtn.isEnabled = viewModel.isCameraGranted
-            binding.microphoneBtn.isEnabled = viewModel.isMicGranted
+            binding.joinBtn.isEnabled = true
         }
     }
 
