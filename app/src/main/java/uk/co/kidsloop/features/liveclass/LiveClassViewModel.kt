@@ -81,4 +81,8 @@ class LiveClassViewModel @Inject constructor(
             })
         }
     }
+
+    fun raiseHand() {
+
+    }
 }

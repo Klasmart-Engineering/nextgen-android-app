@@ -43,7 +43,15 @@
             android:layout_marginBottom="@dimen/space_20"
             android:background="@drawable/ic_close_selector"
             android:textOff=""
-            android:textOn=""/>
+            android:textOn="" />
+
+        <ToggleButton
+            android:id="@+id/toggle_raise_hand_btn"
+            android:layout_width="@dimen/space_80"
+            android:layout_height="@dimen/space_80"
+            android:background="@drawable/ic_placeholder_raise_hand"
+            android:textOff=""
+            android:textOn="" />
     </LinearLayout>
 
 </RelativeLayout>

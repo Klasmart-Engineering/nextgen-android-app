@@ -45,7 +45,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     private var isCameraTurnedOn: Boolean = true
     private var isMicrophoneTurnedOn: Boolean = true
 
-    private val viewModel: LiveClassViewModel by viewModels<LiveClassViewModel>()
+    private val viewModel by viewModels<LiveClassViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,8 +63,30 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         layoutManager = LayoutManager(binding.videoContainer)
         startLocalMedia()
 
-        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
-        {
+        setControls()
+        observe()
+    }
+
+    private fun setControls() {
+        binding.toggleAudioBtn.setOnClickListener {
+            viewModel.toggleLocalAudio()
+        }
+
+        binding.toggleVideoBtn.setOnClickListener {
+            viewModel.toggleLocalVideo()
+        }
+
+        binding.toggleCloseBtn.setOnClickListener {
+            viewModel.leaveLiveClass()
+        }
+
+        binding.toggleRaiseHandBtn.setOnClickListener {
+            viewModel.raiseHand()
+        }
+    }
+
+    private fun observe() {
+        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, {
             when (it) {
                 is LiveClassViewModel.LiveClassState.Loading -> showLoading()
                 is LiveClassViewModel.LiveClassState.RegistrationSuccessful -> onClientRegistered(
@@ -77,17 +99,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
                 is LiveClassViewModel.LiveClassState.UnregisterFailed -> stopLocalMedia()
             }
         })
-
-        binding.toggleAudioBtn.setOnClickListener {
-            viewModel.toggleLocalAudio()
-        }
-        binding.toggleVideoBtn.setOnClickListener {
-            viewModel.toggleLocalVideo()
-        }
-
-        binding.toggleCloseBtn.setOnClickListener {
-            viewModel.leaveLiveClass()
-        }
     }
 
     private fun openSfuDownstreamConnection(
