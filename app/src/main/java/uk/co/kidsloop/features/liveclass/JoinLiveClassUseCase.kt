@@ -21,6 +21,7 @@ class JoinLiveClassUseCase @Inject constructor(private val liveClassManager: Liv
         val client = Client(Config.gatewayUrl, Config.applicationId, null, null, null, arrayOf(STUDENT_ROLE))
         val token = Token.generateClientRegisterToken(
             Config.applicationId, client.userId, client.deviceId, client.id,
+            client.roles,
             arrayOf(ChannelClaim(Config.channelId)), Config.sharedSecret
         )
         liveClassManager.setToken(token)
