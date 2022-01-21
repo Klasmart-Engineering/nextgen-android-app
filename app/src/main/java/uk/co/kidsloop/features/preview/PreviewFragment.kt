@@ -42,6 +42,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.cameraPreviewContainer.clipToOutline = true
         // 1. Check if both are granted
         // 2. Check if CAMERA is not granted, in this case show rationale if you should
         // 3. Check if RECORD_AUDIO is not granted, in this case show rationale if you should
