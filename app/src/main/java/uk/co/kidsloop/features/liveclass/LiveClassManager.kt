@@ -88,19 +88,8 @@ class LiveClassManager @Inject constructor() {
         // Receive data on your channel
         dataChannel?.setOnReceive {
             IAction1<DataChannelReceiveArgs> { dataChannelReceiveArgs ->
-                when (dataChannelReceiveArgs.dataString) {
-                    null -> {}
-                    else -> {
-                        parseReceivedDataString(dataChannelReceiveArgs.dataString)
-                    }
-                }
-
-                when (dataChannelReceiveArgs.dataBytes) {
-                    null -> {}
-                    else -> {
-                        parseReceivedDataBytes(dataChannelReceiveArgs.dataBytes)
-                    }
-                }
+                parseReceivedDataString(dataChannelReceiveArgs.dataString)
+                parseReceivedDataBytes(dataChannelReceiveArgs.dataBytes)
             }
         }
     }
