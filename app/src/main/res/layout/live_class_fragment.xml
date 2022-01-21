@@ -16,7 +16,7 @@
         app:layout_constraintDimensionRatio="H,4:3"/>
 
     <FrameLayout
-        android:id="@+id/first_remote_video_feed"
+        android:id="@+id/first_student_video_feed"
         android:layout_width="@dimen/space_80"
         android:layout_height="@dimen/space_80"
         app:layout_constraintTop_toBottomOf="@+id/local_video_feed"
@@ -24,22 +24,23 @@
         app:layout_constraintDimensionRatio="4:3"/>
 
     <FrameLayout
-        android:id="@+id/second_remote_video_feed"
+        android:id="@+id/second_student_video_feed"
         android:layout_width="@dimen/space_80"
         android:layout_height="@dimen/space_80"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/first_remote_video_feed"
+        app:layout_constraintTop_toBottomOf="@+id/first_student_video_feed"
         app:layout_constraintDimensionRatio="H,4:3"/>
 
     <FrameLayout
-        android:id="@+id/third_remote_video_feed"
+        android:id="@+id/third_student_video_feed"
         android:layout_width="@dimen/space_80"
         android:layout_height="@dimen/space_80"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/second_remote_video_feed"
+        app:layout_constraintTop_toBottomOf="@+id/second_student_video_feed"
         app:layout_constraintDimensionRatio="H,4:3"/>
     
     <FrameLayout
+        android:id="@+id/teacher_video_feed"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
