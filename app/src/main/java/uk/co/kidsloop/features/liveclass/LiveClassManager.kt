@@ -58,14 +58,13 @@ class LiveClassManager @Inject constructor() {
 
     fun setUpstreamConnection(upstreamConnection: SfuUpstreamConnection) {
         this.upstreamConnection = upstreamConnection
-        setDataChannel()
     }
 
     fun getUpstreamConnection(): SfuUpstreamConnection? {
         return upstreamConnection
     }
 
-    private fun setDataChannel() {
+    fun setDataChannel() {
         // TODO @Paul see what you do with this label
         dataChannel = DataChannel("testDataChannel")
         dataStream = DataStream(dataChannel)
