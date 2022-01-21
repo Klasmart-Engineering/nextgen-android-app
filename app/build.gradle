@@ -113,8 +113,9 @@ dependencies {
 
     // OkHttp and Logging Interceptor
     // https://github.com/square/okhttp
-    implementation "com.squareup.okhttp3:logging-interceptor:$ok_http_ersion"
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.2'
+    implementation "com.squareup.okhttp3:okhttp:$ok_http_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$ok_http_version"
+
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
