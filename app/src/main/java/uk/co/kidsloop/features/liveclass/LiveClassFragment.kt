@@ -122,12 +122,14 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
             binding.teacherVideoFeed.addView(remoteMedia.view)
         } else {
             val numberOfDownstreamConnection = liveClassManager.getNumberOfActiveDownStreamConnections()
-            if (numberOfDownstreamConnection == 0) {
-                binding.firstStudentVideoFeed.addView(remoteMedia.view)
-            } else if (numberOfDownstreamConnection == 1) {
-                binding.secondStudentVideoFeed.addView(remoteMedia.view)
-            } else if (numberOfDownstreamConnection == 2) {
-                binding.thirdStudentVideoFeed.addView(remoteMedia.view)
+            requireActivity().runOnUiThread {
+                if (numberOfDownstreamConnection == 0) {
+                    binding.firstStudentVideoFeed.addView(remoteMedia.view)
+                } else if (numberOfDownstreamConnection == 1) {
+                    binding.secondStudentVideoFeed.addView(remoteMedia.view)
+                } else if (numberOfDownstreamConnection == 2) {
+                    binding.thirdStudentVideoFeed.addView(remoteMedia.view)
+                }
             }
         }
 
