@@ -113,7 +113,6 @@ dependencies {
 
     // OkHttp and Logging Interceptor
     // https://github.com/square/okhttp
-    implementation "com.squareup.okhttp3:okhttp:$ok_http_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$ok_http_version"
 
 
