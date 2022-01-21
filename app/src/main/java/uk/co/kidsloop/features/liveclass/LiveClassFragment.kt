@@ -119,7 +119,9 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         )
         // Adding remote view to UI.
         if (remoteConnectionInfo.clientRoles[0] == "teacher") {
-            binding.teacherVideoFeed.addView(remoteMedia.view)
+            requireActivity().runOnUiThread{
+                binding.teacherVideoFeed.addView(remoteMedia.view)
+            }
         } else {
             val numberOfDownstreamConnection = liveClassManager.getNumberOfActiveDownStreamConnections()
             requireActivity().runOnUiThread {
