@@ -174,7 +174,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         localMedia?.start()?.then({
                                       requireActivity().runOnUiThread {
                                           binding.localVideoFeed.addView(localMedia?.view)
-                                          //viewModel.joinLiveClass()
+                                          viewModel.joinLiveClass()
                                       }
                                   }, { exception -> })
     }
