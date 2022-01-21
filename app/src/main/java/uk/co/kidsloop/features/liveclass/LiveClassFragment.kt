@@ -16,7 +16,7 @@ import fm.liveswitch.IAction1
 import fm.liveswitch.ManagedConnection
 import fm.liveswitch.android.LayoutManager
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.BaseFragment
+import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.VideoStream
