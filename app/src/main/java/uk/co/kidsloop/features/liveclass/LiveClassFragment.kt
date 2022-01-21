@@ -14,7 +14,6 @@ import fm.liveswitch.ConnectionInfo
 import fm.liveswitch.ConnectionState
 import fm.liveswitch.IAction1
 import fm.liveswitch.ManagedConnection
-import fm.liveswitch.android.LayoutManager
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.BaseFragment
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
@@ -30,7 +29,6 @@ import javax.inject.Inject
 class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
     companion object {
-
         const val IS_CAMERA_TURNED_ON = "isCameraTurnedOn"
         const val IS_MICROPHONE_TURNED_ON = "isMicrophoneTurnedOn"
     }
@@ -39,7 +37,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     lateinit var appContext: Context
 
     private val binding by viewBinding(LiveClassFragmentBinding::bind)
-    private var layoutManager: LayoutManager? = null
     private var localMedia: LocalMedia<View>? = null
 
     private var isCameraTurnedOn: Boolean = true
@@ -56,11 +53,10 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.toggleVideoBtn.isChecked = isCameraTurnedOn.not()
-        binding.toggleAudioBtn.isChecked = isMicrophoneTurnedOn.not()
+//        binding.toggleVideoBtn.isChecked = isCameraTurnedOn.not()
+//        binding.toggleAudioBtn.isChecked = isMicrophoneTurnedOn.not()
 
         localMedia = CameraLocalMedia(appContext, false, false, AecContext())
-        layoutManager = LayoutManager(binding.videoContainer)
         startLocalMedia()
 
         viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
@@ -78,16 +74,16 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
             }
         })
 
-        binding.toggleAudioBtn.setOnClickListener {
-            viewModel.toggleLocalAudio()
-        }
-        binding.toggleVideoBtn.setOnClickListener {
-            viewModel.toggleLocalVideo()
-        }
-
-        binding.toggleCloseBtn.setOnClickListener {
-            viewModel.leaveLiveClass()
-        }
+//        binding.toggleAudioBtn.setOnClickListener {
+//            viewModel.toggleLocalAudio()
+//        }
+//        binding.toggleVideoBtn.setOnClickListener {
+//            viewModel.toggleLocalVideo()
+//        }
+//
+//        binding.toggleCloseBtn.setOnClickListener {
+//            viewModel.leaveLiveClass()
+//        }
     }
 
     private fun openSfuDownstreamConnection(
@@ -103,7 +99,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
             aecContext = AecContext()
         )
         // Adding remote view to UI.
-        layoutManager?.addRemoteView(remoteMedia.id, remoteMedia.view)
+        //layoutManager?.addRemoteView(remoteMedia.id, remoteMedia.view)
 
         // Create audio and video streams from remote media.
         val audioStream: AudioStream? =
@@ -121,7 +117,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
             if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
 
                 // Removing remote view from UI.
-                layoutManager?.removeRemoteView(remoteMedia.id)
+                //layoutManager?.removeRemoteView(remoteMedia.id)
                 remoteMedia.destroy()
                 //liveClassManager.removeDownStreamConnection(remoteMedia.id)
             } else if (conn.state == ConnectionState.Failed) {
@@ -166,9 +162,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
     private fun stopLocalMedia() {
         localMedia?.stop()?.then(IAction1 { result ->
-            layoutManager?.removeRemoteViews()
-            layoutManager?.unsetLocalView()
-            layoutManager = null
 
             localMedia?.destroy()
             localMedia = null
@@ -180,8 +173,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     private fun startLocalMedia() {
         localMedia?.start()?.then({
                                       requireActivity().runOnUiThread {
-                                          layoutManager?.localView = localMedia?.view
-                                          viewModel.joinLiveClass()
+                                          binding.localVideoFeed.addView(localMedia?.view)
+                                          //viewModel.joinLiveClass()
                                       }
                                   }, { exception -> })
     }

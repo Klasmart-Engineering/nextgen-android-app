@@ -1,49 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    
+    <FrameLayout
+        android:id="@+id/local_video_feed"
+        android:layout_width="@dimen/space_80"
+        android:layout_height="@dimen/space_80"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/first_remote_video_feed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_chainStyle="spread"
+        android:background="@color/teal_200"
+        app:layout_constraintDimensionRatio="H,4:3"/>
 
-    <RelativeLayout
-        android:id="@+id/video_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <FrameLayout
+        android:id="@+id/first_remote_video_feed"
+        android:layout_width="@dimen/space_80"
+        android:layout_height="@dimen/space_80"
+        app:layout_constraintTop_toBottomOf="@+id/local_video_feed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="4:3"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true">
+    <FrameLayout
+        android:id="@+id/second_remote_video_feed"
+        android:layout_width="@dimen/space_80"
+        android:layout_height="@dimen/space_80"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/first_remote_video_feed"
+        app:layout_constraintDimensionRatio="H,4:3"/>
 
-        <ToggleButton
-            android:id="@+id/toggle_audio_btn"
-            android:layout_width="@dimen/space_80"
-            android:layout_height="@dimen/space_80"
-            android:layout_marginEnd="@dimen/space_20"
-            android:layout_marginBottom="@dimen/space_20"
-            android:background="@drawable/ic_mic_selector"
-            android:textOff=""
-            android:textOn="" />
+    <FrameLayout
+        android:id="@+id/third_remote_video_feed"
+        android:layout_width="@dimen/space_80"
+        android:layout_height="@dimen/space_80"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/second_remote_video_feed"
+        app:layout_constraintDimensionRatio="H,4:3"/>
+    
+    <FrameLayout
+        android:layout_width=""
+        android:layout_height=""
 
-        <ToggleButton
-            android:id="@+id/toggle_video_btn"
-            android:layout_width="@dimen/space_80"
-            android:layout_height="@dimen/space_80"
-            android:layout_marginStart="@dimen/space_20"
-            android:layout_marginBottom="@dimen/space_20"
-            android:background="@drawable/ic_camera_selector"
-            android:textOff=""
-            android:textOn="" />
-
-        <ToggleButton
-            android:id="@+id/toggle_close_btn"
-            android:layout_width="@dimen/space_80"
-            android:layout_height="@dimen/space_80"
-            android:layout_marginStart="@dimen/space_40"
-            android:layout_marginBottom="@dimen/space_20"
-            android:background="@drawable/ic_close_selector"
-            android:textOff=""
-            android:textOn=""/>
-    </LinearLayout>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
