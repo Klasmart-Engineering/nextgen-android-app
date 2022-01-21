@@ -20,6 +20,7 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.KidsloopActivity
+import uk.co.kidsloop.app.features.login.LoginFragmentDirections
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.app.utils.*
 import uk.co.kidsloop.app.utils.permissions.isPermissionGranted
@@ -107,6 +108,11 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         binding.cameraBtn.setOnClickListener {
             binding.noCameraTextview.isVisible = binding.cameraBtn.isChecked
             handleCameraFeed()
+        }
+
+        binding.backButton.setOnClickListener{
+            Navigation.findNavController(requireView())
+                .navigate(PreviewFragmentDirections.previewToLogin())
         }
 
         binding.microphoneBtn.setOnClickListener {
