@@ -3,9 +3,7 @@ package uk.co.kidsloop.features.liveclass
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -55,24 +53,12 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         val arguments = requireArguments()
         isCameraTurnedOn = arguments.getBoolean(IS_CAMERA_TURNED_ON)
         isMicrophoneTurnedOn = arguments.getBoolean(IS_MICROPHONE_TURNED_ON)
-        Log.d("LiveClassFragment", "onCreate")
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Log.d("LiveClassFragment", "onCreateView")
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d("LiveClassFragment", "onDestroyView")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("LiveClassFragment", "onViewCreated")
-        //        binding.toggleVideoBtn.isChecked = isCameraTurnedOn.not()
-        //        binding.toggleAudioBtn.isChecked = isMicrophoneTurnedOn.not()
+        binding.toggleCameraBtn.isChecked = isCameraTurnedOn.not()
+        binding.toggleMicrophoneBtn.isChecked = isMicrophoneTurnedOn.not()
 
         localMedia = CameraLocalMedia(appContext, false, false, AecContext())
         startLocalMedia()
@@ -92,16 +78,23 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
             }
         })
 
-        //        binding.toggleAudioBtn.setOnClickListener {
-        //            viewModel.toggleLocalAudio()
-        //        }
-        //        binding.toggleVideoBtn.setOnClickListener {
-        //            viewModel.toggleLocalVideo()
-        //        }
-        //
-        //        binding.toggleCloseBtn.setOnClickListener {
-        //            viewModel.leaveLiveClass()
-        //        }
+        binding.toggleMicrophoneBtn.setOnClickListener {
+            viewModel.toggleLocalAudio()
+        }
+        binding.toggleCameraBtn.setOnClickListener {
+            viewModel.toggleLocalVideo()
+        }
+
+        binding.exitClassBtn.setOnClickListener {
+            viewModel.leaveLiveClass()
+        }
+
+        binding.exitMenu.setOnClickListener {
+            binding.liveClassOverlay.visibility = View.GONE
+        }
+        binding.moreBtn.setOnClickListener {
+            binding.liveClassOverlay.visibility = View.VISIBLE
+        }
     }
 
     private fun openSfuDownstreamConnection(
@@ -119,7 +112,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         )
         // Adding remote view to UI.
         if (remoteConnectionInfo.clientRoles[0] == "teacher") {
-            requireActivity().runOnUiThread{
+            requireActivity().runOnUiThread {
                 binding.teacherVideoFeed.addView(remoteMedia.view)
             }
         } else {
@@ -181,7 +174,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     }
 
     private fun onClientRegistered(channel: Channel) {
-        Log.d("LiveClassManager", "onClientRegistered")
         openSfuUpstreamConnection()
         // Check for existing remote upstream connections and open a downstream connection for
         // each of them.

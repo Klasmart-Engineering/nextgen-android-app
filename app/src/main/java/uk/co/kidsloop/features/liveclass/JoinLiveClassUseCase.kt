@@ -7,18 +7,14 @@ import fm.liveswitch.ClientState
 import fm.liveswitch.Future
 import fm.liveswitch.IAction1
 import fm.liveswitch.Token
+import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.liveswitch.Config
 import javax.inject.Inject
 
-class JoinLiveClassUseCase @Inject constructor(private val liveClassManager: LiveClassManager) {
-
-    companion object {
-        private const val STUDENT_ROLE = "student"
-        private const val TEACHER_ROLE = "teacher"
-    }
+class JoinLiveClassUseCase @Inject constructor(private val liveClassManager: LiveClassManager, private val sharedPrefsWrapper: SharedPrefsWrapper) {
 
     fun joinAsync(): Future<Array<Channel>> {
-        val client = Client(Config.gatewayUrl, Config.applicationId, null, null, null, arrayOf(STUDENT_ROLE))
+        val client = Client(Config.gatewayUrl, Config.applicationId, null, null, null, arrayOf(sharedPrefsWrapper.getRole()))
         val token = Token.generateClientRegisterToken(
             Config.applicationId, client.userId, client.deviceId, client.id,
             client.roles,
