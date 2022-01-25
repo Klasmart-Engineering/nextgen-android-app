@@ -10,7 +10,7 @@
     <string name="mic_permission_denied">You have denied access to the microphone.</string>
     <string name="camera_is_turned_off">You have turned off your camera.</string>
     <string name="waiting_teacher">Waiting teacher to join</string>
-    <string name="join">Join</string>
+    <string name="join">Join Live Class</string>
     <string name="setup_your_camera_and_microphone">Setup your camera and microphone</string>
     <string name="math_live_class">Math Live Class</string>
 
@@ -24,4 +24,5 @@
     <string name="settings_dialog_positive_button_text">Go to settings</string>
     <string name="settings_dialog_negative_button_text">No thanks</string>
     <string name="set_your_mic_and_video">Set your mic and video</string>
+    <string name="join_live_class">Join Live Class</string>
 </resources>
