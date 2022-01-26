@@ -56,3 +56,6 @@ fun View.setVisible(visible: Boolean) {
         View.INVISIBLE
     }
 }
+
+// String functions
+fun emptyString(): String = ""

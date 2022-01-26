@@ -45,6 +45,7 @@ class LiveClassViewModel @Inject constructor(
         upstreamConnection?.let {
             liveClassManager.setUpstreamConnection(it)
         }
+        liveClassManager.setDataChannel()
         val config = upstreamConnection?.config
         config?.localVideoMuted = !isVideoTurnedOn
         config?.localAudioMuted = !isAudioTurnedOn
