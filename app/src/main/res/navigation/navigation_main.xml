@@ -23,12 +23,12 @@
 
         <fragment
             android:id="@+id/login_fragment"
-            android:name="uk.co.kidsloop.app.features.login.LoginFragment"
-            tools:layout="@layout/login_fragment" />
+            android:name="uk.co.kidsloop.features.login.LoginFragment"
+            tools:layout="@layout/fragment_login" />
 
         <fragment
             android:id="@+id/splash_fragment"
-            android:name="uk.co.kidsloop.app.features.splash.SplashFragment" />
+            android:name="uk.co.kidsloop.features.splash.SplashFragment" />
     </navigation>
     <navigation
         android:id="@+id/live_class_graph"
@@ -47,7 +47,14 @@
             app:destination="@id/live_class_graph"
             app:launchSingleTop="true"
             app:popUpTo="@id/preview_fragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true">
+            <argument
+                android:name="isCameraTurnedOn"
+                app:argType="boolean" />
+            <argument
+                android:name="isMicrophoneTurnedOn"
+                app:argType="boolean" />
+        </action>
 
         <fragment
             android:id="@+id/preview_fragment"

@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Kidsloop Android</string>
     <string name="Kidsloop">Kidsloop</string>
-    <string name="login">Login</string>
+    <string name="login_as_student">Login as student</string>
+    <string name="login_as_teacher">Login as teacher</string>
+    <string name="allow">Allow</string>
     <string name="live_video_stream">Live Video Stream</string>
     <string name="permissions_denied">You have denied access to both camera and microphone</string>
     <string name="camera_permission_denied">You have denied access to camera feed</string>
@@ -11,4 +13,14 @@
     <string name="join">Join</string>
     <string name="setup_your_camera_and_microphone">Setup your camera and microphone</string>
     <string name="math_live_class">Math Live Class</string>
+
+    <string name="permission_rationale_dialog_title">Permissions Needed</string>
+    <string name="permission_rationale_dialog_message">We need permissions to camera and microphone in order to use the app.</string>
+    <string name="permission_rationale_dialog_positive_button_text">Allow</string>
+    <string name="permission_rationale_dialog_negative_button_text">No thanks</string>
+
+    <string name="settings_dialog_title">Permission Needed</string>
+    <string name="settings_dialog_message">Give permission manually inside the app\'s settings</string>
+    <string name="settings_dialog_positive_button_text">Go to settings</string>
+    <string name="settings_dialog_negative_button_text">No thanks</string>
 </resources>

@@ -6,6 +6,7 @@ import fm.liveswitch.AudioConfig
 import fm.liveswitch.AudioDecoder
 import fm.liveswitch.AudioFormat
 import fm.liveswitch.AudioSink
+import fm.liveswitch.LayoutScale
 import fm.liveswitch.RtcRemoteMedia
 import fm.liveswitch.VideoDecoder
 import fm.liveswitch.VideoFormat
@@ -17,15 +18,19 @@ import fm.liveswitch.android.OpenGLSink
 import fm.liveswitch.opus.Decoder
 import fm.liveswitch.yuv.ImageConverter
 
-class SFURemoteMedia(private val context: Context, disableAudio:Boolean, disableVideo:Boolean, aecContext: AecContext)
-    : RtcRemoteMedia<FrameLayout>(disableAudio, disableVideo, aecContext) {
+class SFURemoteMedia(
+    private val context: Context,
+    disableAudio: Boolean,
+    disableVideo: Boolean,
+    aecContext: AecContext
+) : RtcRemoteMedia<FrameLayout>(disableAudio, disableVideo, aecContext) {
 
     init {
         super.initialize()
     }
 
     override fun createAudioRecorder(audioFormat: AudioFormat): AudioSink {
-        return fm.liveswitch.matroska.AudioSink(id + "-remote-audio-" + audioFormat.name.toLowerCase() + ".mkv")
+        return fm.liveswitch.matroska.AudioSink(id + "-remote-audio-" + audioFormat.name.lowercase() + ".mkv")
     }
 
     override fun createAudioSink(audioConfig: AudioConfig?): AudioSink {
@@ -42,7 +47,7 @@ class SFURemoteMedia(private val context: Context, disableAudio:Boolean, disable
     }
 
     override fun createViewSink(): ViewSink<FrameLayout?> {
-        return OpenGLSink(context)
+        return OpenGLSink(context, LayoutScale.Cover)
     }
 
     override fun createVp8Decoder(): VideoDecoder {

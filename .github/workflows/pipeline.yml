@@ -9,7 +9,7 @@ on:
       - bugfix/*      
   pull_request:
     branches:
-      - '*'
+      - '*'  
 
 jobs:
   validation:
@@ -32,7 +32,7 @@ jobs:
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
-
+      
       - name: Cache Gradle Files
         uses: actions/cache@v2
         with:
@@ -46,7 +46,15 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
-          
+
+      - name: Decode Keystore
+        env:
+            ENCODED_KEYSTORE: ${{ secrets.DEBUG_PROPERTIES  }}
+            SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
+        run: |            
+            echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
+            echo $SIGNING_PROPERTIES | base64 -di > "${GITHUB_WORKSPACE}"/keystore.properties
+           
       - name: Run Gradle
         run: ./gradlew build check --continue
 
@@ -90,6 +98,12 @@ jobs:
       - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
         name: Stop Gradle
         run: ./gradlew --stop
+      
+      - if: always() 
+        name: Cleanup Keystore        
+        run: |            
+            rm -rf  "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
+            rm -rf  "${GITHUB_WORKSPACE}"/keystore.properties
 
       - if: ${{ github.ref == 'refs/heads/main' }}
         name: Create Release
