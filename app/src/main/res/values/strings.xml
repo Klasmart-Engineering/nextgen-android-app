@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Kidsloop Android</string>
     <string name="Kidsloop">Kidsloop</string>
-    <string name="login">Login</string>
+    <string name="login_as_student">Login as student</string>
+    <string name="login_as_teacher">Login as teacher</string>
     <string name="allow">Allow</string>
     <string name="live_video_stream">Live Video Stream</string>
     <string name="permissions_denied">You have denied access to both camera and microphone</string>

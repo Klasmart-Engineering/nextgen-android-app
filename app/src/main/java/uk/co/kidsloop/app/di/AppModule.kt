@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import java.util.concurrent.TimeUnit
 
 @Module
@@ -26,7 +27,12 @@ object AppModule {
     fun providesResources(app: Application): Resources = app.resources
 
     @Provides
-    fun providesSharedPref(app: Application): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(app)
+    fun providesSharedPreferences(app: Application): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(app)
+
+    @Provides
+    fun providesSharedPrefsWrapper(sharedPreferences: SharedPreferences): SharedPrefsWrapper {
+        return SharedPrefsWrapper(sharedPreferences)
+    }
 
     @Provides
     fun providesMoshiConverterFactory(): MoshiConverterFactory = MoshiConverterFactory.create()
