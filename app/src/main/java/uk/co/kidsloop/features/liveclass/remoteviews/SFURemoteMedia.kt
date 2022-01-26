@@ -6,6 +6,7 @@ import fm.liveswitch.AudioConfig
 import fm.liveswitch.AudioDecoder
 import fm.liveswitch.AudioFormat
 import fm.liveswitch.AudioSink
+import fm.liveswitch.LayoutScale
 import fm.liveswitch.RtcRemoteMedia
 import fm.liveswitch.VideoDecoder
 import fm.liveswitch.VideoFormat
@@ -46,7 +47,7 @@ class SFURemoteMedia(
     }
 
     override fun createViewSink(): ViewSink<FrameLayout?> {
-        return OpenGLSink(context)
+        return OpenGLSink(context, LayoutScale.Cover)
     }
 
     override fun createVp8Decoder(): VideoDecoder {
