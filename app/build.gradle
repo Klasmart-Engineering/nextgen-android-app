@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'androidx.navigation.safeargs.kotlin'
-    id 'dagger.hilt.android.plugin'
+    id 'dagger.hilt.android.plugin'    
     // id "io.gitlab.arturbosch.detekt" version "1.16.0"
     id "org.jlleitschuh.gradle.ktlint" version "10.2.1"
 }
@@ -13,6 +13,10 @@ repositories {
   // Required to download KtLint
   mavenCentral()
 }
+
+// configurations {
+//     ktlint
+// }
 
 // task ktlint(type: JavaExec, group: "kotlin verification") {
 //     description = "Check Kotlin code style."
@@ -114,6 +118,11 @@ dependencies {
 
     implementation "com.google.dagger:dagger:$hilt_version"
     kapt "com.google.dagger:dagger-compiler:$hilt_version"
+    ktlint("com.pinterest:ktlint:0.43.2") {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
+        }
+    }
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"

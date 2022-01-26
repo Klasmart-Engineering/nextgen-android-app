@@ -54,24 +54,31 @@ jobs:
         run: |            
             echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
             echo $SIGNING_PROPERTIES | base64 -di > "${GITHUB_WORKSPACE}"/keystore.properties
+      
+      - name: ktlint
+        uses: ScaCap/action-ktlint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-check 
            
       - name: Run Gradle
         run: ./gradlew build check --continue
+      
+      
+      # - if: ${{ (github.event != 'pull_request')  }}
+      #   name: Run Android Lint 
+      #   uses: dvdandroid/action-android-lint@master        
+      #   with:
+      #     github_token: ${{ secrets.github_token }}
+      #     lint_xml_file: app/build/reports/lint-results-debug.xml   
 
-      - if: ${{ (github.event != 'pull_request')  }}
-        name: Run Android Lint 
-        uses: dvdandroid/action-android-lint@master        
-        with:
-          github_token: ${{ secrets.github_token }}
-          lint_xml_file: app/build/reports/lint-results-debug.xml   
-
-      - if: ${{ (github.event.pull_request)  }}
-        name: Run Android Lint For Pull Requests
-        uses: dvdandroid/action-android-lint@master
-        with:
-          github_token: ${{ secrets.github_token }}
-          lint_xml_file: app/build/reports/lint-results-debug.xml 
-          reporter: github-pr-review       
+      # - if: ${{ (github.event.pull_request)  }}
+      #   name: Run Android Lint For Pull Requests
+      #   uses: dvdandroid/action-android-lint@master
+      #   with:
+      #     github_token: ${{ secrets.github_token }}
+      #     lint_xml_file: app/build/reports/lint-results-debug.xml 
+      #     reporter: github-pr-review       
 
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
         name: Create Debug APK
