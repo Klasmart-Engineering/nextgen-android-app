@@ -27,6 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_more_btn"
+            android:contentDescription="@null"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_raise_hand_btn"
+            android:contentDescription="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -111,6 +113,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="@dimen/space_32"
             android:layout_toEndOf="@+id/toggle_camera_btn"
+            android:contentDescription="@null"
             android:src="@drawable/ic_exit_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -131,6 +134,7 @@
             android:id="@+id/exit_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@null"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_marginBottom="@dimen/space_44"
