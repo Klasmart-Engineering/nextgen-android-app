@@ -46,6 +46,10 @@ class LiveClassManager @Inject constructor() {
         downstreamConnectionsMap[remoteId] = connection
     }
 
+    fun getNumberOfActiveDownStreamConnections(): Int {
+        return downstreamConnectionsMap.size
+    }
+
     fun removeDownStreamConnection(remoteId: String) {
         downstreamConnectionsMap.remove(remoteId)
     }
@@ -58,7 +62,7 @@ class LiveClassManager @Inject constructor() {
         return upstreamConnection
     }
 
-    fun cleanConnection(){
+    fun cleanConnection() {
         client = null
         remoteChannel = null
         upstreamConnection = null

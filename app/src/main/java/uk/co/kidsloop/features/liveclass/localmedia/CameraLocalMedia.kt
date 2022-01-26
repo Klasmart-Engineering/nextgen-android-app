@@ -34,7 +34,6 @@ class CameraLocalMedia(
     }
 
     // Return an Android View for local preview rather than using ViewSink.
-    override fun getView(): View {
-        return viewSink.view
+    override fun getView(): View { return viewSink.view
     }
 }
