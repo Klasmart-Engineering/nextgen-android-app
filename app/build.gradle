@@ -5,33 +5,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'androidx.navigation.safeargs.kotlin'
     id 'dagger.hilt.android.plugin'    
-    // id "io.gitlab.arturbosch.detekt" version "1.16.0"
-    id "org.jlleitschuh.gradle.ktlint" version "10.2.1"
 }
-
-repositories {
-  // Required to download KtLint
-  mavenCentral()
-}
-
-// configurations {
-//     ktlint
-// }
-
-// task ktlint(type: JavaExec, group: "kotlin verification") {
-//     description = "Check Kotlin code style."
-//     classpath = configurations.ktlint
-//     main = "com.pinterest.ktlint.Main"
-//     args "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/ktlint/ktlint.xml"
-//     args "*.kt"
-//     }
-
-// task ktFormat(type: JavaExec, group: "kotlin Formatting") {
-//     description = "Fix Kotlin code style deviations."
-//     classpath = configurations.ktlint
-//     main = "com.pinterest.ktlint.Main"
-//     args "-F", "*.kt"
-// }
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()

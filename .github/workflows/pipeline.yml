@@ -55,11 +55,21 @@ jobs:
             echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
             echo $SIGNING_PROPERTIES | base64 -di > "${GITHUB_WORKSPACE}"/keystore.properties
       
-      - name: ktlint
+      - name: Run ktlint checks
+        if: ${{ (github.event != 'pull_request') }}
         uses: ScaCap/action-ktlint@master
         with:
           github_token: ${{ secrets.github_token }}
-          reporter: github-check 
+          reporter: github-check
+          android: true 
+      
+      - name: Run ktlint checks for PR
+        if: ${{ (github.event.pull_request) }}
+        uses: ScaCap/action-ktlint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review
+          android: true
            
       - name: Run Gradle
         run: ./gradlew build check --continue
