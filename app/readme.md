@@ -1,1 +1,0 @@
-# dummy file to check the CODEOWNERS behavior
