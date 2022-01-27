@@ -83,4 +83,9 @@ class LiveClassViewModel @Inject constructor(
             })
         }
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        liveClassManager.cleanConnection()
+    }
 }

@@ -70,6 +70,7 @@ class LiveClassManager @Inject constructor() {
         remoteChannel = null
         upstreamConnection = null
         token = null
+        liveClassState = LiveClassState.IDLE
     }
 
     fun setState(newState: LiveClassState) {
