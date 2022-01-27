@@ -13,7 +13,7 @@ import fm.liveswitch.ConnectionState
 import fm.liveswitch.IAction1
 import fm.liveswitch.ManagedConnection
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.BaseFragment
+import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.VideoStream
@@ -30,6 +30,7 @@ import javax.inject.Inject
 class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
     companion object {
+
         const val IS_CAMERA_TURNED_ON = "isCameraTurnedOn"
         const val IS_MICROPHONE_TURNED_ON = "isMicrophoneTurnedOn"
     }
@@ -43,23 +44,20 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     private val binding by viewBinding(LiveClassFragmentBinding::bind)
     private var localMedia: LocalMedia<View>? = null
 
-    private var isCameraTurnedOn: Boolean = true
-    private var isMicrophoneTurnedOn: Boolean = true
-
     private val viewModel: LiveClassViewModel by viewModels<LiveClassViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val arguments = requireArguments()
-        isCameraTurnedOn = arguments.getBoolean(IS_CAMERA_TURNED_ON)
-        isMicrophoneTurnedOn = arguments.getBoolean(IS_MICROPHONE_TURNED_ON)
         localMedia = CameraLocalMedia(requireContext(), false, false, AecContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.toggleCameraBtn.isChecked = isCameraTurnedOn.not()
-        binding.toggleMicrophoneBtn.isChecked = isMicrophoneTurnedOn.not()
+        binding.toggleCameraBtn.isChecked = !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
+        binding.toggleMicrophoneBtn.isChecked = !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
+        if (!requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
+            binding.localMediaContainer.showMicMuted()
+        }
         startLocalMedia()
 
         viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
@@ -78,6 +76,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         })
 
         binding.toggleMicrophoneBtn.setOnClickListener {
+            if (binding.toggleMicrophoneBtn.isChecked) {
+                binding.localMediaContainer.showMicMuted()
+            } else {
+                binding.localMediaContainer.showMicTurnedOn()
+            }
             viewModel.toggleLocalAudio()
         }
         binding.toggleCameraBtn.setOnClickListener {
@@ -180,9 +183,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     private fun showLoading() {
     }
 
-    private fun hideLoading() {
-    }
-
     private fun handleFailures() {
     }
 
@@ -200,25 +200,24 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     }
 
     private fun stopLocalMedia() {
-        localMedia?.stop()?.then(IAction1 { result ->
-
+        localMedia?.stop()?.then(IAction1 {
             localMedia?.destroy()
             localMedia = null
             //TODO This is added for testing purpouse and it will be removed later on
-            requireActivity().finish()
+            //requireActivity().finish()
         })
     }
 
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                                          requireActivity().runOnUiThread {
-                                           //   binding.localVideoFeed.addView(localMedia?.view)
+                                          uiThreadPoster.post {
+                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
                                               viewModel.joinLiveClass()
                                           }
                                       }, { exception -> })
         } else {
-           // binding.localVideoFeed.addView(localMedia?.view)
+            binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
     }
 
@@ -234,8 +233,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         val upstreamConnection = viewModel.openSfuUpstreamConnection(
             getAudioStream(localMedia),
             getVideoStream(localMedia),
-            isMicrophoneTurnedOn,
-            isCameraTurnedOn
+            requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true),
+            requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         )
         upstreamConnection?.open()
         liveClassManager.setState(LiveClassState.JOINED)

@@ -23,7 +23,7 @@
 
         <fragment
             android:id="@+id/login_fragment"
-            android:name="uk.co.kidsloop.app.features.login.LoginFragment"
+            android:name="uk.co.kidsloop.features.login.LoginFragment"
             tools:layout="@layout/fragment_login" />
 
         <fragment

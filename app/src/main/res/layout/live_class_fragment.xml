@@ -10,24 +10,40 @@
         android:background="@color/dark_bg_blue"
         android:padding="@dimen/space_15">
 
-        <FrameLayout
-            android:id="@+id/local_video_feed"
-            android:layout_width="@dimen/space_80"
-            android:layout_height="@dimen/space_80"
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/teacher_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="start"
+            app:constraint_referenced_ids="local_media_container,first_student_video_feed,second_student_video_feed,third_student_video_feed" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/student_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="end"
+            app:constraint_referenced_ids="teacher_video_feed" />
+
+        <uk.co.kidsloop.features.liveclass.localmedia.LocalMediaCustomContainer
+            android:id="@+id/local_media_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginEnd="@dimen/space_8"
-            android:background="@color/teal_200"
+            app:cardCornerRadius="@dimen/space_12"
             app:layout_constraintBottom_toTopOf="@+id/first_student_video_feed"
-            app:layout_constraintDimensionRatio="H,4:3"
-            app:layout_constraintEnd_toStartOf="@+id/raise_hand_btn"
+            app:layout_constraintDimensionRatio="W,4:3"
+            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintVertical_chainStyle="spread"/>
 
         <ImageView
             android:id="@+id/more_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_more_btn"
+            android:layout_marginTop="@dimen/space_15"
+            android:layout_marginEnd="@dimen/space_12"
             android:contentDescription="@null"
+            android:src="@drawable/ic_more_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,55 +51,76 @@
             android:id="@+id/raise_hand_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_raise_hand_btn"
+            android:layout_marginEnd="@dimen/space_12"
+            android:layout_marginBottom="@dimen/space_15"
             android:contentDescription="@null"
+            android:src="@drawable/ic_raise_hand_btn"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/second_student_video_feed"
-            android:layout_width="@dimen/space_80"
-            android:layout_height="@dimen/space_80"
-            android:layout_marginEnd="@dimen/space_8"
+            android:id="@+id/first_student_video_feed"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginTop="@dimen/space_8"
-            app:cardCornerRadius="@dimen/space_22"
-            app:layout_constraintDimensionRatio="H,4:3"
-            app:layout_constraintEnd_toStartOf="@+id/raise_hand_btn"
-            app:layout_constraintTop_toBottomOf="@+id/first_student_video_feed" />
+            android:layout_marginEnd="@dimen/space_8"
+            app:cardCornerRadius="@dimen/space_12"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/second_student_video_feed"
+            app:layout_constraintDimensionRatio="W,4:3"
+            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
+            app:layout_constraintTop_toBottomOf="@+id/local_media_container"
+            app:layout_constraintVertical_chainStyle="spread" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/second_student_video_feed"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/space_8"
+            android:layout_marginEnd="@dimen/space_8"
+            app:cardCornerRadius="@dimen/space_12"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/third_student_video_feed"
+            app:layout_constraintDimensionRatio="W,4:3"
+            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
+            app:layout_constraintTop_toBottomOf="@+id/first_student_video_feed"
+            app:layout_constraintVertical_chainStyle="spread" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/third_student_video_feed"
-            android:layout_width="@dimen/space_80"
-            android:layout_height="@dimen/space_80"
-            android:layout_marginEnd="@dimen/space_8"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginTop="@dimen/space_8"
-            app:cardCornerRadius="@dimen/space_22"
-            app:layout_constraintDimensionRatio="H,4:3"
-            app:layout_constraintEnd_toStartOf="@+id/raise_hand_btn"
-            app:layout_constraintTop_toBottomOf="@+id/second_student_video_feed" />
+            android:layout_marginEnd="@dimen/space_8"
+            app:cardCornerRadius="@dimen/space_12"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="W,4:3"
+            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
+            app:layout_constraintTop_toBottomOf="@id/second_student_video_feed"
+            app:layout_constraintVertical_chainStyle="spread" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/teacher_video_feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="@dimen/space_8"
             android:layout_marginTop="@dimen/space_8"
-            app:cardCornerRadius="@dimen/space_22"
-            app:layout_constraintDimensionRatio="16:9"
-            app:layout_constraintEnd_toStartOf="@+id/local_video_feed"
+            android:layout_marginEnd="@dimen/space_8"
+            app:cardCornerRadius="@dimen/space_21"
+            app:layout_constraintDimensionRatio="H,16:9"
+            app:layout_constraintEnd_toStartOf="@id/teacher_barrier"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/first_student_video_feed"
-            android:layout_width="@dimen/space_80"
-            android:layout_height="@dimen/space_80"
-            android:layout_marginEnd="@dimen/space_8"
-            android:layout_marginTop="@dimen/space_8"
-            app:cardCornerRadius="@dimen/space_22"
-            app:layout_constraintDimensionRatio="4:3"
-            app:layout_constraintEnd_toStartOf="@+id/raise_hand_btn"
-            app:layout_constraintTop_toBottomOf="@+id/local_video_feed" />
+            <ImageView
+                android:id="@+id/local_video_teacher_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_local_media_turned_off_teacher" />
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -91,8 +128,8 @@
         android:id="@+id/live_class_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="@color/live_class_overlay">
+        android:background="@color/live_class_overlay"
+        android:visibility="gone">
 
         <ToggleButton
             android:id="@+id/toggle_camera_btn"
@@ -100,46 +137,46 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginEnd="@dimen/space_16"
             android:layout_marginStart="@dimen/space_16"
+            android:layout_marginEnd="@dimen/space_16"
             android:layout_marginBottom="@dimen/space_32"
-            android:button="@drawable/ic_cam_live_class_selector"
             android:background="@null"
+            android:button="@drawable/ic_cam_live_class_selector"
             android:textOff=""
-            android:textOn=""/>
+            android:textOn="" />
 
         <ImageView
             android:id="@+id/exit_class_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="@dimen/space_32"
             android:layout_toEndOf="@+id/toggle_camera_btn"
             android:contentDescription="@null"
-            android:src="@drawable/ic_exit_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:src="@drawable/ic_exit_btn" />
 
         <ToggleButton
             android:id="@+id/toggle_microphone_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/toggle_camera_btn"
             android:layout_marginBottom="@dimen/space_32"
-            android:textOn=""
-            android:textOff=""
+            android:layout_toStartOf="@+id/toggle_camera_btn"
+            android:background="@null"
             android:button="@drawable/ic_mic_live_class_selector"
-            android:background="@null" />
+            android:textOff=""
+            android:textOn="" />
 
         <ImageView
             android:id="@+id/exit_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@null"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="@dimen/space_58"
             android:layout_marginBottom="@dimen/space_44"
-            android:src="@drawable/ic_close_btn"
-            android:layout_marginEnd="@dimen/space_58"/>
+            android:contentDescription="@null"
+            android:src="@drawable/ic_close_btn" />
     </RelativeLayout>
 
 </FrameLayout>

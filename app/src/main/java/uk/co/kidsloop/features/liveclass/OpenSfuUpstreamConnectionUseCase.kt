@@ -1,8 +1,6 @@
 package uk.co.kidsloop.features.liveclass
 
-import fm.liveswitch.AudioStream
-import fm.liveswitch.SfuUpstreamConnection
-import fm.liveswitch.VideoStream
+import fm.liveswitch.*
 import javax.inject.Inject
 
 class OpenSfuUpstreamConnectionUseCase @Inject constructor(private val liveClassManager: LiveClassManager) {
@@ -12,6 +10,8 @@ class OpenSfuUpstreamConnectionUseCase @Inject constructor(private val liveClass
         videoStream: VideoStream?
     ): SfuUpstreamConnection? {
         val channel = liveClassManager.getChannel()
-        return channel?.createSfuUpstreamConnection(audioStream, videoStream)
+        val dataStream = liveClassManager.getDataStream()
+
+        return channel?.createSfuUpstreamConnection(audioStream, videoStream, dataStream)
     }
 }
