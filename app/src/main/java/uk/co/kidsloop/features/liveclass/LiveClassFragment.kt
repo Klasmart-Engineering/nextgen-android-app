@@ -204,7 +204,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
             localMedia?.destroy()
             localMedia = null
             //TODO This is added for testing purpouse and it will be removed later on
-            //requireActivity().finish()
+            requireActivity().finish()
         })
     }
 
