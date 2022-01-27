@@ -10,9 +10,11 @@
     <dimen name="space_8">8dp</dimen>
     <dimen name="space_9">9dp</dimen>
     <dimen name="space_10">10dp</dimen>
+    <dimen name="space_12">12dp</dimen>
     <dimen name="space_15">15dp</dimen>
     <dimen name="space_16">16dp</dimen>
     <dimen name="space_20">20dp</dimen>
+    <dimen name="space_21">21dp</dimen>
     <dimen name="space_22">22dp</dimen>
     <dimen name="space_30">30dp</dimen>
     <dimen name="space_32">32dp</dimen>
