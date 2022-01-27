@@ -116,7 +116,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
                 binding.teacherVideoFeed.addView(remoteMedia.view)
             }
         } else {
-            val numberOfDownstreamConnection = liveClassManager.getNumberOfActiveDownStreamConnections()
+            val numberOfDownstreamConnection =
+                liveClassManager.getNumberOfActiveDownStreamConnections()
             requireActivity().runOnUiThread {
                 if (numberOfDownstreamConnection == 0) {
                     binding.firstStudentVideoFeed.addView(remoteMedia.view)
@@ -187,22 +188,21 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     }
 
     private fun stopLocalMedia() {
-        localMedia?.stop()?.then(IAction1 { result ->
-
+        localMedia?.stop()?.then(IAction1 {
             localMedia?.destroy()
             localMedia = null
             //TODO This is added for testing purpouse and it will be removed later on
-            requireActivity().finish()
+            //requireActivity().finish()
         })
     }
 
     private fun startLocalMedia() {
         localMedia?.start()?.then({
-                                      requireActivity().runOnUiThread {
-                                          binding.localVideoFeed.addView(localMedia?.view)
-                                          viewModel.joinLiveClass()
-                                      }
-                                  }, { exception -> })
+            requireActivity().runOnUiThread {
+                binding.localVideoFeed.addView(localMedia?.view)
+                viewModel.joinLiveClass()
+            }
+        }, { exception -> })
     }
 
     private fun turnOnLocalMedia() {
