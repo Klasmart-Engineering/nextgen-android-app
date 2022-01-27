@@ -298,11 +298,13 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                     sum += (data[i] * data[i]).toDouble() + 50
                     amplitude = sum / read
                 }
-                if (currentAmplitude != amplitude) {
+                if (currentAmplitude <= amplitude - 100 || currentAmplitude >= amplitude + 100) {
                     currentAmplitude = amplitude
                     Handler(Looper.getMainLooper()).postDelayed({
                         animateView(binding.microphoneBtn)
                     }, 100)
+                } else {
+                    currentAmplitude = amplitude
                 }
             } catch (e: IOException) {
                 Log.d(
