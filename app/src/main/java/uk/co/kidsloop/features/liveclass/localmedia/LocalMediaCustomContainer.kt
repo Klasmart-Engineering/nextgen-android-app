@@ -1,0 +1,32 @@
+package uk.co.kidsloop.features.liveclass.localmedia
+
+import android.content.Context
+import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.view.View
+import androidx.cardview.widget.CardView
+import uk.co.kidsloop.R
+import uk.co.kidsloop.databinding.LocalMediaContainerBinding
+
+class LocalMediaCustomContainer @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    CardView(context, attrs, defStyleAttr) {
+
+    private val binding = LocalMediaContainerBinding.inflate(LayoutInflater.from(context), this)
+
+
+    fun addLocalMediaView(localMediaView:View?){
+        addView(localMediaView, 1)
+    }
+
+    fun removeLocalMediaView(){
+        removeViewAt(1)
+    }
+
+    fun showMicMuted(){
+        binding.micStatusImageView.setImageResource(R.drawable.ic_mic_muted)
+    }
+
+    fun showMicTurnedOn(){
+        binding.micStatusImageView.setImageResource(R.drawable.ic_mic_on)
+    }
+}

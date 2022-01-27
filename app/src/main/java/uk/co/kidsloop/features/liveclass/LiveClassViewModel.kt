@@ -9,6 +9,7 @@ import fm.liveswitch.Channel
 import fm.liveswitch.IAction1
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
+import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,25 +19,25 @@ class LiveClassViewModel @Inject constructor(
     private val liveClassManager: LiveClassManager
 ) : ViewModel() {
 
-    private var _classroomStateLiveData = MutableLiveData<LiveClassState>()
-    val classroomStateLiveData: LiveData<LiveClassState> get() = _classroomStateLiveData
+    private var _classroomStateLiveData = MutableLiveData<LiveClassUiState>()
+    val classroomStateLiveData: LiveData<LiveClassUiState> get() = _classroomStateLiveData
 
-    sealed class LiveClassState {
-        object Loading : LiveClassState()
-        object LocalMediaTurnedOn : LiveClassState()
-        object LocalMediaTurnedOff : LiveClassState()
-        data class RegistrationSuccessful(val channel: Channel) : LiveClassState()
-        data class FailedToJoiningLiveClass(val message: String?) : LiveClassState()
-        object UnregisterSuccessful : LiveClassState()
-        object UnregisterFailed : LiveClassState()
+    sealed class LiveClassUiState {
+        object Loading : LiveClassUiState()
+        object LocalMediaTurnedOn : LiveClassUiState()
+        object LocalMediaTurnedOff : LiveClassUiState()
+        data class RegistrationSuccessful(val channel: Channel) : LiveClassUiState()
+        data class FailedToJoiningLiveClass(val message: String?) : LiveClassUiState()
+        object UnregisterSuccessful : LiveClassUiState()
+        object UnregisterFailed : LiveClassUiState()
     }
 
     fun joinLiveClass() {
-        _classroomStateLiveData.value = LiveClassState.Loading
+        _classroomStateLiveData.value = LiveClassUiState.Loading
         joinLiveClassUseCase.joinAsync().then { channels ->
-            _classroomStateLiveData.postValue(LiveClassState.RegistrationSuccessful(channels[0]))
+            _classroomStateLiveData.postValue(LiveClassUiState.RegistrationSuccessful(channels[0]))
         }.fail(IAction1 { exception ->
-            _classroomStateLiveData.postValue(LiveClassState.FailedToJoiningLiveClass(exception.message))
+            _classroomStateLiveData.postValue(LiveClassUiState.FailedToJoiningLiveClass(exception.message))
         })
     }
 
@@ -66,7 +67,7 @@ class LiveClassViewModel @Inject constructor(
             val config = upstreamConnection.config
             config.localVideoMuted = !config.localVideoMuted
             upstreamConnection.update(config)
-            _classroomStateLiveData.value = if (config.localVideoMuted) LiveClassState.LocalMediaTurnedOff else LiveClassState.LocalMediaTurnedOn
+            _classroomStateLiveData.value = if (config.localVideoMuted) LiveClassUiState.LocalMediaTurnedOff else LiveClassUiState.LocalMediaTurnedOn
         }
     }
 
@@ -75,10 +76,17 @@ class LiveClassViewModel @Inject constructor(
         if (client != null) {
             client.unregister().then(IAction1 {
                 liveClassManager.cleanConnection()
-                _classroomStateLiveData.postValue(LiveClassState.UnregisterSuccessful)
+                liveClassManager.setState(LiveClassState.IDLE)
+                _classroomStateLiveData.postValue(LiveClassUiState.UnregisterSuccessful)
             }).fail(IAction1 { exception ->
-                _classroomStateLiveData.postValue(LiveClassState.UnregisterFailed)
+                liveClassManager.setState(LiveClassState.IDLE)
+                _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
             })
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        liveClassManager.cleanConnection()
     }
 }
