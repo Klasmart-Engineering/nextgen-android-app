@@ -122,7 +122,7 @@
             android:layout_width="@dimen/space_64"
             android:layout_height="@dimen/space_64"
             android:layout_marginEnd="@dimen/space_20"
-            android:background="@drawable/ic_mic_selector"
+            android:background="@drawable/mic_amplitude_animation"
             android:textOff=""
             android:textOn="" />
 
