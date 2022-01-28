@@ -2,6 +2,7 @@ package uk.co.kidsloop.features.liveclass
 
 import fm.liveswitch.*
 import uk.co.kidsloop.data.enums.DataChannelActions
+import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import javax.inject.Inject
 import javax.inject.Singleton

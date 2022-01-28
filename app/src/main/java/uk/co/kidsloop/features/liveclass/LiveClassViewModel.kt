@@ -84,15 +84,16 @@ class LiveClassViewModel @Inject constructor(
         val client = liveClassManager.getClient()
         client?.unregister()?.then {
             liveClassManager.cleanConnection()
-        if (client != null) {
-            client.unregister().then(IAction1 {
-                liveClassManager.cleanConnection()
-                liveClassManager.setState(LiveClassState.IDLE)
-                _classroomStateLiveData.postValue(LiveClassUiState.UnregisterSuccessful)
-            }).fail(IAction1 { exception ->
-                liveClassManager.setState(LiveClassState.IDLE)
-                _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
-            })
+            if (client != null) {
+                client.unregister().then(IAction1 {
+                    liveClassManager.cleanConnection()
+                    liveClassManager.setState(LiveClassState.IDLE)
+                    _classroomStateLiveData.postValue(LiveClassUiState.UnregisterSuccessful)
+                }).fail(IAction1 { exception ->
+                    liveClassManager.setState(LiveClassState.IDLE)
+                    _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
+                })
+            }
         }
     }
 

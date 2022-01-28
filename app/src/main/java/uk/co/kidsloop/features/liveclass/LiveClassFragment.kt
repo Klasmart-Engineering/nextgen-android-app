@@ -284,6 +284,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
         upstreamConnection?.open()
         liveClassManager.setState(LiveClassState.JOINED)
+    }
 
     override fun onRaiseHand() {
         requireActivity().runOnUiThread {
