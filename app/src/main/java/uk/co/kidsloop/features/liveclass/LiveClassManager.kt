@@ -120,7 +120,6 @@ class LiveClassManager @Inject constructor() {
             DataChannelActions.LOWER_HAND.type -> {
                 dataChannelActionsHandler?.onLowerHand()
             }
-            else -> {}
         }
     }
 

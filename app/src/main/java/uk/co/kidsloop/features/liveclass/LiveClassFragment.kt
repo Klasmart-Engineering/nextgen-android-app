@@ -287,13 +287,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     }
 
     override fun onRaiseHand() {
-        requireActivity().runOnUiThread {
+        uiThreadPoster.post {
             shortToast("Hand raised")
         }
     }
 
     override fun onLowerHand() {
-        requireActivity().runOnUiThread {
+        uiThreadPoster.post {
             shortToast("Hand lowered")
         }
     }
