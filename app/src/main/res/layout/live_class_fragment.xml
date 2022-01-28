@@ -11,6 +11,13 @@
         android:padding="@dimen/space_15">
 
         <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/teacher_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="start"
+            app:constraint_referenced_ids="local_media_container,first_student_video_feed,second_student_video_feed,third_student_video_feed" />
+
+        <androidx.constraintlayout.widget.Barrier
             android:id="@+id/student_barrier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,9 +33,8 @@
             app:layout_constraintBottom_toTopOf="@+id/first_student_video_feed"
             app:layout_constraintDimensionRatio="W,4:3"
             app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
-            app:layout_constraintStart_toEndOf="@id/student_barrier"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintVertical_chainStyle="spread"/>
 
         <ImageView
             android:id="@+id/more_btn"
@@ -58,12 +64,11 @@
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/space_8"
             android:layout_marginEnd="@dimen/space_8"
-            android:visibility="invisible"
             app:cardCornerRadius="@dimen/space_12"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@id/second_student_video_feed"
             app:layout_constraintDimensionRatio="W,4:3"
             app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
-            app:layout_constraintStart_toEndOf="@id/student_barrier"
             app:layout_constraintTop_toBottomOf="@+id/local_media_container"
             app:layout_constraintVertical_chainStyle="spread" />
 
@@ -73,12 +78,11 @@
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/space_8"
             android:layout_marginEnd="@dimen/space_8"
-            android:visibility="invisible"
             app:cardCornerRadius="@dimen/space_12"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@id/third_student_video_feed"
             app:layout_constraintDimensionRatio="W,4:3"
             app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
-            app:layout_constraintStart_toEndOf="@id/student_barrier"
             app:layout_constraintTop_toBottomOf="@+id/first_student_video_feed"
             app:layout_constraintVertical_chainStyle="spread" />
 
@@ -88,12 +92,11 @@
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/space_8"
             android:layout_marginEnd="@dimen/space_8"
-            android:visibility="invisible"
             app:cardCornerRadius="@dimen/space_12"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="W,4:3"
             app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
-            app:layout_constraintStart_toEndOf="@id/student_barrier"
             app:layout_constraintTop_toBottomOf="@id/second_student_video_feed"
             app:layout_constraintVertical_chainStyle="spread" />
 
@@ -105,7 +108,7 @@
             android:layout_marginEnd="@dimen/space_8"
             app:cardCornerRadius="@dimen/space_21"
             app:layout_constraintDimensionRatio="H,16:9"
-            app:layout_constraintEnd_toStartOf="@id/student_barrier"
+            app:layout_constraintEnd_toStartOf="@id/teacher_barrier"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
