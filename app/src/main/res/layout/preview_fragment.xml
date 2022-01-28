@@ -104,7 +104,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:text="My Live Class"
+        android:text="@string/my_live_class"
         app:layout_constraintStart_toEndOf="@id/camera_preview_container"
         app:layout_constraintTop_toTopOf="@id/camera_preview_container" />
 
