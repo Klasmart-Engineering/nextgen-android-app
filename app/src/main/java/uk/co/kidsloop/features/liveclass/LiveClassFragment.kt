@@ -113,22 +113,26 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         )
         // Adding remote view to UI.
         if (remoteConnectionInfo.clientRoles[0] == TEACHER_ROLE) {
-            binding.teacherVideoFeed.tag = remoteMedia.id
-            binding.teacherVideoFeed.addView(remoteMedia.view)
+            uiThreadPoster.post {
+                binding.teacherVideoFeed.tag = remoteMedia.id
+                binding.teacherVideoFeed.addView(remoteMedia.view)
+            }
         } else {
-            val numberOfDownstreamConnection = liveClassManager.getNumberOfActiveDownStreamConnections()
-            if (numberOfDownstreamConnection == 0) {
-                binding.firstStudentVideoFeed.tag = remoteMedia.id
-                binding.firstStudentVideoFeed.visibility = View.VISIBLE
-                binding.firstStudentVideoFeed.addView(remoteMedia.view)
-            } else if (numberOfDownstreamConnection == 1) {
-                binding.secondStudentVideoFeed.tag = remoteMedia.id
-                binding.secondStudentVideoFeed.visibility = View.VISIBLE
-                binding.secondStudentVideoFeed.addView(remoteMedia.view)
-            } else if (numberOfDownstreamConnection == 2) {
-                binding.thirdStudentVideoFeed.tag = remoteMedia.id
-                binding.thirdStudentVideoFeed.visibility = View.VISIBLE
-                binding.thirdStudentVideoFeed.addView(remoteMedia.view)
+            uiThreadPoster.post {
+                val numberOfDownstreamConnection = liveClassManager.getNumberOfActiveDownStreamConnections()
+                if (numberOfDownstreamConnection == 0) {
+                    binding.firstStudentVideoFeed.tag = remoteMedia.id
+                    binding.firstStudentVideoFeed.visibility = View.VISIBLE
+                    binding.firstStudentVideoFeed.addView(remoteMedia.view)
+                } else if (numberOfDownstreamConnection == 1) {
+                    binding.secondStudentVideoFeed.tag = remoteMedia.id
+                    binding.secondStudentVideoFeed.visibility = View.VISIBLE
+                    binding.secondStudentVideoFeed.addView(remoteMedia.view)
+                } else if (numberOfDownstreamConnection == 2) {
+                    binding.thirdStudentVideoFeed.tag = remoteMedia.id
+                    binding.thirdStudentVideoFeed.visibility = View.VISIBLE
+                    binding.thirdStudentVideoFeed.addView(remoteMedia.view)
+                }
             }
         }
 
