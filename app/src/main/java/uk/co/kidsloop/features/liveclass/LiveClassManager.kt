@@ -1,5 +1,10 @@
 package uk.co.kidsloop.features.liveclass
 
+import fm.liveswitch.Channel
+import fm.liveswitch.Client
+import fm.liveswitch.SfuDownstreamConnection
+import fm.liveswitch.SfuUpstreamConnection
+import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import fm.liveswitch.*
 import uk.co.kidsloop.app.utils.emptyString
 import javax.inject.Inject
@@ -19,6 +24,8 @@ class LiveClassManager @Inject constructor() {
     private var token: String? = null
     private var remoteChannel: Channel? = null
     private var client: Client? = null
+
+    private var liveClassState: LiveClassState = LiveClassState.IDLE
 
     fun setToken(token: String) {
         this.token = token
@@ -132,5 +139,14 @@ class LiveClassManager @Inject constructor() {
         remoteChannel = null
         upstreamConnection = null
         token = null
+        liveClassState = LiveClassState.IDLE
+    }
+
+    fun setState(newState: LiveClassState) {
+        this.liveClassState = newState
+    }
+
+    fun getState(): LiveClassState {
+        return liveClassState
     }
 }
