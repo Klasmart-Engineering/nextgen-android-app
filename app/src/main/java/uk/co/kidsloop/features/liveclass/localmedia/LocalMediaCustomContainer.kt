@@ -36,11 +36,11 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
 
     fun showCameraTurnedOff() {
         binding.localVideoStudentOverlay.elevation = 10F
-        binding.localVideoStudentOverlay.setImageResource(R.drawable.ic_local_media_turned_off_student)
+        binding.localVideoStudentOverlay.visibility = VISIBLE
     }
 
     fun showCameraTurnedOn() {
         binding.localVideoStudentOverlay.elevation = 0F
-        binding.localVideoStudentOverlay.setImageResource(android.R.color.transparent)
+        binding.localVideoStudentOverlay.visibility = INVISIBLE
     }
 }
