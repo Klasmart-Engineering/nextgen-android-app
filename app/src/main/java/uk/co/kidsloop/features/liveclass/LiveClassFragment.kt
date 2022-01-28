@@ -53,8 +53,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.toggleCameraBtn.isChecked = !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
-        binding.toggleMicrophoneBtn.isChecked = !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
+        binding.toggleCameraBtn.isChecked =
+            !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
+        binding.toggleMicrophoneBtn.isChecked =
+            !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
+        if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
+            binding.localMediaContainer.showCameraTurnedOff()
+        }
         if (!requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
             binding.localMediaContainer.showMicMuted()
         }
@@ -83,7 +88,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
             }
             viewModel.toggleLocalAudio()
         }
+
         binding.toggleCameraBtn.setOnClickListener {
+            if (binding.toggleCameraBtn.isChecked) {
+                binding.localMediaContainer.showCameraTurnedOff()
+            } else {
+                binding.localMediaContainer.showCameraTurnedOn()
+            }
             viewModel.toggleLocalVideo()
         }
 
@@ -94,6 +105,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         binding.exitMenu.setOnClickListener {
             binding.liveClassOverlay.visibility = View.GONE
         }
+
         binding.moreBtn.setOnClickListener {
             binding.liveClassOverlay.visibility = View.VISIBLE
         }
@@ -215,11 +227,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                                          uiThreadPoster.post {
-                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                                              viewModel.joinLiveClass()
-                                          }
-                                      }, { exception -> })
+                uiThreadPoster.post {
+                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                    viewModel.joinLiveClass()
+                }
+            }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
