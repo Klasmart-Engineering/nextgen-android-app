@@ -1,12 +1,16 @@
 package uk.co.kidsloop.features.preview
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.ToggleButton
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -16,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.R
@@ -39,9 +44,11 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     private var recordingThread: Thread? = null
     private var audioRecord: AudioRecord? = null
     private var isRecordingAudio = false
+    private var currentAmplitude = 0.0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.cameraPreviewContainer.clipToOutline = true
         // 1. Check if both are granted
         // 2. Check if CAMERA is not granted, in this case show rationale if you should
         // 3. Check if RECORD_AUDIO is not granted, in this case show rationale if you should
@@ -80,7 +87,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 requestPermissionsLauncher.launch(KidsloopPermissions.getPreviewPermissions()) // Asking for @Permissions directly
             }
         }
-
         setControls()
         observe()
     }
@@ -108,8 +114,12 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             handleCameraFeed()
         }
 
+        binding.backButton.setOnClickListener {
+            Navigation.findNavController(requireView())
+                .navigate(PreviewFragmentDirections.previewToLogin())
+        }
+
         binding.microphoneBtn.setOnClickListener {
-            binding.progressBar.isVisible = !binding.microphoneBtn.isChecked
             onRecord()
         }
 
@@ -172,13 +182,10 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             ) || !isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type)
         ) {
             binding.microphoneBtn.isEnabled = false
-            binding.progressBar.isVisible = false
             binding.cameraBtn.isEnabled = false
             binding.joinBtn.isEnabled = false
         } else {
             binding.microphoneBtn.isEnabled =
-                isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type)
-            binding.progressBar.isVisible =
                 isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type)
             binding.cameraBtn.isEnabled =
                 isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type)
@@ -270,29 +277,34 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 shortToast("Couldn't initialize AudioRecord, check configuration")
                 return
             }
-
             audioRecord!!.startRecording()
             isRecordingAudio = true
             isMicRecording = true
-            recordingThread = Thread { getAudioDataToProgressBar() }
+            recordingThread = Thread { playAnimationOnMicActivity() }
             recordingThread!!.start()
+            binding.microphoneBtn.setBackgroundResource(R.drawable.mic_amplitude_animation)
         }
     }
 
-    private fun getAudioDataToProgressBar() {
+    private fun playAnimationOnMicActivity() {
         val data =
             ByteArray(BUFFER_SIZE_RECORDING / 2)
-
+        var amplitude = 0.0
         while (isRecordingAudio) {
             val read = audioRecord!!.read(data, 0, data.size)
             try {
                 var sum = 0.0
                 for (i in 0 until read) {
                     sum += (data[i] * data[i]).toDouble() + 50
+                    amplitude = sum / read
                 }
-                if (read > 0) {
-                    val amplitude = sum / read
-                    binding.progressBar.progress = Math.sqrt(amplitude).toInt()
+                if (currentAmplitude <= amplitude - 100 || currentAmplitude >= amplitude + 100) {
+                    currentAmplitude = amplitude
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        animateView(binding.microphoneBtn)
+                    }, 100)
+                } else {
+                    currentAmplitude = amplitude
                 }
             } catch (e: IOException) {
                 Log.d(
@@ -300,6 +312,17 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                     "Exception while recording with AudioRecord, $e"
                 )
                 e.printStackTrace()
+            }
+        }
+    }
+
+    private fun animateView(view: ToggleButton) {
+        when (val drawable = view.background) {
+            is AnimatedVectorDrawableCompat -> {
+                drawable.start()
+            }
+            is AnimatedVectorDrawable -> {
+                drawable.start()
             }
         }
     }
@@ -312,6 +335,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             audioRecord!!.release()
             audioRecord = null
             recordingThread = null
+            binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_off)
         }
     }
 

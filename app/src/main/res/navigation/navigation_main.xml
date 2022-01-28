@@ -56,10 +56,23 @@
                 app:argType="boolean" />
         </action>
 
+
+        <action
+            android:id="@+id/preview_to_login"
+            app:destination="@id/splash_graph"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/preview_fragment"
+            app:popUpToInclusive="true">
+        </action>
         <fragment
             android:id="@+id/preview_fragment"
             android:name="uk.co.kidsloop.features.preview.PreviewFragment"
             tools:layout="@layout/preview_fragment" />
+
+        <fragment
+            android:id="@+id/login_fragment"
+            android:name="uk.co.kidsloop.features.preview.PreviewFragment"
+            tools:layout="@layout/fragment_login" />
 
     </navigation>
 </navigation>
