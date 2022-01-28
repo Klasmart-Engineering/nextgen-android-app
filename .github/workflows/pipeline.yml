@@ -73,8 +73,8 @@ jobs:
       
       - name: "Run detekt"
         uses: natiginfo/action-detekt-all@1.19.0
-        with:
-          args: --fail-fast --config detekt.yml
+        # with:
+        #   args: --fail-fast --config detekt.yml
            
       - name: Run Gradle
         run: ./gradlew build check --continue            
