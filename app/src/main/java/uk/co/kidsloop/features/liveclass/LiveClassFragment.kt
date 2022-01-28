@@ -12,24 +12,26 @@ import fm.liveswitch.AudioStream
 import fm.liveswitch.Channel
 import fm.liveswitch.ConnectionInfo
 import fm.liveswitch.ConnectionState
-import fm.liveswitch.IAction1
 import fm.liveswitch.ManagedConnection
 import uk.co.kidsloop.R
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.VideoStream
 import uk.co.kidsloop.app.structure.BaseFragment
+import uk.co.kidsloop.app.utils.shortToast
+import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
 import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
+import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
+class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChannelActionsHandler {
 
     companion object {
-
+        val TAG = LiveClassFragment::class.qualifiedName
         const val IS_CAMERA_TURNED_ON = "isCameraTurnedOn"
         const val IS_MICROPHONE_TURNED_ON = "isMicrophoneTurnedOn"
     }
@@ -46,7 +48,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     private var isCameraTurnedOn: Boolean = true
     private var isMicrophoneTurnedOn: Boolean = true
 
-    private val viewModel: LiveClassViewModel by viewModels<LiveClassViewModel>()
+    private val viewModel by viewModels<LiveClassViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,6 +97,18 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         binding.moreBtn.setOnClickListener {
             binding.liveClassOverlay.visibility = View.VISIBLE
         }
+
+        binding.raiseHandBtn.setOnClickListener {
+            if(liveClassManager.getUpstreamConnection()?.state == ConnectionState.Connected) {
+                binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
+                when (binding.raiseHandBtn.isSelected) {
+                    true -> liveClassManager.sendDataString(DataChannelActions.RAISE_HAND.type)
+                    false -> liveClassManager.sendDataString(DataChannelActions.LOWER_HAND.type)
+                }
+            }
+        }
+
+        liveClassManager.dataChannelActionsHandler = this
     }
 
     private fun openSfuDownstreamConnection(
@@ -116,14 +130,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
                 binding.teacherVideoFeed.addView(remoteMedia.view)
             }
         } else {
-            val numberOfDownstreamConnection = liveClassManager.getNumberOfActiveDownStreamConnections()
+            val numberOfDownstreamConnection =
+                liveClassManager.getNumberOfActiveDownStreamConnections()
             requireActivity().runOnUiThread {
-                if (numberOfDownstreamConnection == 0) {
-                    binding.firstStudentVideoFeed.addView(remoteMedia.view)
-                } else if (numberOfDownstreamConnection == 1) {
-                    binding.secondStudentVideoFeed.addView(remoteMedia.view)
-                } else if (numberOfDownstreamConnection == 2) {
-                    binding.thirdStudentVideoFeed.addView(remoteMedia.view)
+                when (numberOfDownstreamConnection) {
+                    0 -> binding.firstStudentVideoFeed.addView(remoteMedia.view)
+                    1 -> binding.secondStudentVideoFeed.addView(remoteMedia.view)
+                    2 -> binding.thirdStudentVideoFeed.addView(remoteMedia.view)
                 }
             }
         }
@@ -136,20 +149,28 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
 
         // Create a SFU downstream connection with remote audio and video and data streams.
         val connection: SfuDownstreamConnection =
-            channel.createSfuDownstreamConnection(remoteConnectionInfo, audioStream, videoStream)
+            channel.createSfuDownstreamConnection(
+                remoteConnectionInfo,
+                audioStream,
+                videoStream,
+                liveClassManager.getDownstreamDataStream()
+            )
 
         // Store the downstream connection.
         liveClassManager.saveDownStreamConnections(remoteMedia.id, connection)
         connection.addOnStateChange { conn: ManagedConnection ->
-            if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
-
-                // Removing remote view from UI.
-                //layoutManager?.removeRemoteView(remoteMedia.id)
-                remoteMedia.destroy()
-                liveClassManager.removeDownStreamConnection(remoteMedia.id)
-            } else if (conn.state == ConnectionState.Failed) {
-                // Reconnect if the connection failed.
-                openSfuDownstreamConnection(remoteConnectionInfo, channel)
+            when (conn.state) {
+                ConnectionState.Failing, ConnectionState.Closing -> {
+                    // Removing remote view from UI.
+                    //layoutManager?.removeRemoteView(remoteMedia.id)
+                    remoteMedia.destroy()
+                    liveClassManager.removeDownStreamConnection(remoteMedia.id)
+                }
+                ConnectionState.Failed -> {
+                    // Reconnect if the connection failed.
+                    openSfuDownstreamConnection(remoteConnectionInfo, channel)
+                }
+                else -> {}
             }
         }
         connection.open()
@@ -187,22 +208,21 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
     }
 
     private fun stopLocalMedia() {
-        localMedia?.stop()?.then(IAction1 { result ->
-
+        localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
             //TODO This is added for testing purpouse and it will be removed later on
             requireActivity().finish()
-        })
+        }
     }
 
     private fun startLocalMedia() {
         localMedia?.start()?.then({
-                                      requireActivity().runOnUiThread {
-                                          binding.localVideoFeed.addView(localMedia?.view)
-                                          viewModel.joinLiveClass()
-                                      }
-                                  }, { exception -> })
+            requireActivity().runOnUiThread {
+                binding.localVideoFeed.addView(localMedia?.view)
+                viewModel.joinLiveClass()
+            }
+        }, { exception -> })
     }
 
     private fun turnOnLocalMedia() {
@@ -220,6 +240,29 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
             isMicrophoneTurnedOn,
             isCameraTurnedOn
         )
+
+        upstreamConnection?.addOnStateChange { connection ->
+            when (connection.state) {
+                ConnectionState.Failed -> {
+                    // Reconnect if the connection failed.
+                    openSfuUpstreamConnection()
+                }
+                else -> {}
+            }
+        }
+
         upstreamConnection?.open()
+    }
+
+    override fun onRaiseHand() {
+        requireActivity().runOnUiThread {
+            shortToast("Hand raised")
+        }
+    }
+
+    override fun onLowerHand() {
+        requireActivity().runOnUiThread {
+            shortToast("Hand lowered")
+        }
     }
 }
