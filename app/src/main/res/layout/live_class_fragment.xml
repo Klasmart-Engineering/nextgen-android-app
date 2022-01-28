@@ -15,6 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="start"
+            app:barrierAllowsGoneWidgets="true"
             app:constraint_referenced_ids="local_media_container,first_student_video_feed,second_student_video_feed,third_student_video_feed" />
 
         <androidx.constraintlayout.widget.Barrier

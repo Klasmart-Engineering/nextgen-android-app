@@ -64,9 +64,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         {
             when (it) {
                 is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> {
-                    uiThreadPoster.post { onClientRegistered(it.channel) }
-                }
+                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
                 is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
                 is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOn -> turnOnLocalMedia()
                 is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOff -> turnOffLocalMedia()
@@ -150,19 +148,21 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
         liveClassManager.saveDownStreamConnections(remoteMedia.id, connection)
         connection.addOnStateChange { conn: ManagedConnection ->
             if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
-                if (view != null) {
-                    val remoteId = remoteMedia.id
-                    if (binding.firstStudentVideoFeed.tag == remoteId) {
-                        binding.firstStudentVideoFeed.removeView(remoteMedia.view)
-                        binding.firstStudentVideoFeed.visibility = View.GONE
-                    } else if (binding.secondStudentVideoFeed.tag == remoteId) {
-                        binding.secondStudentVideoFeed.removeView(remoteMedia.view)
-                        binding.secondStudentVideoFeed.visibility = View.GONE
-                    } else if (binding.thirdStudentVideoFeed.tag == remoteId) {
-                        binding.thirdStudentVideoFeed.removeView(remoteMedia.view)
-                        binding.thirdStudentVideoFeed.visibility = View.GONE
-                    } else if (binding.teacherVideoFeed.tag == remoteId) {
-                        binding.teacherVideoFeed.removeView(remoteMedia.view)
+                uiThreadPoster.post {
+                    if (view != null) {
+                        val remoteId = remoteMedia.id
+                        if (binding.firstStudentVideoFeed.tag == remoteId) {
+                            binding.firstStudentVideoFeed.removeView(remoteMedia.view)
+                            binding.firstStudentVideoFeed.visibility = View.GONE
+                        } else if (binding.secondStudentVideoFeed.tag == remoteId) {
+                            binding.secondStudentVideoFeed.removeView(remoteMedia.view)
+                            binding.secondStudentVideoFeed.visibility = View.GONE
+                        } else if (binding.thirdStudentVideoFeed.tag == remoteId) {
+                            binding.thirdStudentVideoFeed.removeView(remoteMedia.view)
+                            binding.thirdStudentVideoFeed.visibility = View.GONE
+                        } else if (binding.teacherVideoFeed.tag == remoteId) {
+                            binding.teacherVideoFeed.removeView(remoteMedia.view)
+                        }
                     }
                 }
                 remoteMedia.destroy()
@@ -219,6 +219,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment) {
                                               binding.localMediaContainer.addLocalMediaView(localMedia?.view)
                                               viewModel.joinLiveClass()
                                           }
+
                                       }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
