@@ -27,6 +27,7 @@ class LiveClassManager @Inject constructor() {
     private var client: Client? = null
 
     var dataChannelActionsHandler: DataChannelActionsHandler? = null
+    private var liveClassState: LiveClassState = LiveClassState.IDLE
 
     fun setToken(token: String) {
         this.token = token
@@ -147,5 +148,14 @@ class LiveClassManager @Inject constructor() {
         remoteChannel = null
         upstreamConnection = null
         token = null
+        liveClassState = LiveClassState.IDLE
+    }
+
+    fun setState(newState: LiveClassState) {
+        this.liveClassState = newState
+    }
+
+    fun getState(): LiveClassState {
+        return liveClassState
     }
 }

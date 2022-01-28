@@ -4,7 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_purple">
+    android:background="@color/light_cyan">
+
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="41dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/ic_back_button"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/setup_label"
+        style="@style/TitleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="13dp"
+        android:text="@string/set_your_mic_and_video"
+        app:layout_constraintBottom_toBottomOf="@id/back_button"
+        app:layout_constraintStart_toEndOf="@id/back_button"
+        app:layout_constraintTop_toTopOf="@id/back_button" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/permissions_layout"
@@ -48,16 +70,13 @@
 
     <FrameLayout
         android:id="@+id/camera_preview_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="@dimen/space_100"
-        android:layout_marginStart="@dimen/space_100"
-        android:layout_marginTop="48dp"
-        android:layout_marginBottom="60dp"
+        android:layout_width="383dp"
+        android:layout_height="240dp"
+        android:layout_marginStart="63dp"
+        android:layout_marginBottom="29dp"
+        android:background="@drawable/rounded_corners"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.camera.view.PreviewView
             android:id="@+id/camera_preview"
@@ -67,32 +86,26 @@
 
     <TextView
         android:id="@+id/no_camera_textview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/space_100"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="@dimen/space_100"
-        android:layout_marginBottom="60dp"
-        android:background="@color/black"
+        android:layout_width="383dp"
+        android:layout_height="240dp"
+        android:layout_marginStart="63dp"
+        android:layout_marginBottom="29dp"
+        android:background="@drawable/rounded_corners"
         android:gravity="center"
         android:text="@string/camera_is_turned_off"
         android:textColor="@color/white"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="60dp"
-        android:layout_height="20dp"
+    <TextView
+        android:id="@+id/class_name_label"
+        style="@style/TitleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="25dp"
-        android:max="250"
-        android:progressDrawable="@drawable/progress_bar"
-        app:layout_constraintStart_toStartOf="@id/camera_preview_container"
+        android:text="@string/my_live_class"
+        app:layout_constraintStart_toEndOf="@id/camera_preview_container"
         app:layout_constraintTop_toTopOf="@id/camera_preview_container" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -101,46 +114,45 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/space_5"
         android:gravity="center"
-        android:paddingBottom="@dimen/space_30"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
+        app:layout_constraintEnd_toEndOf="@id/camera_preview_container"
+        app:layout_constraintStart_toStartOf="@id/camera_preview_container">
 
         <ToggleButton
             android:id="@+id/microphone_btn"
             android:layout_width="@dimen/space_64"
             android:layout_height="@dimen/space_64"
             android:layout_marginEnd="@dimen/space_20"
-            android:background="@drawable/ic_mic_selector"
+            android:background="@drawable/mic_amplitude_animation"
             android:textOff=""
-            android:textOn=""
-            app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
-            app:layout_constraintEnd_toStartOf="@id/camera_btn"
-            app:layout_constraintStart_toStartOf="@id/camera_preview_container" />
+            android:textOn="" />
 
         <ToggleButton
             android:id="@+id/camera_btn"
             android:layout_width="@dimen/space_64"
             android:layout_height="@dimen/space_64"
-            android:layout_marginEnd="@dimen/space_30"
             android:background="@drawable/ic_camera_selector"
             android:textOff=""
-            android:textOn=""
-            app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
-            app:layout_constraintEnd_toEndOf="@id/camera_preview_container"
-            app:layout_constraintStart_toEndOf="@id/microphone_btn" />
+            android:textOn="" />
 
-        <ToggleButton
-            android:id="@+id/join_btn"
-            android:layout_width="118dp"
-            android:layout_height="56dp"
-            android:background="@drawable/rounded_button"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textOff="@string/join"
-            android:textOn=""
-            android:textSize="24sp" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ToggleButton
+        android:id="@+id/join_btn"
+        style="@style/JoinButton"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginBottom="@dimen/space_30"
+        android:background="@drawable/rounded_button"
+        android:paddingHorizontal="45dp"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textOff="@string/join_live_class"
+        android:textOn=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/camera_preview_container" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
