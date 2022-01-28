@@ -150,7 +150,7 @@
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textOff="@string/join_live_class"
-        android:textOn=""
+        android:textOn="@string/join_live_class"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/camera_preview_container" />
 
