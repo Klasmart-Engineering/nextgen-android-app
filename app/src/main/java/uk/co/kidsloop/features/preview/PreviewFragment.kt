@@ -185,12 +185,14 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_off)
             binding.cameraBtn.isEnabled = false
             binding.joinBtn.isEnabled = false
+            binding.joinBtn.alpha = 0.2F
         } else {
             binding.microphoneBtn.isEnabled =
                 isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type)
             binding.cameraBtn.isEnabled =
                 isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type)
             binding.joinBtn.isEnabled = true
+            binding.joinBtn.alpha = 1F
         }
     }
 
