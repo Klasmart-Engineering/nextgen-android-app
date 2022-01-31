@@ -184,12 +184,14 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             binding.microphoneBtn.isEnabled = false
             binding.cameraBtn.isEnabled = false
             binding.joinBtn.isEnabled = false
+            binding.joinBtn.alpha = 0.2F
         } else {
             binding.microphoneBtn.isEnabled =
                 isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type)
             binding.cameraBtn.isEnabled =
                 isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type)
             binding.joinBtn.isEnabled = true
+            binding.joinBtn.alpha = 1F
         }
     }
 
@@ -317,12 +319,14 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     }
 
     private fun animateView(view: ToggleButton) {
-        when (val drawable = view.background) {
-            is AnimatedVectorDrawableCompat -> {
-                drawable.start()
-            }
-            is AnimatedVectorDrawable -> {
-                drawable.start()
+        if(getView() != null){
+            when (val drawable = view.background) {
+                is AnimatedVectorDrawableCompat -> {
+                    drawable.start()
+                }
+                is AnimatedVectorDrawable -> {
+                    drawable.start()
+                }
             }
         }
     }
