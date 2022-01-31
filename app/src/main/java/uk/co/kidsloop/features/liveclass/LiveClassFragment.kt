@@ -147,15 +147,15 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             uiThreadPoster.post {
                 val numberOfDownstreamConnection =
                     liveClassManager.getNumberOfActiveDownStreamConnections()
-                if (numberOfDownstreamConnection == 0) {
+                if (numberOfDownstreamConnection == 1) {
                     binding.firstStudentVideoFeed.tag = remoteMedia.id
                     binding.firstStudentVideoFeed.visibility = View.VISIBLE
                     binding.firstStudentVideoFeed.addView(remoteMedia.view)
-                } else if (numberOfDownstreamConnection == 1) {
+                } else if (numberOfDownstreamConnection == 2) {
                     binding.secondStudentVideoFeed.tag = remoteMedia.id
                     binding.secondStudentVideoFeed.visibility = View.VISIBLE
                     binding.secondStudentVideoFeed.addView(remoteMedia.view)
-                } else if (numberOfDownstreamConnection == 2) {
+                } else if (numberOfDownstreamConnection == 3) {
                     binding.thirdStudentVideoFeed.tag = remoteMedia.id
                     binding.thirdStudentVideoFeed.visibility = View.VISIBLE
                     binding.thirdStudentVideoFeed.addView(remoteMedia.view)
