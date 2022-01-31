@@ -10,39 +10,11 @@
         android:background="@color/dark_bg_blue"
         android:padding="@dimen/space_15">
 
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/teacher_barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="start"
-            app:barrierAllowsGoneWidgets="true"
-            app:constraint_referenced_ids="local_media_container,first_student_video_feed,second_student_video_feed,third_student_video_feed" />
-
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/student_barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="end"
-            app:constraint_referenced_ids="teacher_video_feed" />
-
-        <uk.co.kidsloop.features.liveclass.localmedia.LocalMediaCustomContainer
-            android:id="@+id/local_media_container"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="@dimen/space_8"
-            app:cardCornerRadius="@dimen/space_12"
-            app:layout_constraintBottom_toTopOf="@+id/first_student_video_feed"
-            app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread"/>
-
         <ImageView
             android:id="@+id/more_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_15"
-            android:layout_marginEnd="@dimen/space_12"
+            android:layout_marginStart="@dimen/space_8"
             android:contentDescription="@null"
             android:src="@drawable/ic_more_btn"
             app:layout_constraintEnd_toEndOf="parent"
@@ -65,7 +37,6 @@
             android:layout_marginTop="@dimen/space_8"
             android:layout_marginEnd="@dimen/space_8"
             app:cardCornerRadius="@dimen/space_12"
-            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@id/second_student_video_feed"
             app:layout_constraintDimensionRatio="W,4:3"
             app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
@@ -100,17 +71,36 @@
             app:layout_constraintTop_toBottomOf="@id/second_student_video_feed"
             app:layout_constraintVertical_chainStyle="spread" />
 
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/students_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top"
+            app:constraint_referenced_ids="first_student_video_feed"/>
+
+        <uk.co.kidsloop.features.liveclass.localmedia.LocalMediaCustomContainer
+            android:id="@+id/local_media_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/space_8"
+            app:cardCornerRadius="@dimen/space_12"
+            app:layout_constraintBottom_toTopOf="@+id/first_student_video_feed"
+            app:layout_constraintDimensionRatio="W,4:3"
+            app:layout_constraintEnd_toStartOf="@id/more_btn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"/>
+
         <androidx.cardview.widget.CardView
             android:id="@+id/teacher_video_feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/space_8"
             android:layout_marginEnd="@dimen/space_8"
             app:cardCornerRadius="@dimen/space_21"
-            app:layout_constraintDimensionRatio="H,16:9"
-            app:layout_constraintEnd_toStartOf="@id/teacher_barrier"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/local_media_container"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageView
                 android:id="@+id/local_video_teacher_overlay"
