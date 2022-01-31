@@ -319,12 +319,14 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     }
 
     private fun animateView(view: ToggleButton) {
-        when (val drawable = view.background) {
-            is AnimatedVectorDrawableCompat -> {
-                drawable.start()
-            }
-            is AnimatedVectorDrawable -> {
-                drawable.start()
+        if(getView() != null){
+            when (val drawable = view.background) {
+                is AnimatedVectorDrawableCompat -> {
+                    drawable.start()
+                }
+                is AnimatedVectorDrawable -> {
+                    drawable.start()
+                }
             }
         }
     }
