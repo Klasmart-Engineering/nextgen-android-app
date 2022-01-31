@@ -113,7 +113,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
 
         binding.raiseHandBtn.setOnClickListener {
-            if(liveClassManager.getUpstreamConnection()?.state == ConnectionState.Connected) {
+            if (liveClassManager.getUpstreamConnection()?.state == ConnectionState.Connected) {
                 binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
                 when (binding.raiseHandBtn.isSelected) {
                     true -> liveClassManager.sendDataString(DataChannelActions.RAISE_HAND.type)
@@ -145,7 +145,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             }
         } else {
             uiThreadPoster.post {
-                val numberOfDownstreamConnection = liveClassManager.getNumberOfActiveDownStreamConnections()
+                val numberOfDownstreamConnection =
+                    liveClassManager.getNumberOfActiveDownStreamConnections()
                 if (numberOfDownstreamConnection == 0) {
                     binding.firstStudentVideoFeed.tag = remoteMedia.id
                     binding.firstStudentVideoFeed.visibility = View.VISIBLE
