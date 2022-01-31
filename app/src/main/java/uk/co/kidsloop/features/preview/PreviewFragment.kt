@@ -100,8 +100,10 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 KidsloopPermissions.RECORD_AUDIO.type
             ) && !viewModel.havePermissionsBeenPreviouslyDenied
         ) {
-            isRecordingAudio = true
-            startRecording()
+            if(isMicRecording){
+                isRecordingAudio = true
+                startRecording()
+            }
             handleNoPermissionViews()
             handleToggles()
         }
