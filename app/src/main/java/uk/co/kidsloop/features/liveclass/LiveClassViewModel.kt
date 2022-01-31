@@ -41,16 +41,25 @@ class LiveClassViewModel @Inject constructor(
         })
     }
 
-    fun openSfuUpstreamConnection(audioStream: AudioStream?, videoStream: VideoStream?, isAudioTurnedOn:Boolean, isVideoTurnedOn:Boolean): SfuUpstreamConnection? {
-        val upstreamConnection = openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream)
+    fun openSfuUpstreamConnection(
+        audioStream: AudioStream?,
+        videoStream: VideoStream?,
+        isAudioTurnedOn: Boolean,
+        isVideoTurnedOn: Boolean
+    ): SfuUpstreamConnection? {
+        liveClassManager.setDataChannels()
+        liveClassManager.setDataChannelsListeners()
+
+        val upstreamConnection =
+            openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream)
         upstreamConnection?.let {
             liveClassManager.setUpstreamConnection(it)
         }
-        liveClassManager.setDataChannel()
         val config = upstreamConnection?.config
         config?.localVideoMuted = !isVideoTurnedOn
         config?.localAudioMuted = !isAudioTurnedOn
         upstreamConnection?.update(config)
+
         return upstreamConnection
     }
 
@@ -73,15 +82,18 @@ class LiveClassViewModel @Inject constructor(
 
     fun leaveLiveClass() {
         val client = liveClassManager.getClient()
-        if (client != null) {
-            client.unregister().then(IAction1 {
-                liveClassManager.cleanConnection()
-                liveClassManager.setState(LiveClassState.IDLE)
-                _classroomStateLiveData.postValue(LiveClassUiState.UnregisterSuccessful)
-            }).fail(IAction1 { exception ->
-                liveClassManager.setState(LiveClassState.IDLE)
-                _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
-            })
+        client?.unregister()?.then {
+            liveClassManager.cleanConnection()
+            if (client != null) {
+                client.unregister().then(IAction1 {
+                    liveClassManager.cleanConnection()
+                    liveClassManager.setState(LiveClassState.IDLE)
+                    _classroomStateLiveData.postValue(LiveClassUiState.UnregisterSuccessful)
+                }).fail(IAction1 { exception ->
+                    liveClassManager.setState(LiveClassState.IDLE)
+                    _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
+                })
+            }
         }
     }
 

@@ -48,14 +48,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/raise_hand_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/space_12"
-            android:layout_marginBottom="@dimen/space_15"
+            android:src="@drawable/selector_raise_hand_btn"
+            android:background="@color/transparent"
             android:contentDescription="@null"
-            android:src="@drawable/ic_raise_hand_btn"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
