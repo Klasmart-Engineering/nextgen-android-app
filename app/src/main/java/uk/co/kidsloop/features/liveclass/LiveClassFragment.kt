@@ -67,6 +67,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
         startLocalMedia()
 
+        binding.raiseHandBtn.isActivated = false
+
         viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
         {
             when (it) {
@@ -274,6 +276,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
         upstreamConnection?.addOnStateChange { connection ->
             when (connection.state) {
+                ConnectionState.Initializing -> { onConnectionInitializing() }
+                ConnectionState.Connected -> { onConnectedSuccessfully() }
                 ConnectionState.Failed -> {
                     // Reconnect if the connection failed.
                     openSfuUpstreamConnection()
@@ -284,6 +288,14 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
         upstreamConnection?.open()
         liveClassManager.setState(LiveClassState.JOINED)
+    }
+
+    private fun onConnectionInitializing() {
+        binding.raiseHandBtn.isActivated = false
+    }
+
+    private fun onConnectedSuccessfully() {
+        binding.raiseHandBtn.isActivated = true
     }
 
     override fun onRaiseHand() {
