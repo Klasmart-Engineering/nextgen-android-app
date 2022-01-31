@@ -303,7 +303,9 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 if (currentAmplitude <= amplitude - 100 || currentAmplitude >= amplitude + 100) {
                     currentAmplitude = amplitude
                     Handler(Looper.getMainLooper()).postDelayed({
-                        animateView(binding.microphoneBtn)
+                        if (isRecordingAudio) {
+                            animateView(binding.microphoneBtn)
+                        }
                     }, 100)
                 } else {
                     currentAmplitude = amplitude
