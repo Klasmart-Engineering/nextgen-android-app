@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--<selector xmlns:android="http://schemas.android.com/apk/res/android">-->
-<!--    <item android:drawable="@drawable/ic_raise_hand_disabled" android:state_enabled="false" />-->
-<!--    <item android:drawable="@drawable/ic_raise_hand_unselected" android:state_selected="false" />-->
-<!--    <item android:drawable="@drawable/ic_raise_hand_selected" android:state_selected="true" />-->
-<!--</selector>-->
-
-
+<?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--Disable-->
@@ -21,5 +15,4 @@
     <item android:drawable="@drawable/ic_raise_hand_selected"
         android:state_enabled="true" android:state_pressed="false"
         android:state_selected="true" />
-
 </selector>
