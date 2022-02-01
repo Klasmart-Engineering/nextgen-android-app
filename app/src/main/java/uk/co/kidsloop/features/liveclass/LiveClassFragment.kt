@@ -158,10 +158,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 liveClassManager.getNewDownstreamDataStream()
             )
 
-        if (remoteConnectionInfo.clientRoles[0] == STUDENT_ROLE) {
-            // Store the downstream connection.
-            liveClassManager.saveDownStreamConnections(remoteConnectionInfo.clientId, connection)
-        }
+        liveClassManager.saveDownStreamConnections(remoteConnectionInfo.clientId, connection)
 
         // Adding remote view to UI.
         when (remoteConnectionInfo.clientRoles[0]) {
@@ -197,7 +194,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             }
         }
 
-        liveClassManager.saveDownStreamConnections(remoteConnectionInfo.clientId, connection)
         connection.addOnStateChange { conn: ManagedConnection ->
             if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
                 val clientId = remoteConnectionInfo.clientId
