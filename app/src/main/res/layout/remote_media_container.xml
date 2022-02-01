@@ -20,6 +20,7 @@
         android:layout_marginEnd="@dimen/space_4"
         android:contentDescription="@null"
         android:elevation="@dimen/space_20"
+        android:visibility="gone"
         android:src="@drawable/ic_mic_on" />
 
     <ImageView
