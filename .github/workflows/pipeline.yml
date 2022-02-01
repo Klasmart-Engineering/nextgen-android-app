@@ -80,7 +80,10 @@ jobs:
         with:
           name: Detekt_reports
           path: |
-            - app/build/reports/detekt/detekt.*          
+            app/build/reports/detekt/detekt.html
+            app/build/reports/detekt/detekt.xml
+            app/build/reports/detekt/detekt.sarif
+            app/build/reports/detekt/detekt.txt        
 
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
         name: Create Debug APK
