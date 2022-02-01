@@ -142,7 +142,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             disableVideo = false,
             aecContext = AecContext()
         )
-        
+
         // Create audio and video streams from remote media.
         val audioStream: AudioStream? =
             if (remoteConnectionInfo.hasAudio) AudioStream(remoteMedia) else null
@@ -157,35 +157,46 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 videoStream,
                 liveClassManager.getNewDownstreamDataStream()
             )
+
         if (remoteConnectionInfo.clientRoles[0] == STUDENT_ROLE) {
             // Store the downstream connection.
             liveClassManager.saveDownStreamConnections(remoteConnectionInfo.clientId, connection)
         }
+
         // Adding remote view to UI.
-        if (remoteConnectionInfo.clientRoles[0] == TEACHER_ROLE) {
-            uiThreadPoster.post {
-                binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
-                binding.teacherVideoFeed.addRemoteMediaView(remoteMedia.view)
+        when (remoteConnectionInfo.clientRoles[0]) {
+            TEACHER_ROLE -> {
+                uiThreadPoster.post {
+                    binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
+                    binding.teacherVideoFeed.addRemoteMediaView(remoteMedia.view)
+                }
             }
-        } else {
-            val numberOfDownstreamConnection =
-                liveClassManager.getNumberOfActiveDownStreamConnections()
-            uiThreadPoster.post {
-                if (numberOfDownstreamConnection == 1) {
-                    binding.firstStudentVideoFeed.tag = remoteConnectionInfo.clientId
-                    binding.firstStudentVideoFeed.visibility = View.VISIBLE
-                    binding.firstStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
-                } else if (numberOfDownstreamConnection == 2) {
-                    binding.secondStudentVideoFeed.tag = remoteConnectionInfo.clientId
-                    binding.secondStudentVideoFeed.visibility = View.VISIBLE
-                    binding.secondStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
-                } else if (numberOfDownstreamConnection == 3) {
-                    binding.thirdStudentVideoFeed.tag = remoteConnectionInfo.clientId
-                    binding.thirdStudentVideoFeed.visibility = View.VISIBLE
-                    binding.thirdStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
+
+            STUDENT_ROLE -> {
+                val numberOfDownstreamConnection =
+                    liveClassManager.getNumberOfActiveDownStreamConnections()
+                uiThreadPoster.post {
+                    when(numberOfDownstreamConnection) {
+                        1 -> {
+                            binding.firstStudentVideoFeed.tag = remoteConnectionInfo.clientId
+                            binding.firstStudentVideoFeed.visibility = View.VISIBLE
+                            binding.firstStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
+                        }
+                        2 -> {
+                            binding.secondStudentVideoFeed.tag = remoteConnectionInfo.clientId
+                            binding.secondStudentVideoFeed.visibility = View.VISIBLE
+                            binding.secondStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
+                        }
+                        3 -> {
+                            binding.thirdStudentVideoFeed.tag = remoteConnectionInfo.clientId
+                            binding.thirdStudentVideoFeed.visibility = View.VISIBLE
+                            binding.thirdStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
+                        }
+                    }
                 }
             }
         }
+
         liveClassManager.saveDownStreamConnections(remoteConnectionInfo.clientId, connection)
         connection.addOnStateChange { conn: ManagedConnection ->
             if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
@@ -193,17 +204,22 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
                 uiThreadPoster.post {
                     if (view != null) {
-                        if (binding.firstStudentVideoFeed.tag.toString() == clientId) {
-                            binding.firstStudentVideoFeed.removeRemoteMediaView()
-                            binding.firstStudentVideoFeed.visibility = View.GONE
-                        } else if (binding.secondStudentVideoFeed.tag.toString() == clientId) {
-                            binding.secondStudentVideoFeed.removeRemoteMediaView()
-                            binding.secondStudentVideoFeed.visibility = View.GONE
-                        } else if (binding.thirdStudentVideoFeed.tag.toString() == clientId) {
-                            binding.thirdStudentVideoFeed.removeRemoteMediaView()
-                            binding.thirdStudentVideoFeed.visibility = View.GONE
-                        } else if (binding.teacherVideoFeed.tag.toString() == clientId) {
-                            binding.teacherVideoFeed.removeRemoteMediaView()
+                        when (clientId) {
+                            binding.firstStudentVideoFeed.tag?.toString() -> {
+                                binding.firstStudentVideoFeed.removeRemoteMediaView()
+                                binding.firstStudentVideoFeed.visibility = View.GONE
+                            }
+                            binding.secondStudentVideoFeed.tag?.toString() -> {
+                                binding.secondStudentVideoFeed.removeRemoteMediaView()
+                                binding.secondStudentVideoFeed.visibility = View.GONE
+                            }
+                            binding.thirdStudentVideoFeed.tag?.toString() -> {
+                                binding.thirdStudentVideoFeed.removeRemoteMediaView()
+                                binding.thirdStudentVideoFeed.visibility = View.GONE
+                            }
+                            binding.teacherVideoFeed.tag?.toString() -> {
+                                binding.teacherVideoFeed.removeRemoteMediaView()
+                            }
                         }
                     }
                 }
