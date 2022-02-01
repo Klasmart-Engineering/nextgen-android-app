@@ -26,6 +26,10 @@ class LiveClassManager @Inject constructor() {
     var dataChannelActionsHandler: DataChannelActionsHandler? = null
     private var liveClassState: LiveClassState = LiveClassState.IDLE
 
+    init {
+        setUpstreamDataChannel()
+    }
+
     fun setToken(token: String) {
         this.token = token
     }
@@ -93,7 +97,7 @@ class LiveClassManager @Inject constructor() {
         return upstreamConnection
     }
 
-    fun setUpstreamDataChannel() {
+    private fun setUpstreamDataChannel() {
         // TODO @Paul see what you do with this label
         upstreamDataChannel = DataChannel("testDataChannel")
         upstreamDataStream = DataStream(upstreamDataChannel)
