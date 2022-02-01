@@ -1,12 +1,9 @@
 package uk.co.kidsloop.features.liveclass
 
-import fm.liveswitch.Channel
-import fm.liveswitch.Client
-import fm.liveswitch.SfuDownstreamConnection
-import fm.liveswitch.SfuUpstreamConnection
-import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import fm.liveswitch.*
-import uk.co.kidsloop.app.utils.emptyString
+import uk.co.kidsloop.data.enums.DataChannelActions
+import uk.co.kidsloop.features.liveclass.state.LiveClassState
+import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,9 +12,14 @@ class LiveClassManager @Inject constructor() {
 
     private var upstreamConnection: SfuUpstreamConnection? = null
 
-    // Data Channel & Stream
-    private var dataChannel: DataChannel? = null
-    private var dataStream: DataStream? = null
+    // Data Channels & Streams
+    // Upstream
+    private var upstreamDataChannel: DataChannel? = null
+    private var upstreamDataStream: DataStream? = null
+
+    // Downstream
+    private var downstreamDataChannel: DataChannel? = null
+    private var downstreamDataStream: DataStream? = null
 
     private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection>()
 
@@ -25,6 +27,7 @@ class LiveClassManager @Inject constructor() {
     private var remoteChannel: Channel? = null
     private var client: Client? = null
 
+    var dataChannelActionsHandler: DataChannelActionsHandler? = null
     private var liveClassState: LiveClassState = LiveClassState.IDLE
 
     fun setToken(token: String) {
@@ -51,8 +54,12 @@ class LiveClassManager @Inject constructor() {
         return client
     }
 
-    fun getDataStream(): DataStream? {
-        return dataStream
+    fun getUpstreamDataStream(): DataStream? {
+        return upstreamDataStream
+    }
+
+    fun getDownstreamDataStream(): DataStream? {
+        return downstreamDataStream
     }
 
     fun saveDownStreamConnections(remoteId: String, connection: SfuDownstreamConnection) {
@@ -75,63 +82,65 @@ class LiveClassManager @Inject constructor() {
         return upstreamConnection
     }
 
-    fun setDataChannel() {
+    fun setDataChannels() {
         // TODO @Paul see what you do with this label
-        dataChannel = DataChannel("testDataChannel")
-        dataStream = DataStream(dataChannel)
-        setDataChannelListeners()
+        upstreamDataChannel = DataChannel("testDataChannel")
+        upstreamDataStream = DataStream(upstreamDataChannel)
+        downstreamDataChannel = DataChannel("testDataChannel")
+        downstreamDataStream = DataStream(downstreamDataChannel)
     }
 
-    private fun setDataChannelListeners() {
-        // Catch the change of states
-        dataChannel?.addOnStateChange {
-            IAction1<DataChannel> { dataChannel ->
-                // States are New, Connecting, Connected, Closing, Closed, Failed
-                when (dataChannel.state) {
-                    DataChannelState.Connected -> {
-
-                    }
-                    else -> {}
-                }
+    fun setDataChannelsListeners() {
+        // Receive data on your downstream
+        downstreamDataChannel?.setOnReceive { dataChannelReceiveArgs ->
+            dataChannelReceiveArgs.dataString?.let {
+                handleReceivedDataString(it)
             }
-        }
-
-        // Receive data on your channel
-        dataChannel?.setOnReceive {
-            IAction1<DataChannelReceiveArgs> { dataChannelReceiveArgs ->
-                parseReceivedDataString(dataChannelReceiveArgs.dataString)
-                parseReceivedDataBytes(dataChannelReceiveArgs.dataBytes)
+            dataChannelReceiveArgs.dataBytes?.let {
+                parseReceivedDataBytes(it)
             }
         }
     }
 
     fun sendDataString(data: String) {
-        if (isDataChannelConnected())
-            dataChannel?.sendDataString(data)
+        if (isUpstreamDataChannelConnected())
+            upstreamDataChannel?.sendDataString(data)
     }
 
     fun sendDataBytes(data: ByteArray) {
-        if (isDataChannelConnected())
-            dataChannel?.sendDataBytes(DataBuffer.wrap(data))
+        if (isUpstreamDataChannelConnected())
+            upstreamDataChannel?.sendDataBytes(DataBuffer.wrap(data))
     }
 
-    private fun parseReceivedDataString(data: String?): String {
-        return data ?: emptyString()
+    private fun handleReceivedDataString(data: String?) {
+        when (data) {
+            DataChannelActions.RAISE_HAND.type -> {
+                dataChannelActionsHandler?.onRaiseHand()
+            }
+            DataChannelActions.LOWER_HAND.type -> {
+                dataChannelActionsHandler?.onLowerHand()
+            }
+        }
     }
 
     private fun parseReceivedDataBytes(data: DataBuffer?): ByteArray {
         data?.let {
-            val bytes = it.data // The payload byte[] might contain extra bytes that are not part of the payload.
+            val bytes =
+                it.data // The payload byte[] might contain extra bytes that are not part of the payload.
             val index = data.index // Starting index of the payload’s bytes you want.
             val length = data.length // Length of the payload’s bytes you want.
-            return bytes.copyOfRange(index, index+length-1)
+
+            val newValues = bytes.copyOfRange(index, index + length - 1)
+            // TODO parsing of the states transmitted over the DataChannel will be done here
+
+            return newValues
         }
 
         return ByteArray(0)
     }
 
-    private fun isDataChannelConnected(): Boolean {
-        return dataChannel?.state == DataChannelState.Connected
+    private fun isUpstreamDataChannelConnected(): Boolean {
+        return upstreamDataChannel?.state == DataChannelState.Connected
     }
 
     fun cleanConnection() {
