@@ -19,6 +19,7 @@ import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
 import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
+import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import javax.inject.Inject
 
@@ -146,9 +147,10 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 videoStream,
                 liveClassManager.getNewDownstreamDataStream()
             )
-
-        // Store the downstream connection.
-        liveClassManager.saveDownStreamConnections(remoteMedia.id, connection)
+        if (remoteConnectionInfo.clientRoles[0] == STUDENT_ROLE) {
+            // Store the downstream connection.
+            liveClassManager.saveDownStreamConnections(remoteMedia.id, connection)
+        }
         // Adding remote view to UI.
         if (remoteConnectionInfo.clientRoles[0] == TEACHER_ROLE) {
             uiThreadPoster.post {
