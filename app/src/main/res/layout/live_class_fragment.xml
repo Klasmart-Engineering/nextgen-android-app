@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -51,7 +52,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <androidx.cardview.widget.CardView
+        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
             android:id="@+id/first_student_video_feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -64,7 +65,7 @@
             app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
             app:layout_constraintTop_toBottomOf="@+id/local_media_container" />
 
-        <androidx.cardview.widget.CardView
+        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
             android:id="@+id/second_student_video_feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -77,7 +78,7 @@
             app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
             app:layout_constraintTop_toBottomOf="@+id/first_student_video_feed" />
 
-        <androidx.cardview.widget.CardView
+        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
             android:id="@+id/third_student_video_feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -97,7 +98,7 @@
             android:orientation="vertical"
             app:layout_constraintGuide_end="@dimen/space_190" />
 
-        <androidx.cardview.widget.CardView
+        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
             android:id="@+id/teacher_video_feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -116,7 +117,7 @@
                 android:contentDescription="@null"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_local_media_turned_off_teacher" />
-        </androidx.cardview.widget.CardView>
+        </uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

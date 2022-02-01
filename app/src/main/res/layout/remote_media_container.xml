@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/local_video_student_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_local_media_turned_off_student"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/mic_status_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/space_4"
+        android:layout_marginEnd="@dimen/space_4"
+        android:contentDescription="@null"
+        android:elevation="@dimen/space_20"
+        android:src="@drawable/ic_mic_on" />
+
+    <ImageView
+        android:id="@+id/raise_hand_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_raise_hand_selected" />
+</merge>

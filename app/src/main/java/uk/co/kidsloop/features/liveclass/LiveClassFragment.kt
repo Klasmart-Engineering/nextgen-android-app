@@ -1,6 +1,7 @@
 package uk.co.kidsloop.features.liveclass
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -11,8 +12,8 @@ import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.app.UiThreadPoster
+import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.shortToast
-import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
@@ -20,6 +21,7 @@ import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
+import uk.co.kidsloop.liveswitch.DataChannelTransmitter
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -111,9 +113,20 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         binding.raiseHandBtn.setOnClickListener {
             if (liveClassManager.getUpstreamConnection()?.state == ConnectionState.Connected) {
                 binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
+                val id = liveClassManager.getUpstreamConnection()?.clientId
+                //Log.d(TAG, "remoteMediaId: ${liveClassManager.getUpstreamConnection()?.remoteMediaId}") -> mereu null
+                Log.d(TAG, "clientId: ${liveClassManager.getUpstreamConnection()?.clientId}")
+                Log.d(TAG, "id: ${liveClassManager.getUpstreamConnection()?.id}")
+
                 when (binding.raiseHandBtn.isSelected) {
-                    true -> liveClassManager.sendDataString(DataChannelActions.RAISE_HAND.type)
-                    false -> liveClassManager.sendDataString(DataChannelActions.LOWER_HAND.type)
+                    true -> DataChannelTransmitter.sendRaiseHand(
+                        liveClassManager,
+                        id ?: emptyString()
+                    )
+                    false -> DataChannelTransmitter.sendLowerHand(
+                        liveClassManager,
+                        id ?: emptyString()
+                    )
                 }
             }
         }
@@ -135,26 +148,26 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         )
         // Adding remote view to UI.
         if (remoteConnectionInfo.clientRoles[0] == TEACHER_ROLE) {
-            requireActivity().runOnUiThread {
+            uiThreadPoster.post {
                 binding.teacherVideoFeed.tag = remoteMedia.id
-                binding.teacherVideoFeed.addView(remoteMedia.view)
+                binding.teacherVideoFeed.addRemoteMediaView(remoteMedia.view)
             }
         } else {
-            val numberOfDownstreamConnection =
-                liveClassManager.getNumberOfActiveDownStreamConnections()
-            requireActivity().runOnUiThread {
+            uiThreadPoster.post {
+                val numberOfDownstreamConnection =
+                    liveClassManager.getNumberOfActiveDownStreamConnections()
                 if (numberOfDownstreamConnection == 0) {
                     binding.firstStudentVideoFeed.tag = remoteMedia.id
                     binding.firstStudentVideoFeed.visibility = View.VISIBLE
-                    binding.firstStudentVideoFeed.addView(remoteMedia.view)
+                    binding.firstStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
                 } else if (numberOfDownstreamConnection == 1) {
                     binding.secondStudentVideoFeed.tag = remoteMedia.id
                     binding.secondStudentVideoFeed.visibility = View.VISIBLE
-                    binding.secondStudentVideoFeed.addView(remoteMedia.view)
+                    binding.secondStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
                 } else if (numberOfDownstreamConnection == 2) {
                     binding.thirdStudentVideoFeed.tag = remoteMedia.id
                     binding.thirdStudentVideoFeed.visibility = View.VISIBLE
-                    binding.thirdStudentVideoFeed.addView(remoteMedia.view)
+                    binding.thirdStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
                 }
             }
         }
@@ -273,8 +286,12 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
         upstreamConnection?.addOnStateChange { connection ->
             when (connection.state) {
-                ConnectionState.Initializing -> { onConnectionInitializing() }
-                ConnectionState.Connected -> { onConnectedSuccessfully() }
+                ConnectionState.Initializing -> {
+                    onConnectionInitializing()
+                }
+                ConnectionState.Connected -> {
+                    onConnectedSuccessfully()
+                }
                 ConnectionState.Failed -> {
                     // Reconnect if the connection failed.
                     openSfuUpstreamConnection()
@@ -295,15 +312,41 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         binding.raiseHandBtn.isActivated = true
     }
 
-    override fun onRaiseHand() {
+    override fun onRaiseHand(remoteId: String) {
         uiThreadPoster.post {
-            shortToast("Hand raised")
+            shortToast("Hand raised by $remoteId")
+            Log.d(TAG, binding.firstStudentVideoFeed.tag.toString())
+            Log.d(TAG, binding.secondStudentVideoFeed.tag.toString())
+            Log.d(TAG, binding.thirdStudentVideoFeed.tag.toString())
+
+            when {
+                binding.firstStudentVideoFeed.tag == remoteId -> {
+                    binding.firstStudentVideoFeed.showHandRaised()
+                }
+                binding.secondStudentVideoFeed.tag == remoteId -> {
+                    binding.secondStudentVideoFeed.showHandRaised()
+                }
+                binding.thirdStudentVideoFeed.tag == remoteId -> {
+                    binding.thirdStudentVideoFeed.showHandRaised()
+                }
+            }
         }
     }
 
-    override fun onLowerHand() {
+    override fun onLowerHand(remoteId: String) {
         uiThreadPoster.post {
-            shortToast("Hand lowered")
+            shortToast("Hand lowered by $remoteId")
+            when {
+                binding.firstStudentVideoFeed.tag == remoteId -> {
+                    binding.firstStudentVideoFeed.hideRaiseHand()
+                }
+                binding.secondStudentVideoFeed.tag == remoteId -> {
+                    binding.secondStudentVideoFeed.hideRaiseHand()
+                }
+                binding.thirdStudentVideoFeed.tag == remoteId -> {
+                    binding.thirdStudentVideoFeed.hideRaiseHand()
+                }
+            }
         }
     }
 }
