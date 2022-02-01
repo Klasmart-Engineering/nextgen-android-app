@@ -6,16 +6,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import fm.liveswitch.AudioStream
-import fm.liveswitch.Channel
-import fm.liveswitch.ConnectionInfo
-import fm.liveswitch.ConnectionState
-import fm.liveswitch.ManagedConnection
+import fm.liveswitch.*
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
-import fm.liveswitch.SfuDownstreamConnection
-import fm.liveswitch.VideoStream
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.data.enums.DataChannelActions
@@ -175,7 +169,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 remoteConnectionInfo,
                 audioStream,
                 videoStream,
-                liveClassManager.getDownstreamDataStream()
+                liveClassManager.getNewDownstreamDataStream()
             )
 
         // Store the downstream connection.
