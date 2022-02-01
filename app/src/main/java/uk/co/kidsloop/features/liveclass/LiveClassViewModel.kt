@@ -44,10 +44,11 @@ class LiveClassViewModel @Inject constructor(
         audioStream: AudioStream?,
         videoStream: VideoStream?,
         isAudioTurnedOn: Boolean,
-        isVideoTurnedOn: Boolean
+        isVideoTurnedOn: Boolean,
+        mediaId: String,
     ): SfuUpstreamConnection? {
         val upstreamConnection =
-            openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream)
+            openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream, mediaId)
         upstreamConnection?.let {
             liveClassManager.setUpstreamConnection(it)
         }

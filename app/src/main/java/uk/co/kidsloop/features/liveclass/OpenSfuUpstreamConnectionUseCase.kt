@@ -7,11 +7,12 @@ class OpenSfuUpstreamConnectionUseCase @Inject constructor(private val liveClass
 
     fun openSfuUpstreamConnection(
         audioStream: AudioStream?,
-        videoStream: VideoStream?
+        videoStream: VideoStream?,
+        mediaId: String
     ): SfuUpstreamConnection? {
         val channel = liveClassManager.getChannel()
         val dataStream = liveClassManager.getUpstreamDataStream()
 
-        return channel?.createSfuUpstreamConnection(audioStream, videoStream, dataStream)
+        return channel?.createSfuUpstreamConnection(audioStream, videoStream, dataStream, mediaId)
     }
 }
