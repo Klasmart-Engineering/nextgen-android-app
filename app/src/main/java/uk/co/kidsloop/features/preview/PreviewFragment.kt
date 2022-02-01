@@ -98,11 +98,12 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             isPermissionGranted(
                 requireContext(),
                 KidsloopPermissions.RECORD_AUDIO.type
-            ) && viewModel.havePermissionsBeenPreviouslyDenied
+            ) && !viewModel.havePermissionsBeenPreviouslyDenied
         ) {
-            viewModel.havePermissionsBeenPreviouslyDenied = false
-            handleCameraFeed()
-            startRecording()
+            if(isMicRecording){
+                isRecordingAudio = true
+                startRecording()
+            }
             handleNoPermissionViews()
             handleToggles()
         }
@@ -282,6 +283,10 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             audioRecord!!.startRecording()
             isRecordingAudio = true
             isMicRecording = true
+            recordingThread = Thread { playAnimationOnMicActivity() }
+            recordingThread!!.start()
+            binding.microphoneBtn.setBackgroundResource(R.drawable.mic_amplitude_animation)
+        } else {
             recordingThread = Thread { playAnimationOnMicActivity() }
             recordingThread!!.start()
             binding.microphoneBtn.setBackgroundResource(R.drawable.mic_amplitude_animation)
