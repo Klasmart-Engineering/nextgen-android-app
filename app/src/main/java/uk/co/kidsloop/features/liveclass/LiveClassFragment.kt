@@ -133,14 +133,14 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         )
         // Adding remote view to UI.
         if (remoteConnectionInfo.clientRoles[0] == TEACHER_ROLE) {
-            uiThreadPoster.post {
+            requireActivity().runOnUiThread {
                 binding.teacherVideoFeed.tag = remoteMedia.id
                 binding.teacherVideoFeed.addView(remoteMedia.view)
             }
         } else {
-            uiThreadPoster.post {
-                val numberOfDownstreamConnection =
-                    liveClassManager.getNumberOfActiveDownStreamConnections()
+            val numberOfDownstreamConnection =
+                liveClassManager.getNumberOfActiveDownStreamConnections()
+            requireActivity().runOnUiThread {
                 if (numberOfDownstreamConnection == 0) {
                     binding.firstStudentVideoFeed.tag = remoteMedia.id
                     binding.firstStudentVideoFeed.visibility = View.VISIBLE
@@ -176,7 +176,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         liveClassManager.saveDownStreamConnections(remoteMedia.id, connection)
         connection.addOnStateChange { conn: ManagedConnection ->
             if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
-                uiThreadPoster.post {
+                requireActivity().runOnUiThread {
                     if (view != null) {
                         val remoteId = remoteMedia.id
                         if (binding.firstStudentVideoFeed.tag == remoteId) {

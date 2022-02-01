@@ -9,7 +9,6 @@ import fm.liveswitch.Channel
 import fm.liveswitch.IAction1
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
-import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -83,17 +82,11 @@ class LiveClassViewModel @Inject constructor(
         val client = liveClassManager.getClient()
         client?.unregister()?.then {
             liveClassManager.cleanConnection()
-            if (client != null) {
-                client.unregister().then(IAction1 {
-                    liveClassManager.cleanConnection()
-                    liveClassManager.setState(LiveClassState.IDLE)
-                    _classroomStateLiveData.postValue(LiveClassUiState.UnregisterSuccessful)
-                }).fail(IAction1 { exception ->
-                    liveClassManager.setState(LiveClassState.IDLE)
-                    _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
-                })
-            }
-        }
+            _classroomStateLiveData.postValue(LiveClassUiState.UnregisterSuccessful)
+        }?.fail(IAction1 { exception ->
+            liveClassManager.cleanConnection()
+            _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
+        })
     }
 
     override fun onCleared() {
