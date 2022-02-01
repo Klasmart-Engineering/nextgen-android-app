@@ -73,8 +73,8 @@ class LiveClassManager @Inject constructor() {
         return DataStream(dataChannel)
     }
 
-    fun saveDownStreamConnections(remoteId: String, connection: SfuDownstreamConnection) {
-        downstreamConnectionsMap[remoteId] = connection
+    fun saveDownStreamConnections(clientId: String, connection: SfuDownstreamConnection) {
+        downstreamConnectionsMap[clientId] = connection
     }
 
     fun getDownStreamConnections(): Map<String, SfuDownstreamConnection> {
@@ -85,8 +85,8 @@ class LiveClassManager @Inject constructor() {
         return downstreamConnectionsMap.size
     }
 
-    fun removeDownStreamConnection(remoteId: String) {
-        downstreamConnectionsMap.remove(remoteId)
+    fun removeDownStreamConnection(clientId: String) {
+        downstreamConnectionsMap.remove(clientId)
     }
 
     fun setUpstreamConnection(upstreamConnection: SfuUpstreamConnection) {

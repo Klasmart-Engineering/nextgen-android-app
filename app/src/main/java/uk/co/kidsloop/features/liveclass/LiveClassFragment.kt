@@ -18,6 +18,7 @@ import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
 import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
+import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelTransmitter
 import javax.inject.Inject
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChannelActionsHandler {
 
     companion object {
+
         val TAG = LiveClassFragment::class.qualifiedName
         const val IS_CAMERA_TURNED_ON = "isCameraTurnedOn"
         const val IS_MICROPHONE_TURNED_ON = "isMicrophoneTurnedOn"
@@ -140,33 +142,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             disableVideo = false,
             aecContext = AecContext()
         )
-
-        // Adding remote view to UI.
-        if (remoteConnectionInfo.clientRoles[0] == TEACHER_ROLE) {
-            uiThreadPoster.post {
-                binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
-                binding.teacherVideoFeed.addRemoteMediaView(remoteMedia.view)
-            }
-        } else {
-            uiThreadPoster.post {
-                val numberOfDownstreamConnection =
-                    liveClassManager.getNumberOfActiveDownStreamConnections()
-                if (numberOfDownstreamConnection == 0) {
-                    binding.firstStudentVideoFeed.tag = remoteConnectionInfo.clientId
-                    binding.firstStudentVideoFeed.visibility = View.VISIBLE
-                    binding.firstStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
-                } else if (numberOfDownstreamConnection == 1) {
-                    binding.secondStudentVideoFeed.tag = remoteConnectionInfo.clientId
-                    binding.secondStudentVideoFeed.visibility = View.VISIBLE
-                    binding.secondStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
-                } else if (numberOfDownstreamConnection == 2) {
-                    binding.thirdStudentVideoFeed.tag = remoteConnectionInfo.clientId
-                    binding.thirdStudentVideoFeed.visibility = View.VISIBLE
-                    binding.thirdStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
-                }
-            }
-        }
-
+        
         // Create audio and video streams from remote media.
         val audioStream: AudioStream? =
             if (remoteConnectionInfo.hasAudio) AudioStream(remoteMedia) else null
@@ -181,15 +157,42 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 videoStream,
                 liveClassManager.getNewDownstreamDataStream()
             )
-
-        // Store the downstream connection.
+        if (remoteConnectionInfo.clientRoles[0] == STUDENT_ROLE) {
+            // Store the downstream connection.
+            liveClassManager.saveDownStreamConnections(remoteConnectionInfo.clientId, connection)
+        }
+        // Adding remote view to UI.
+        if (remoteConnectionInfo.clientRoles[0] == TEACHER_ROLE) {
+            uiThreadPoster.post {
+                binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
+                binding.teacherVideoFeed.addRemoteMediaView(remoteMedia.view)
+            }
+        } else {
+            val numberOfDownstreamConnection =
+                liveClassManager.getNumberOfActiveDownStreamConnections()
+            uiThreadPoster.post {
+                if (numberOfDownstreamConnection == 1) {
+                    binding.firstStudentVideoFeed.tag = remoteConnectionInfo.clientId
+                    binding.firstStudentVideoFeed.visibility = View.VISIBLE
+                    binding.firstStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
+                } else if (numberOfDownstreamConnection == 2) {
+                    binding.secondStudentVideoFeed.tag = remoteConnectionInfo.clientId
+                    binding.secondStudentVideoFeed.visibility = View.VISIBLE
+                    binding.secondStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
+                } else if (numberOfDownstreamConnection == 3) {
+                    binding.thirdStudentVideoFeed.tag = remoteConnectionInfo.clientId
+                    binding.thirdStudentVideoFeed.visibility = View.VISIBLE
+                    binding.thirdStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
+                }
+            }
+        }
         liveClassManager.saveDownStreamConnections(remoteConnectionInfo.clientId, connection)
         connection.addOnStateChange { conn: ManagedConnection ->
             if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
-                if (view != null) {
-                    UiThreadPoster().post() {
-                        val clientId = remoteConnectionInfo.clientId
+                val clientId = remoteConnectionInfo.clientId
 
+                uiThreadPoster.post {
+                    if (view != null) {
                         if (binding.firstStudentVideoFeed.tag.toString() == clientId) {
                             binding.firstStudentVideoFeed.removeRemoteMediaView()
                             binding.firstStudentVideoFeed.visibility = View.GONE
@@ -205,7 +208,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                     }
                 }
                 remoteMedia.destroy()
-                liveClassManager.removeDownStreamConnection(remoteMedia.id)
+                liveClassManager.removeDownStreamConnection(clientId)
             } else if (conn.state == ConnectionState.Failed) {
                 // Reconnect if the connection failed.
                 openSfuDownstreamConnection(remoteConnectionInfo, channel)
@@ -277,7 +280,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             getAudioStream(localMedia),
             getVideoStream(localMedia),
             requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true),
-            requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true),
+            requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         )
 
         upstreamConnection?.addOnStateChange { connection ->
@@ -292,7 +295,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                     // Reconnect if the connection failed.
                     openSfuUpstreamConnection()
                 }
-                else -> {}
+                else -> {
+                }
             }
         }
 
