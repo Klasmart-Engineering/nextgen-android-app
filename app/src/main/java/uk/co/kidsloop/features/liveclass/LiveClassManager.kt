@@ -17,10 +17,6 @@ class LiveClassManager @Inject constructor() {
     private var upstreamDataChannel: DataChannel? = null
     private var upstreamDataStream: DataStream? = null
 
-    // Downstream
-    private var downstreamDataChannel: DataChannel? = null
-    private var downstreamDataStream: DataStream? = null
-
     private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection>()
 
     private var token: String? = null
@@ -58,8 +54,19 @@ class LiveClassManager @Inject constructor() {
         return upstreamDataStream
     }
 
-    fun getDownstreamDataStream(): DataStream? {
-        return downstreamDataStream
+    // For the Downstreams, it needs to be an unique DataChannel and Data Stream for every connection,
+    // so we will instantiate each one when we will open the DownstreamConnection.
+    fun getNewDownstreamDataStream(): DataStream {
+        val dataChannel = DataChannel("testDataChannel")
+        dataChannel.setOnReceive { dataChannelReceiveArgs ->
+            dataChannelReceiveArgs.dataString?.let {
+                handleReceivedDataString(it)
+            }
+            dataChannelReceiveArgs.dataBytes?.let {
+                parseReceivedDataBytes(it)
+            }
+        }
+        return DataStream(dataChannel)
     }
 
     fun saveDownStreamConnections(remoteId: String, connection: SfuDownstreamConnection) {
@@ -82,24 +89,10 @@ class LiveClassManager @Inject constructor() {
         return upstreamConnection
     }
 
-    fun setDataChannels() {
+    fun setUpstreamDataChannel() {
         // TODO @Paul see what you do with this label
         upstreamDataChannel = DataChannel("testDataChannel")
         upstreamDataStream = DataStream(upstreamDataChannel)
-        downstreamDataChannel = DataChannel("testDataChannel")
-        downstreamDataStream = DataStream(downstreamDataChannel)
-    }
-
-    fun setDataChannelsListeners() {
-        // Receive data on your downstream
-        downstreamDataChannel?.setOnReceive { dataChannelReceiveArgs ->
-            dataChannelReceiveArgs.dataString?.let {
-                handleReceivedDataString(it)
-            }
-            dataChannelReceiveArgs.dataBytes?.let {
-                parseReceivedDataBytes(it)
-            }
-        }
     }
 
     fun sendDataString(data: String) {
