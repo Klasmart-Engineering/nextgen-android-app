@@ -9,6 +9,7 @@ import fm.liveswitch.Channel
 import fm.liveswitch.IAction1
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
+import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,6 +18,8 @@ class LiveClassViewModel @Inject constructor(
     private val openSfuUpstreamConnectionUseCase: OpenSfuUpstreamConnectionUseCase,
     private val liveClassManager: LiveClassManager
 ) : ViewModel() {
+    @Inject
+    lateinit var sharedPrefsWrapper: SharedPrefsWrapper
 
     private var _classroomStateLiveData = MutableLiveData<LiveClassUiState>()
     val classroomStateLiveData: LiveData<LiveClassUiState> get() = _classroomStateLiveData

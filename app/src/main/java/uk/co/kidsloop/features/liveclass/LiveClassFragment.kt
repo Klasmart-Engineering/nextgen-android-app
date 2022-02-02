@@ -42,9 +42,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     @Inject
     lateinit var uiThreadPoster: UiThreadPoster
 
-    @Inject
-    lateinit var sharedPrefsWrapper: SharedPrefsWrapper
-
     private val binding by viewBinding(LiveClassFragmentBinding::bind)
     private var localMedia: LocalMedia<View>? = null
 
@@ -69,7 +66,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
         startLocalMedia()
 
-        when(sharedPrefsWrapper.getRole()) {
+        when(viewModel.sharedPrefsWrapper.getRole()) {
             TEACHER_ROLE -> { setUiForTeacher() }
             STUDENT_ROLE -> { setUiForStudent() }
         }
@@ -123,20 +120,20 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         binding.raiseHandBtn.setOnClickListener {
             if (liveClassManager.getUpstreamConnection()?.state == ConnectionState.Connected) {
                 binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
-                val id = liveClassManager.getUpstreamConnection()?.clientId
+                val id = liveClassManager.getUpstreamConnection()?.clientId ?: emptyString()
 
                 when (binding.raiseHandBtn.isSelected) {
                     true -> {
                         DataChannelTransmitter.sendRaiseHand(
                             liveClassManager,
-                            id ?: emptyString()
+                            id
                         )
                         binding.localMediaContainer.showHandRaised()
                     }
                     false -> {
                         DataChannelTransmitter.sendLowerHand(
                             liveClassManager,
-                            id ?: emptyString()
+                            id
                         )
                         binding.localMediaContainer.hideRaiseHand()
                     }

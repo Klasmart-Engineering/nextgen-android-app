@@ -130,7 +130,6 @@ class LiveClassManager @Inject constructor() {
                 val remoteId = data[1]
                 dataChannelActionsHandler?.onLowerHand(remoteId)
             }
-            else -> { }
         }
     }
 
