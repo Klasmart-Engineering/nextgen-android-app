@@ -1,5 +1,4 @@
 name: Main Build Pipeline
-# test
 on:
   push:
     branches:
