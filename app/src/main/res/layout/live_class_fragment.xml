@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -26,31 +26,42 @@
             app:cardCornerRadius="@dimen/space_12"
             app:layout_constraintBottom_toTopOf="@+id/first_student_video_feed"
             app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
+            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintVertical_chainStyle="packed" />
 
-        <ImageView
-            android:id="@+id/more_btn"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/right_side_buttons_container"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginEnd="@dimen/space_13"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_more_btn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/raise_hand_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/space_13"
-            android:background="@color/transparent"
-            android:contentDescription="@null"
-            android:src="@drawable/selector_raise_hand_btn"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            <ImageView
+                android:id="@+id/more_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_more_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/raise_hand_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:contentDescription="@null"
+                android:src="@drawable/selector_raise_hand_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
             android:id="@+id/first_student_video_feed"
@@ -62,7 +73,7 @@
             app:cardCornerRadius="@dimen/space_12"
             app:layout_constraintBottom_toTopOf="@id/second_student_video_feed"
             app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
+            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
             app:layout_constraintTop_toBottomOf="@+id/local_media_container" />
 
         <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
@@ -75,7 +86,7 @@
             app:cardCornerRadius="@dimen/space_12"
             app:layout_constraintBottom_toTopOf="@id/third_student_video_feed"
             app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
+            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
             app:layout_constraintTop_toBottomOf="@+id/first_student_video_feed" />
 
         <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
@@ -88,7 +99,7 @@
             app:cardCornerRadius="@dimen/space_12"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
+            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
             app:layout_constraintTop_toBottomOf="@id/second_student_video_feed" />
 
         <androidx.constraintlayout.widget.Guideline

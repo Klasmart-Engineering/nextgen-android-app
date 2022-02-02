@@ -12,6 +12,9 @@ import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.utils.emptyString
+import uk.co.kidsloop.app.utils.gone
+import uk.co.kidsloop.app.utils.visible
+import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
@@ -39,6 +42,9 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     @Inject
     lateinit var uiThreadPoster: UiThreadPoster
 
+    @Inject
+    lateinit var sharedPrefsWrapper: SharedPrefsWrapper
+
     private val binding by viewBinding(LiveClassFragmentBinding::bind)
     private var localMedia: LocalMedia<View>? = null
 
@@ -63,23 +69,27 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
         startLocalMedia()
 
+        when(sharedPrefsWrapper.getRole()) {
+            TEACHER_ROLE -> { setUiForTeacher() }
+            STUDENT_ROLE -> { setUiForStudent() }
+        }
+
+        observe()
+        setControls()
+
+        liveClassManager.dataChannelActionsHandler = this
+    }
+
+    private fun setUiForTeacher() {
+        binding.raiseHandBtn.gone()
+    }
+
+    private fun setUiForStudent() {
+        binding.raiseHandBtn.visible()
         binding.raiseHandBtn.isActivated = false
+    }
 
-        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
-        {
-            when (it) {
-                is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> {
-                    uiThreadPoster.post { onClientRegistered(it.channel) }
-                }
-                is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
-                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOn -> turnOnLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOff -> turnOffLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
-            }
-        })
-
+    private fun setControls() {
         binding.toggleMicrophoneBtn.setOnClickListener {
             if (binding.toggleMicrophoneBtn.isChecked) {
                 binding.localMediaContainer.showMicMuted()
@@ -127,8 +137,23 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 }
             }
         }
+    }
 
-        liveClassManager.dataChannelActionsHandler = this
+    private fun observe() = with(viewModel) {
+        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
+        {
+            when (it) {
+                is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
+                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> {
+                    uiThreadPoster.post { onClientRegistered(it.channel) }
+                }
+                is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
+                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOn -> turnOnLocalMedia()
+                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOff -> turnOffLocalMedia()
+                is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
+                is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+            }
+        })
     }
 
     private fun openSfuDownstreamConnection(
