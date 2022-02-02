@@ -126,14 +126,20 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 val id = liveClassManager.getUpstreamConnection()?.clientId
 
                 when (binding.raiseHandBtn.isSelected) {
-                    true -> DataChannelTransmitter.sendRaiseHand(
-                        liveClassManager,
-                        id ?: emptyString()
-                    )
-                    false -> DataChannelTransmitter.sendLowerHand(
-                        liveClassManager,
-                        id ?: emptyString()
-                    )
+                    true -> {
+                        DataChannelTransmitter.sendRaiseHand(
+                            liveClassManager,
+                            id ?: emptyString()
+                        )
+                        binding.localMediaContainer.showHandRaised()
+                    }
+                    false -> {
+                        DataChannelTransmitter.sendLowerHand(
+                            liveClassManager,
+                            id ?: emptyString()
+                        )
+                        binding.localMediaContainer.hideRaiseHand()
+                    }
                 }
             }
         }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.cardview.widget.CardView
 import uk.co.kidsloop.R
+import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.invisible
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.databinding.LocalMediaContainerBinding
@@ -42,5 +43,13 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
     fun showCameraTurnedOn() {
         binding.localVideoStudentOverlay.elevation = 0F
         binding.localVideoStudentOverlay.invisible()
+    }
+
+    fun showHandRaised() {
+        binding.raiseHandImageView.visible()
+    }
+
+    fun hideRaiseHand() {
+        binding.raiseHandImageView.gone()
     }
 }
