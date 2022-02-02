@@ -66,9 +66,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
         startLocalMedia()
 
-        when(viewModel.sharedPrefsWrapper.getRole()) {
-            TEACHER_ROLE -> { setUiForTeacher() }
-            STUDENT_ROLE -> { setUiForStudent() }
+        when (viewModel.sharedPrefsWrapper.getRole()) {
+            TEACHER_ROLE -> {
+                setUiForTeacher()
+            }
+            STUDENT_ROLE -> {
+                setUiForStudent()
+            }
         }
 
         observe()
@@ -124,17 +128,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
                 when (binding.raiseHandBtn.isSelected) {
                     true -> {
-                        DataChannelTransmitter.sendRaiseHand(
-                            liveClassManager,
-                            id
-                        )
+                        DataChannelTransmitter.sendRaiseHand(liveClassManager, id)
                         binding.localMediaContainer.showHandRaised()
                     }
                     false -> {
-                        DataChannelTransmitter.sendLowerHand(
-                            liveClassManager,
-                            id
-                        )
+                        DataChannelTransmitter.sendLowerHand(liveClassManager, id)
                         binding.localMediaContainer.hideRaiseHand()
                     }
                 }
@@ -186,13 +184,16 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 liveClassManager.getNewDownstreamDataStream()
             )
 
-        liveClassManager.saveDownStreamConnections(remoteConnectionInfo.clientId, connection)
+        liveClassManager.saveDownStreamConnections(
+            remoteConnectionInfo.clientId ?: emptyString(),
+            connection
+        )
 
         // Adding remote view to UI.
         when (remoteConnectionInfo.clientRoles[0]) {
             TEACHER_ROLE -> {
                 uiThreadPoster.post {
-                    binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
+                    binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId ?: emptyString()
                     binding.teacherVideoFeed.addRemoteMediaView(remoteMedia.view)
                 }
             }
@@ -201,19 +202,22 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 val numberOfDownstreamConnection =
                     liveClassManager.getNumberOfActiveDownStreamConnections()
                 uiThreadPoster.post {
-                    when(numberOfDownstreamConnection) {
+                    when (numberOfDownstreamConnection) {
                         1 -> {
-                            binding.firstStudentVideoFeed.tag = remoteConnectionInfo.clientId
+                            binding.firstStudentVideoFeed.tag =
+                                remoteConnectionInfo.clientId ?: emptyString()
                             binding.firstStudentVideoFeed.visibility = View.VISIBLE
                             binding.firstStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
                         }
                         2 -> {
-                            binding.secondStudentVideoFeed.tag = remoteConnectionInfo.clientId
+                            binding.secondStudentVideoFeed.tag =
+                                remoteConnectionInfo.clientId ?: emptyString()
                             binding.secondStudentVideoFeed.visibility = View.VISIBLE
                             binding.secondStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
                         }
                         3 -> {
-                            binding.thirdStudentVideoFeed.tag = remoteConnectionInfo.clientId
+                            binding.thirdStudentVideoFeed.tag =
+                                remoteConnectionInfo.clientId ?: emptyString()
                             binding.thirdStudentVideoFeed.visibility = View.VISIBLE
                             binding.thirdStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
                         }
@@ -224,24 +228,24 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
         connection.addOnStateChange { conn: ManagedConnection ->
             if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
-                val clientId = remoteConnectionInfo.clientId
+                val clientId = remoteConnectionInfo.clientId ?: emptyString()
 
                 uiThreadPoster.post {
                     if (view != null) {
                         when (clientId) {
-                            binding.firstStudentVideoFeed.tag?.toString() -> {
+                            binding.firstStudentVideoFeed.tag -> {
                                 binding.firstStudentVideoFeed.removeRemoteMediaView()
                                 binding.firstStudentVideoFeed.visibility = View.GONE
                             }
-                            binding.secondStudentVideoFeed.tag?.toString() -> {
+                            binding.secondStudentVideoFeed.tag -> {
                                 binding.secondStudentVideoFeed.removeRemoteMediaView()
                                 binding.secondStudentVideoFeed.visibility = View.GONE
                             }
-                            binding.thirdStudentVideoFeed.tag?.toString() -> {
+                            binding.thirdStudentVideoFeed.tag -> {
                                 binding.thirdStudentVideoFeed.removeRemoteMediaView()
                                 binding.thirdStudentVideoFeed.visibility = View.GONE
                             }
-                            binding.teacherVideoFeed.tag?.toString() -> {
+                            binding.teacherVideoFeed.tag -> {
                                 binding.teacherVideoFeed.removeRemoteMediaView()
                             }
                         }
@@ -354,14 +358,14 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
     override fun onRaiseHand(clientId: String) {
         uiThreadPoster.post {
-            when {
-                binding.firstStudentVideoFeed.tag == clientId -> {
+            when (clientId) {
+                binding.firstStudentVideoFeed.tag -> {
                     binding.firstStudentVideoFeed.showHandRaised()
                 }
-                binding.secondStudentVideoFeed.tag == clientId -> {
+                binding.secondStudentVideoFeed.tag -> {
                     binding.secondStudentVideoFeed.showHandRaised()
                 }
-                binding.thirdStudentVideoFeed.tag == clientId -> {
+                binding.thirdStudentVideoFeed.tag -> {
                     binding.thirdStudentVideoFeed.showHandRaised()
                 }
             }
@@ -370,14 +374,14 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
     override fun onLowerHand(clientId: String) {
         uiThreadPoster.post {
-            when {
-                binding.firstStudentVideoFeed.tag == clientId -> {
+            when (clientId) {
+                binding.firstStudentVideoFeed.tag -> {
                     binding.firstStudentVideoFeed.hideRaiseHand()
                 }
-                binding.secondStudentVideoFeed.tag == clientId -> {
+                binding.secondStudentVideoFeed.tag -> {
                     binding.secondStudentVideoFeed.hideRaiseHand()
                 }
-                binding.thirdStudentVideoFeed.tag == clientId -> {
+                binding.thirdStudentVideoFeed.tag -> {
                     binding.thirdStudentVideoFeed.hideRaiseHand()
                 }
             }
