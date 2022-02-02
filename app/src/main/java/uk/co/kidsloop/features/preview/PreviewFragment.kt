@@ -183,6 +183,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             ) || !isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type)
         ) {
             binding.microphoneBtn.isEnabled = false
+            binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_off)
             binding.cameraBtn.isEnabled = false
             binding.joinBtn.isEnabled = false
             binding.joinBtn.alpha = 0.2F
