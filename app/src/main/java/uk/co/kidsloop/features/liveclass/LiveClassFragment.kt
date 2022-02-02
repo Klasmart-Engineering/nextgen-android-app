@@ -184,10 +184,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 liveClassManager.getNewDownstreamDataStream()
             )
 
-        liveClassManager.saveDownStreamConnections(
-            remoteConnectionInfo.clientId ?: emptyString(),
-            connection
-        )
+        if (remoteConnectionInfo.clientRoles[0] == STUDENT_ROLE) {
+            // Store the downstream connection.
+            liveClassManager.saveDownStreamConnections(
+                remoteConnectionInfo.clientId ?: emptyString(),
+                connection
+            )
+        }
 
         // Adding remote view to UI.
         when (remoteConnectionInfo.clientRoles[0]) {
