@@ -119,15 +119,6 @@
             app:layout_constraintEnd_toStartOf="@id/barrierVertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/local_video_teacher_overlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:contentDescription="@null"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_local_media_turned_off_teacher" />
         </uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
