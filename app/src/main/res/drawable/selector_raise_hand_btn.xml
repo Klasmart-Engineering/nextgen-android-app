@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/ic_raise_hand_btn" android:state_selected="false"/>
-    <item android:drawable="@drawable/ic_placeholder_raise_hand" android:state_selected="true"/>
+
+    <!--Disable-->
+    <item android:drawable="@drawable/ic_raise_hand_disabled"
+        android:state_activated="false"
+        android:state_pressed="false" />
+
+    <!--Default-->
+    <item android:drawable="@drawable/ic_raise_hand_unselected"
+        android:state_pressed="false"
+        android:state_selected="false" />
+
+    <!--Active-->
+    <item android:drawable="@drawable/ic_raise_hand_selected"
+        android:state_pressed="false"
+        android:state_selected="true" />
 </selector>
