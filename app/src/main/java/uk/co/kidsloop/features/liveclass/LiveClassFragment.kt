@@ -14,7 +14,7 @@ import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.visible
-import uk.co.kidsloop.data.enums.SharedPrefsWrapper
+import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
@@ -23,7 +23,6 @@ import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
-import uk.co.kidsloop.liveswitch.DataChannelTransmitter
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -128,11 +127,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
                 when (binding.raiseHandBtn.isSelected) {
                     true -> {
-                        DataChannelTransmitter.sendRaiseHand(liveClassManager, id)
+                        liveClassManager.sendDataString(DataChannelActions.RAISE_HAND.type+":"+id)
                         binding.localMediaContainer.showHandRaised()
                     }
                     false -> {
-                        DataChannelTransmitter.sendLowerHand(liveClassManager, id)
+                        liveClassManager.sendDataString(DataChannelActions.LOWER_HAND.type+":"+id)
                         binding.localMediaContainer.hideRaiseHand()
                     }
                 }
