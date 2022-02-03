@@ -20,15 +20,16 @@
         android:layout_marginEnd="@dimen/space_4"
         android:contentDescription="@null"
         android:elevation="@dimen/space_20"
-        android:visibility="gone"
-        android:src="@drawable/ic_mic_on" />
+        android:src="@drawable/ic_mic_on"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/raise_hand_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_gravity="center"
         android:contentDescription="@null"
-        android:src="@drawable/ic_raise_hand_selected" />
+        android:elevation="@dimen/space_20"
+        android:src="@drawable/ic_raise_hand_selected"
+        android:visibility="gone" />
 </merge>
