@@ -92,7 +92,7 @@ dependencies {
 
     implementation "com.google.dagger:dagger:$hilt_version"
     kapt "com.google.dagger:dagger-compiler:$hilt_version"
-
+    
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
