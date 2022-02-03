@@ -1,12 +1,9 @@
 package uk.co.kidsloop.features.liveclass
 
-import fm.liveswitch.Channel
-import fm.liveswitch.Client
-import fm.liveswitch.SfuDownstreamConnection
-import fm.liveswitch.SfuUpstreamConnection
-import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import fm.liveswitch.*
-import uk.co.kidsloop.app.utils.emptyString
+import uk.co.kidsloop.data.enums.DataChannelActions
+import uk.co.kidsloop.features.liveclass.state.LiveClassState
+import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,9 +12,10 @@ class LiveClassManager @Inject constructor() {
 
     private var upstreamConnection: SfuUpstreamConnection? = null
 
-    // Data Channel & Stream
-    private var dataChannel: DataChannel? = null
-    private var dataStream: DataStream? = null
+    // Data Channels & Streams
+    // Upstream
+    private var upstreamDataChannel: DataChannel? = null
+    private var upstreamDataStream: DataStream? = null
 
     private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection>()
 
@@ -25,7 +23,12 @@ class LiveClassManager @Inject constructor() {
     private var remoteChannel: Channel? = null
     private var client: Client? = null
 
+    var dataChannelActionsHandler: DataChannelActionsHandler? = null
     private var liveClassState: LiveClassState = LiveClassState.IDLE
+
+    init {
+        setUpstreamDataChannel()
+    }
 
     fun setToken(token: String) {
         this.token = token
@@ -51,20 +54,39 @@ class LiveClassManager @Inject constructor() {
         return client
     }
 
-    fun getDataStream(): DataStream? {
-        return dataStream
+    fun getUpstreamDataStream(): DataStream? {
+        return upstreamDataStream
     }
 
-    fun saveDownStreamConnections(remoteId: String, connection: SfuDownstreamConnection) {
-        downstreamConnectionsMap[remoteId] = connection
+    // For the Downstreams, it needs to be an unique DataChannel and Data Stream for every connection,
+    // so we will instantiate each one when we will open the DownstreamConnection.
+    fun getNewDownstreamDataStream(): DataStream {
+        val dataChannel = DataChannel("testDataChannel")
+        dataChannel.setOnReceive { dataChannelReceiveArgs ->
+            dataChannelReceiveArgs.dataString?.let {
+                parseReceivedDataString(it)
+            }
+            dataChannelReceiveArgs.dataBytes?.let {
+                parseReceivedDataBytes(it)
+            }
+        }
+        return DataStream(dataChannel)
+    }
+
+    fun saveDownStreamConnections(clientId: String, connection: SfuDownstreamConnection) {
+        downstreamConnectionsMap[clientId] = connection
+    }
+
+    fun getDownStreamConnections(): Map<String, SfuDownstreamConnection> {
+        return downstreamConnectionsMap.toMap()
     }
 
     fun getNumberOfActiveDownStreamConnections(): Int {
         return downstreamConnectionsMap.size
     }
 
-    fun removeDownStreamConnection(remoteId: String) {
-        downstreamConnectionsMap.remove(remoteId)
+    fun removeDownStreamConnection(clientId: String) {
+        downstreamConnectionsMap.remove(clientId)
     }
 
     fun setUpstreamConnection(upstreamConnection: SfuUpstreamConnection) {
@@ -75,63 +97,60 @@ class LiveClassManager @Inject constructor() {
         return upstreamConnection
     }
 
-    fun setDataChannel() {
+    private fun setUpstreamDataChannel() {
         // TODO @Paul see what you do with this label
-        dataChannel = DataChannel("testDataChannel")
-        dataStream = DataStream(dataChannel)
-        setDataChannelListeners()
-    }
-
-    private fun setDataChannelListeners() {
-        // Catch the change of states
-        dataChannel?.addOnStateChange {
-            IAction1<DataChannel> { dataChannel ->
-                // States are New, Connecting, Connected, Closing, Closed, Failed
-                when (dataChannel.state) {
-                    DataChannelState.Connected -> {
-
-                    }
-                    else -> {}
-                }
-            }
-        }
-
-        // Receive data on your channel
-        dataChannel?.setOnReceive {
-            IAction1<DataChannelReceiveArgs> { dataChannelReceiveArgs ->
-                parseReceivedDataString(dataChannelReceiveArgs.dataString)
-                parseReceivedDataBytes(dataChannelReceiveArgs.dataBytes)
-            }
-        }
+        upstreamDataChannel = DataChannel("testDataChannel")
+        upstreamDataStream = DataStream(upstreamDataChannel)
     }
 
     fun sendDataString(data: String) {
-        if (isDataChannelConnected())
-            dataChannel?.sendDataString(data)
+        if (isUpstreamDataChannelConnected())
+            upstreamDataChannel?.sendDataString(data)
     }
 
     fun sendDataBytes(data: ByteArray) {
-        if (isDataChannelConnected())
-            dataChannel?.sendDataBytes(DataBuffer.wrap(data))
+        if (isUpstreamDataChannelConnected())
+            upstreamDataChannel?.sendDataBytes(DataBuffer.wrap(data))
     }
 
-    private fun parseReceivedDataString(data: String?): String {
-        return data ?: emptyString()
+    private fun parseReceivedDataString(data: String?) {
+        data?.let {
+            val parsedData = data.split(":")
+            handleReceivedDataString(parsedData)
+        }
+    }
+
+    private fun handleReceivedDataString(data: List<String>) {
+        when (data[0]) {
+            DataChannelActions.RAISE_HAND.type -> {
+                val clientId = data[1]
+                dataChannelActionsHandler?.onRaiseHand(clientId)
+            }
+            DataChannelActions.LOWER_HAND.type -> {
+                val remoteId = data[1]
+                dataChannelActionsHandler?.onLowerHand(remoteId)
+            }
+        }
     }
 
     private fun parseReceivedDataBytes(data: DataBuffer?): ByteArray {
         data?.let {
-            val bytes = it.data // The payload byte[] might contain extra bytes that are not part of the payload.
+            val bytes =
+                it.data // The payload byte[] might contain extra bytes that are not part of the payload.
             val index = data.index // Starting index of the payload’s bytes you want.
             val length = data.length // Length of the payload’s bytes you want.
-            return bytes.copyOfRange(index, index+length-1)
+
+            val newValues = bytes.copyOfRange(index, index + length - 1)
+            // TODO parsing of the states transmitted over the DataChannel will be done here
+
+            return newValues
         }
 
         return ByteArray(0)
     }
 
-    private fun isDataChannelConnected(): Boolean {
-        return dataChannel?.state == DataChannelState.Connected
+    private fun isUpstreamDataChannelConnected(): Boolean {
+        return upstreamDataChannel?.state == DataChannelState.Connected
     }
 
     fun cleanConnection() {

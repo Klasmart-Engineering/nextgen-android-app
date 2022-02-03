@@ -8,7 +8,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@null"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_local_media_turned_off_student"
+        android:src="@drawable/ic_local_media_turned_off_teacher"
         android:visibility="visible" />
 
     <ImageView
@@ -20,6 +20,7 @@
         android:layout_marginEnd="@dimen/space_4"
         android:contentDescription="@null"
         android:elevation="@dimen/space_20"
+        android:visibility="gone"
         android:src="@drawable/ic_mic_on" />
 
     <ImageView

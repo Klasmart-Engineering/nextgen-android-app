@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,18 +12,11 @@
         android:padding="@dimen/space_15">
 
         <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/teacher_barrier"
+            android:id="@+id/barrierVertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="start"
-            app:constraint_referenced_ids="local_media_container,first_student_video_feed,second_student_video_feed,third_student_video_feed" />
-
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/student_barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="end"
-            app:constraint_referenced_ids="teacher_video_feed" />
+            app:constraint_referenced_ids="local_media_container,guidelineVertical" />
 
         <uk.co.kidsloop.features.liveclass.localmedia.LocalMediaCustomContainer
             android:id="@+id/local_media_container"
@@ -32,95 +26,100 @@
             app:cardCornerRadius="@dimen/space_12"
             app:layout_constraintBottom_toTopOf="@+id/first_student_video_feed"
             app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
+            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread"/>
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_chainStyle="packed" />
 
-        <ImageView
-            android:id="@+id/more_btn"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/right_side_buttons_container"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_15"
-            android:layout_marginEnd="@dimen/space_12"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_more_btn"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/space_13"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <ImageView
-            android:id="@+id/raise_hand_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/space_12"
-            android:layout_marginBottom="@dimen/space_15"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_raise_hand_btn"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            <ImageView
+                android:id="@+id/more_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_more_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.cardview.widget.CardView
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/raise_hand_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:contentDescription="@null"
+                android:src="@drawable/selector_raise_hand_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
             android:id="@+id/first_student_video_feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/space_8"
             android:layout_marginEnd="@dimen/space_8"
+            android:visibility="gone"
             app:cardCornerRadius="@dimen/space_12"
-            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@id/second_student_video_feed"
             app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
-            app:layout_constraintTop_toBottomOf="@+id/local_media_container"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
+            app:layout_constraintTop_toBottomOf="@+id/local_media_container" />
 
-        <androidx.cardview.widget.CardView
+        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
             android:id="@+id/second_student_video_feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/space_8"
             android:layout_marginEnd="@dimen/space_8"
+            android:visibility="gone"
             app:cardCornerRadius="@dimen/space_12"
-            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@id/third_student_video_feed"
             app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
-            app:layout_constraintTop_toBottomOf="@+id/first_student_video_feed"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
+            app:layout_constraintTop_toBottomOf="@+id/first_student_video_feed" />
 
-        <androidx.cardview.widget.CardView
+        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
             android:id="@+id/third_student_video_feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/space_8"
             android:layout_marginEnd="@dimen/space_8"
+            android:visibility="gone"
             app:cardCornerRadius="@dimen/space_12"
-            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/raise_hand_btn"
-            app:layout_constraintTop_toBottomOf="@id/second_student_video_feed"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
+            app:layout_constraintTop_toBottomOf="@id/second_student_video_feed" />
 
-        <androidx.cardview.widget.CardView
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineVertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/space_190" />
+
+        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
             android:id="@+id/teacher_video_feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/space_8"
             android:layout_marginEnd="@dimen/space_8"
             app:cardCornerRadius="@dimen/space_21"
-            app:layout_constraintDimensionRatio="H,16:9"
-            app:layout_constraintEnd_toStartOf="@id/teacher_barrier"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/barrierVertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/local_video_teacher_overlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:contentDescription="@null"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_local_media_turned_off_teacher" />
-        </androidx.cardview.widget.CardView>
+        </uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -129,6 +128,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/live_class_overlay"
+        android:clickable="true"
+        android:focusable="true"
         android:visibility="gone">
 
         <ToggleButton
