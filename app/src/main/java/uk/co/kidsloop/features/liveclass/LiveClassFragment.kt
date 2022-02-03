@@ -11,7 +11,9 @@ import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.app.UiThreadPoster
-import uk.co.kidsloop.app.utils.shortToast
+import uk.co.kidsloop.app.utils.emptyString
+import uk.co.kidsloop.app.utils.gone
+import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
@@ -63,21 +65,31 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
         startLocalMedia()
 
-        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
-        {
-            when (it) {
-                is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> {
-                    uiThreadPoster.post { onClientRegistered(it.channel) }
-                }
-                is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
-                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOn -> turnOnLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOff -> turnOffLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+        when (viewModel.sharedPrefsWrapper.getRole()) {
+            TEACHER_ROLE -> {
+                setUiForTeacher()
             }
-        })
+            STUDENT_ROLE -> {
+                setUiForStudent()
+            }
+        }
 
+        observe()
+        setControls()
+
+        liveClassManager.dataChannelActionsHandler = this
+    }
+
+    private fun setUiForTeacher() {
+        binding.raiseHandBtn.gone()
+    }
+
+    private fun setUiForStudent() {
+        binding.raiseHandBtn.visible()
+        binding.raiseHandBtn.isActivated = false
+    }
+
+    private fun setControls() {
         binding.toggleMicrophoneBtn.setOnClickListener {
             if (binding.toggleMicrophoneBtn.isChecked) {
                 binding.localMediaContainer.showMicMuted()
@@ -111,14 +123,37 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         binding.raiseHandBtn.setOnClickListener {
             if (liveClassManager.getUpstreamConnection()?.state == ConnectionState.Connected) {
                 binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
+                val id = liveClassManager.getUpstreamConnection()?.clientId ?: emptyString()
+
                 when (binding.raiseHandBtn.isSelected) {
-                    true -> liveClassManager.sendDataString(DataChannelActions.RAISE_HAND.type)
-                    false -> liveClassManager.sendDataString(DataChannelActions.LOWER_HAND.type)
+                    true -> {
+                        liveClassManager.sendDataString(DataChannelActions.RAISE_HAND.type+":"+id)
+                        binding.localMediaContainer.showHandRaised()
+                    }
+                    false -> {
+                        liveClassManager.sendDataString(DataChannelActions.LOWER_HAND.type+":"+id)
+                        binding.localMediaContainer.hideRaiseHand()
+                    }
                 }
             }
         }
+    }
 
-        liveClassManager.dataChannelActionsHandler = this
+    private fun observe() = with(viewModel) {
+        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
+        {
+            when (it) {
+                is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
+                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> {
+                    uiThreadPoster.post { onClientRegistered(it.channel) }
+                }
+                is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
+                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOn -> turnOnLocalMedia()
+                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOff -> turnOffLocalMedia()
+                is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
+                is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+            }
+        })
     }
 
     private fun openSfuDownstreamConnection(
@@ -126,13 +161,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         channel: Channel
     ): SfuDownstreamConnection {
         // Create remote media.
-
         val remoteMedia = SFURemoteMedia(
             requireContext(),
             disableAudio = false,
             disableVideo = false,
             aecContext = AecContext()
         )
+
         // Create audio and video streams from remote media.
         val audioStream: AudioStream? =
             if (remoteConnectionInfo.hasAudio) AudioStream(remoteMedia) else null
@@ -147,56 +182,79 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 videoStream,
                 liveClassManager.getNewDownstreamDataStream()
             )
+
         if (remoteConnectionInfo.clientRoles[0] == STUDENT_ROLE) {
             // Store the downstream connection.
-            liveClassManager.saveDownStreamConnections(remoteMedia.id, connection)
+            liveClassManager.saveDownStreamConnections(
+                remoteConnectionInfo.clientId ?: emptyString(),
+                connection
+            )
         }
+
         // Adding remote view to UI.
-        if (remoteConnectionInfo.clientRoles[0] == TEACHER_ROLE) {
-            uiThreadPoster.post {
-                binding.teacherVideoFeed.tag = remoteMedia.id
-                binding.teacherVideoFeed.addView(remoteMedia.view)
+        when (remoteConnectionInfo.clientRoles[0]) {
+            TEACHER_ROLE -> {
+                uiThreadPoster.post {
+                    binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId ?: emptyString()
+                    binding.teacherVideoFeed.addRemoteMediaView(remoteMedia.view)
+                }
             }
-        } else {
-            val numberOfDownstreamConnection =
-                liveClassManager.getNumberOfActiveDownStreamConnections()
-            uiThreadPoster.post {
-                if (numberOfDownstreamConnection == 1) {
-                    binding.firstStudentVideoFeed.tag = remoteMedia.id
-                    binding.firstStudentVideoFeed.visibility = View.VISIBLE
-                    binding.firstStudentVideoFeed.addView(remoteMedia.view)
-                } else if (numberOfDownstreamConnection == 2) {
-                    binding.secondStudentVideoFeed.tag = remoteMedia.id
-                    binding.secondStudentVideoFeed.visibility = View.VISIBLE
-                    binding.secondStudentVideoFeed.addView(remoteMedia.view)
-                } else if (numberOfDownstreamConnection == 3) {
-                    binding.thirdStudentVideoFeed.tag = remoteMedia.id
-                    binding.thirdStudentVideoFeed.visibility = View.VISIBLE
-                    binding.thirdStudentVideoFeed.addView(remoteMedia.view)
+
+            STUDENT_ROLE -> {
+                val numberOfDownstreamConnection =
+                    liveClassManager.getNumberOfActiveDownStreamConnections()
+                uiThreadPoster.post {
+                    when (numberOfDownstreamConnection) {
+                        1 -> {
+                            binding.firstStudentVideoFeed.tag =
+                                remoteConnectionInfo.clientId ?: emptyString()
+                            binding.firstStudentVideoFeed.visibility = View.VISIBLE
+                            binding.firstStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
+                        }
+                        2 -> {
+                            binding.secondStudentVideoFeed.tag =
+                                remoteConnectionInfo.clientId ?: emptyString()
+                            binding.secondStudentVideoFeed.visibility = View.VISIBLE
+                            binding.secondStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
+                        }
+                        3 -> {
+                            binding.thirdStudentVideoFeed.tag =
+                                remoteConnectionInfo.clientId ?: emptyString()
+                            binding.thirdStudentVideoFeed.visibility = View.VISIBLE
+                            binding.thirdStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
+                        }
+                    }
                 }
             }
         }
+
         connection.addOnStateChange { conn: ManagedConnection ->
             if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
+                val clientId = remoteConnectionInfo.clientId ?: emptyString()
+
                 uiThreadPoster.post {
                     if (view != null) {
-                        val remoteId = remoteMedia.id
-                        if (binding.firstStudentVideoFeed.tag == remoteId) {
-                            binding.firstStudentVideoFeed.removeView(remoteMedia.view)
-                            binding.firstStudentVideoFeed.visibility = View.GONE
-                        } else if (binding.secondStudentVideoFeed.tag == remoteId) {
-                            binding.secondStudentVideoFeed.removeView(remoteMedia.view)
-                            binding.secondStudentVideoFeed.visibility = View.GONE
-                        } else if (binding.thirdStudentVideoFeed.tag == remoteId) {
-                            binding.thirdStudentVideoFeed.removeView(remoteMedia.view)
-                            binding.thirdStudentVideoFeed.visibility = View.GONE
-                        } else if (binding.teacherVideoFeed.tag == remoteId) {
-                            binding.teacherVideoFeed.removeView(remoteMedia.view)
+                        when (clientId) {
+                            binding.firstStudentVideoFeed.tag -> {
+                                binding.firstStudentVideoFeed.removeRemoteMediaView()
+                                binding.firstStudentVideoFeed.visibility = View.GONE
+                            }
+                            binding.secondStudentVideoFeed.tag -> {
+                                binding.secondStudentVideoFeed.removeRemoteMediaView()
+                                binding.secondStudentVideoFeed.visibility = View.GONE
+                            }
+                            binding.thirdStudentVideoFeed.tag -> {
+                                binding.thirdStudentVideoFeed.removeRemoteMediaView()
+                                binding.thirdStudentVideoFeed.visibility = View.GONE
+                            }
+                            binding.teacherVideoFeed.tag -> {
+                                binding.teacherVideoFeed.removeRemoteMediaView()
+                            }
                         }
                     }
                 }
                 remoteMedia.destroy()
-                liveClassManager.removeDownStreamConnection(remoteMedia.id)
+                liveClassManager.removeDownStreamConnection(clientId)
             } else if (conn.state == ConnectionState.Failed) {
                 // Reconnect if the connection failed.
                 openSfuDownstreamConnection(remoteConnectionInfo, channel)
@@ -245,11 +303,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                                          uiThreadPoster.post {
-                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                                              viewModel.joinLiveClass()
-                                          }
-                                      }, { exception -> })
+                uiThreadPoster.post {
+                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                    viewModel.joinLiveClass()
+                }
+            }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
@@ -273,6 +331,12 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
         upstreamConnection?.addOnStateChange { connection ->
             when (connection.state) {
+                ConnectionState.Initializing -> {
+                    onConnectionInitializing()
+                }
+                ConnectionState.Connected -> {
+                    onConnectedSuccessfully()
+                }
                 ConnectionState.Failed -> {
                     // Reconnect if the connection failed.
                     openSfuUpstreamConnection()
@@ -286,15 +350,43 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         liveClassManager.setState(LiveClassState.JOINED)
     }
 
-    override fun onRaiseHand() {
+    private fun onConnectionInitializing() {
+        binding.raiseHandBtn.isActivated = false
+    }
+
+    private fun onConnectedSuccessfully() {
+        binding.raiseHandBtn.isActivated = true
+    }
+
+    override fun onRaiseHand(clientId: String) {
         uiThreadPoster.post {
-            shortToast("Hand raised")
+            when (clientId) {
+                binding.firstStudentVideoFeed.tag -> {
+                    binding.firstStudentVideoFeed.showHandRaised()
+                }
+                binding.secondStudentVideoFeed.tag -> {
+                    binding.secondStudentVideoFeed.showHandRaised()
+                }
+                binding.thirdStudentVideoFeed.tag -> {
+                    binding.thirdStudentVideoFeed.showHandRaised()
+                }
+            }
         }
     }
 
-    override fun onLowerHand() {
+    override fun onLowerHand(clientId: String) {
         uiThreadPoster.post {
-            shortToast("Hand lowered")
+            when (clientId) {
+                binding.firstStudentVideoFeed.tag -> {
+                    binding.firstStudentVideoFeed.hideRaiseHand()
+                }
+                binding.secondStudentVideoFeed.tag -> {
+                    binding.secondStudentVideoFeed.hideRaiseHand()
+                }
+                binding.thirdStudentVideoFeed.tag -> {
+                    binding.thirdStudentVideoFeed.hideRaiseHand()
+                }
+            }
         }
     }
 }

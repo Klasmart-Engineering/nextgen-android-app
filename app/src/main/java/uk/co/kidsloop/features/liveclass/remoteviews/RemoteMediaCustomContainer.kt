@@ -1,4 +1,4 @@
-package uk.co.kidsloop.features.liveclass.localmedia
+package uk.co.kidsloop.features.liveclass.remoteviews
 
 import android.content.Context
 import android.util.AttributeSet
@@ -9,21 +9,23 @@ import uk.co.kidsloop.R
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.invisible
 import uk.co.kidsloop.app.utils.visible
-import uk.co.kidsloop.databinding.LocalMediaContainerBinding
+import uk.co.kidsloop.databinding.RemoteMediaContainerBinding
 
-class LocalMediaCustomContainer @JvmOverloads constructor(
+/**
+ *  Created by paulbisioc on 01.02.2022
+ */
+class RemoteMediaCustomContainer @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : CardView(context, attrs, defStyleAttr) {
+    private val binding = RemoteMediaContainerBinding.inflate(LayoutInflater.from(context), this)
 
-    private val binding = LocalMediaContainerBinding.inflate(LayoutInflater.from(context), this)
-
-    fun addLocalMediaView(localMediaView: View?) {
-        addView(localMediaView, 1)
+    fun addRemoteMediaView(remoteMediaView: View?) {
+        addView(remoteMediaView, 1)
     }
 
-    fun removeLocalMediaView() {
+    fun removeRemoteMediaView() {
         removeViewAt(1)
     }
 

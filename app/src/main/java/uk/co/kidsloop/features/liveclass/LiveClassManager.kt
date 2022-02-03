@@ -64,7 +64,7 @@ class LiveClassManager @Inject constructor() {
         val dataChannel = DataChannel("testDataChannel")
         dataChannel.setOnReceive { dataChannelReceiveArgs ->
             dataChannelReceiveArgs.dataString?.let {
-                handleReceivedDataString(it)
+                parseReceivedDataString(it)
             }
             dataChannelReceiveArgs.dataBytes?.let {
                 parseReceivedDataBytes(it)
@@ -73,16 +73,20 @@ class LiveClassManager @Inject constructor() {
         return DataStream(dataChannel)
     }
 
-    fun saveDownStreamConnections(remoteId: String, connection: SfuDownstreamConnection) {
-        downstreamConnectionsMap[remoteId] = connection
+    fun saveDownStreamConnections(clientId: String, connection: SfuDownstreamConnection) {
+        downstreamConnectionsMap[clientId] = connection
+    }
+
+    fun getDownStreamConnections(): Map<String, SfuDownstreamConnection> {
+        return downstreamConnectionsMap.toMap()
     }
 
     fun getNumberOfActiveDownStreamConnections(): Int {
         return downstreamConnectionsMap.size
     }
 
-    fun removeDownStreamConnection(remoteId: String) {
-        downstreamConnectionsMap.remove(remoteId)
+    fun removeDownStreamConnection(clientId: String) {
+        downstreamConnectionsMap.remove(clientId)
     }
 
     fun setUpstreamConnection(upstreamConnection: SfuUpstreamConnection) {
@@ -109,13 +113,22 @@ class LiveClassManager @Inject constructor() {
             upstreamDataChannel?.sendDataBytes(DataBuffer.wrap(data))
     }
 
-    private fun handleReceivedDataString(data: String?) {
-        when (data) {
+    private fun parseReceivedDataString(data: String?) {
+        data?.let {
+            val parsedData = data.split(":")
+            handleReceivedDataString(parsedData)
+        }
+    }
+
+    private fun handleReceivedDataString(data: List<String>) {
+        when (data[0]) {
             DataChannelActions.RAISE_HAND.type -> {
-                dataChannelActionsHandler?.onRaiseHand()
+                val clientId = data[1]
+                dataChannelActionsHandler?.onRaiseHand(clientId)
             }
             DataChannelActions.LOWER_HAND.type -> {
-                dataChannelActionsHandler?.onLowerHand()
+                val remoteId = data[1]
+                dataChannelActionsHandler?.onLowerHand(remoteId)
             }
         }
     }
