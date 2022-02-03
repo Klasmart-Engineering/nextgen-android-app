@@ -9,14 +9,15 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
+import uk.co.kidsloop.app.utils.clickable
+import uk.co.kidsloop.app.utils.disable
+import uk.co.kidsloop.app.utils.enable
+import uk.co.kidsloop.app.utils.unclickable
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.databinding.FragmentLoginBinding
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import javax.inject.Inject
-import android.view.View.OnFocusChangeListener
-import android.widget.Toast
-import uk.co.kidsloop.app.utils.*
 import uk.co.kidsloop.liveswitch.Config.CHANNEL_ID
 
 @AndroidEntryPoint
@@ -60,7 +61,7 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
             }
 
         })
-        binding.channelID.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+        binding.channelID.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 sharedPrefsWrapper.saveChannelID(binding.channelID.text.toString())
             }
