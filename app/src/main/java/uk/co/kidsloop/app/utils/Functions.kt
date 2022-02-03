@@ -57,5 +57,21 @@ fun View.setVisible(visible: Boolean) {
     }
 }
 
+fun View?.enable() {
+    this?.isEnabled = true
+}
+
+fun View?.disable() {
+    this?.isEnabled = false
+}
+
+fun View?.clickable() {
+    this?.isClickable = true
+}
+
+fun View?.unclickable() {
+    this?.isClickable = false
+}
+
 // String functions
 fun emptyString(): String = ""
