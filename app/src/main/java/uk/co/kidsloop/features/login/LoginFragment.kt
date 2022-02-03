@@ -15,7 +15,9 @@ import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import javax.inject.Inject
 import android.view.View.OnFocusChangeListener
+import android.widget.Toast
 import uk.co.kidsloop.app.utils.*
+import uk.co.kidsloop.liveswitch.Config.CHANNEL_ID
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment(R.layout.fragment_login) {
@@ -27,6 +29,15 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (sharedPrefsWrapper.getChannelID() != CHANNEL_ID) {
+            binding.channelID.setText(sharedPrefsWrapper.getChannelID())
+            binding.loginAsStudentBtn.enable()
+            binding.loginAsStudentBtn.clickable()
+            binding.loginAsTeacherBtn.enable()
+            binding.loginAsTeacherBtn.clickable()
+        }
+
         binding.channelID.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
