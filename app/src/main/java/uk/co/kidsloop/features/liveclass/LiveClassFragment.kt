@@ -358,7 +358,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
         upstreamConnection?.addOnNetworkQuality { networkQuality ->
             // TODO @Paul remove these after QA get their stats
-            UiThreadPoster().post {
+            uiThreadPoster.post {
                 shortToast(networkQuality.toString())
                 Log.d(TAG, networkQuality.toString())
             }
