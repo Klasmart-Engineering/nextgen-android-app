@@ -4,15 +4,7 @@ on:
   push:
     branches:
       - main
-      - develop
-      - feature/*
-      - bugfix/*
-  pull_request:
-    branches:
-      - main
-      - develop 
-      - feature/*
-      - bugfix/*
+      - chore/*
   schedule:
     - cron: '30 1 * * *'
 
@@ -36,15 +28,20 @@ jobs:
       - name: mobsfscan
         uses: MobSF/mobsfscan@main
         with:
-          args: '. --json --output results.json || true'
-
-      - name: Upload Scan results
-        uses: actions/upload-artifact@v2
+          args: '. --sarif --output results.sarif || true'
+      
+      - name: Upload mobsfscan report
+        uses: github/codeql-action/upload-sarif@v1
         with:
-          name: sast-results
-          path: |
-            results.html
-            results.json
+          sarif_file: results.sarif
+
+      # - name: Upload Scan results
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: sast-results
+      #     path: |
+      #       results.html
+      #       results.json
       
       - name: Publish to Slack 
         if: always()
