@@ -10,6 +10,10 @@ import javax.inject.Singleton
 @Singleton
 class LiveClassManager @Inject constructor() {
 
+    companion object {
+        const val STATS_COLLECTING_INTERVAL = 2500
+    }
+
     private var upstreamConnection: SfuUpstreamConnection? = null
 
     // Data Channels & Streams
