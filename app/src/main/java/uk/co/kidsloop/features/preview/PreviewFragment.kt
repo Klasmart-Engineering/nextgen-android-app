@@ -93,7 +93,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     override fun onResume() {
         super.onResume()
-        if (isMicRecording){
+        if (isMicRecording) {
             isRecordingAudio = true
             startRecording()
         }
@@ -329,7 +329,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     }
 
     private fun animateView(view: ToggleButton) {
-        if(getView() != null){
+        if (getView() != null) {
             when (val drawable = view.background) {
                 is AnimatedVectorDrawableCompat -> {
                     drawable.start()
