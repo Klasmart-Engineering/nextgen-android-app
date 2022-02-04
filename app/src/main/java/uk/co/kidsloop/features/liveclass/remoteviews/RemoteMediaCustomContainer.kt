@@ -24,7 +24,7 @@ class RemoteMediaCustomContainer @JvmOverloads constructor(
     private val binding = RemoteMediaContainerBinding.inflate(LayoutInflater.from(context), this)
 
     fun addRemoteMediaView(remoteMediaView: View?) {
-        //addView(remoteMediaView, 1)
+        addView(remoteMediaView, 1)
     }
 
     fun removeRemoteMediaView() {

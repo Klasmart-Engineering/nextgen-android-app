@@ -29,17 +29,16 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val videoFeedContainer =  holder.binding.studentVideoFeed
         val videoFeed = remoteStudentsFeedList[position].view
-//        val layoutParams = ConstraintLayout.LayoutParams(0, 0)
-//        videoFeed.layoutParams = layoutParams
+        val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
+        videoFeed.layoutParams = layoutParams
         videoFeed.id = View.generateViewId()
         videoFeedContainer.addRemoteMediaView(videoFeed)
 
-//        val constraintSet = ConstraintSet()
-//        constraintSet.clone(videoFeedContainer)
-//        constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
-//        constraintSet.constrainDefaultWidth(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
-//        constraintSet.setDimensionRatio(videoFeed.id, "4:3")
-//        constraintSet.applyTo(videoFeedContainer)
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(videoFeedContainer)
+        constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
+        constraintSet.setDimensionRatio(videoFeed.id, "4:3")
+        constraintSet.applyTo(videoFeedContainer)
     }
 
     inner class ViewHolder(val binding: StudentFeedLayoutBinding) :
