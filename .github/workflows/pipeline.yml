@@ -1,3 +1,4 @@
+# Main release pipeline
 name: Main Build Pipeline
 
 on:
@@ -70,9 +71,16 @@ jobs:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
           android: true
-           
-      - name: Run Gradle
-        run: ./gradlew build check --continue            
+      
+         
+      - name: Run Gradle Build
+        run: ./gradlew build check --continue  
+
+      - name: Upload Detekt Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: Detekt_reports
+          path: app/build/reports/detekt/*  
 
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
         name: Create Debug APK
