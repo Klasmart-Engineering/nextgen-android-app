@@ -1,7 +1,9 @@
 package uk.co.kidsloop.features.liveclass
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -13,6 +15,7 @@ import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
+import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
@@ -335,6 +338,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         )
 
+        upstreamConnection?.statsEventInterval = LiveClassManager.STATS_COLLECTING_INTERVAL
+
         upstreamConnection?.addOnStateChange { connection ->
             when (connection.state) {
                 ConnectionState.Initializing -> {
@@ -349,6 +354,14 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 }
                 else -> {
                 }
+            }
+        }
+
+        upstreamConnection?.addOnNetworkQuality { networkQuality ->
+            // TODO @Paul remove these after QA get their stats
+            UiThreadPoster().post {
+                shortToast(networkQuality.toString())
+                Log.d(TAG, networkQuality.toString())
             }
         }
 
