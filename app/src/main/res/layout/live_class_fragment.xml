@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -24,83 +23,32 @@
             android:layout_height="0dp"
             android:layout_marginEnd="@dimen/space_8"
             app:cardCornerRadius="@dimen/space_12"
-            app:layout_constraintBottom_toTopOf="@+id/first_student_video_feed"
-            app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
+            app:layout_constraintDimensionRatio="H,4:3"
+            app:layout_constraintEnd_toStartOf="@+id/more_btn"
+            app:layout_constraintStart_toEndOf="@+id/guidelineVertical"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_bias="0" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/right_side_buttons_container"
+        <ImageView
+            android:id="@+id/more_btn"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_more_btn"
             android:layout_marginEnd="@dimen/space_13"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/more_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_more_btn"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/raise_hand_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/transparent"
-                android:contentDescription="@null"
-                android:src="@drawable/selector_raise_hand_btn"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
-            android:id="@+id/first_student_video_feed"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/space_8"
-            android:layout_marginEnd="@dimen/space_8"
-            android:visibility="gone"
-            app:cardCornerRadius="@dimen/space_12"
-            app:layout_constraintBottom_toTopOf="@id/second_student_video_feed"
-            app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
-            app:layout_constraintTop_toBottomOf="@+id/local_media_container" />
-
-        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
-            android:id="@+id/second_student_video_feed"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/space_8"
-            android:layout_marginEnd="@dimen/space_8"
-            android:visibility="gone"
-            app:cardCornerRadius="@dimen/space_12"
-            app:layout_constraintBottom_toTopOf="@id/third_student_video_feed"
-            app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
-            app:layout_constraintTop_toBottomOf="@+id/first_student_video_feed" />
-
-        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
-            android:id="@+id/third_student_video_feed"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/space_8"
-            android:layout_marginEnd="@dimen/space_8"
-            android:visibility="gone"
-            app:cardCornerRadius="@dimen/space_12"
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/raise_hand_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:contentDescription="@null"
+            android:layout_marginEnd="@dimen/space_13"
+            android:src="@drawable/selector_raise_hand_btn"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="W,4:3"
-            app:layout_constraintEnd_toStartOf="@id/right_side_buttons_container"
-            app:layout_constraintTop_toBottomOf="@id/second_student_video_feed" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineVertical"
@@ -108,6 +56,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_end="@dimen/space_190" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/student_feeds_recyclerview"
+            android:layout_marginEnd="@dimen/space_8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/local_media_container"
+            app:layout_constraintStart_toEndOf="@+id/guidelineVertical"
+            app:layout_constraintEnd_toStartOf="@+id/more_btn"/>
 
         <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
             android:id="@+id/teacher_video_feed"
