@@ -104,7 +104,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 isRecordingAudio = true
                 startRecording()
             }
-            if(viewModel.havePermissionsBeenPreviouslyDenied){
+            if (viewModel.havePermissionsBeenPreviouslyDenied) {
                 viewModel.havePermissionsBeenPreviouslyDenied = false
                 handleCameraFeed()
                 handleNoPermissionViews()
