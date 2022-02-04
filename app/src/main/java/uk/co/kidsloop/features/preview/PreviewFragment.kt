@@ -93,17 +93,19 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     override fun onResume() {
         super.onResume()
+        if (isMicRecording) {
+            isRecordingAudio = true
+            startRecording()
+        }
         // Handle return in the app from settings only when the user has previously denied the permissions
         if (isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type) &&
             isPermissionGranted(
                 requireContext(),
                 KidsloopPermissions.RECORD_AUDIO.type
-            ) && !viewModel.havePermissionsBeenPreviouslyDenied
+            ) && viewModel.havePermissionsBeenPreviouslyDenied
         ) {
-            if(isMicRecording){
-                isRecordingAudio = true
-                startRecording()
-            }
+            viewModel.havePermissionsBeenPreviouslyDenied = false
+            handleCameraFeed()
             handleNoPermissionViews()
             handleToggles()
         }
@@ -327,7 +329,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     }
 
     private fun animateView(view: ToggleButton) {
-        if(getView() != null){
+        if (getView() != null) {
             when (val drawable = view.background) {
                 is AnimatedVectorDrawableCompat -> {
                     drawable.start()
