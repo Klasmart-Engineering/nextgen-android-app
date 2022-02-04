@@ -206,18 +206,24 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 uiThreadPoster.post {
                     when (numberOfDownstreamConnection) {
                         1 -> {
+                            binding.firstStudentVideoFeed.hideRaiseHand()
+
                             binding.firstStudentVideoFeed.tag =
                                 remoteConnectionInfo.clientId ?: emptyString()
                             binding.firstStudentVideoFeed.visibility = View.VISIBLE
                             binding.firstStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
                         }
                         2 -> {
+                            binding.firstStudentVideoFeed.hideRaiseHand()
+
                             binding.secondStudentVideoFeed.tag =
                                 remoteConnectionInfo.clientId ?: emptyString()
                             binding.secondStudentVideoFeed.visibility = View.VISIBLE
                             binding.secondStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
                         }
                         3 -> {
+                            binding.firstStudentVideoFeed.hideRaiseHand()
+
                             binding.thirdStudentVideoFeed.tag =
                                 remoteConnectionInfo.clientId ?: emptyString()
                             binding.thirdStudentVideoFeed.visibility = View.VISIBLE
