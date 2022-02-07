@@ -7,6 +7,7 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.*
@@ -51,6 +52,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
     private val viewModel by viewModels<LiveClassViewModel>()
 
+    private lateinit var studentsFeedAdapter: StudentFeedsAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         localMedia = CameraLocalMedia(
@@ -76,6 +79,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             binding.localMediaContainer.showMicMuted()
         }
         startLocalMedia()
+
+        studentsFeedAdapter = StudentFeedsAdapter()
+        binding.studentFeedsRecyclerview.apply {
+            adapter = studentsFeedAdapter
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = null
+        }
 
         when (viewModel.sharedPrefsWrapper.getRole()) {
             TEACHER_ROLE -> {
@@ -161,12 +171,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         {
             when (it) {
                 is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> {
-                    uiThreadPoster.post { onClientRegistered(it.channel) }
-                }
+                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
                 is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
-                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOn -> turnOnLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOff -> turnOffLocalMedia()
                 is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
                 is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
             }
@@ -213,41 +219,12 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             TEACHER_ROLE -> {
                 uiThreadPoster.post {
                     binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId ?: emptyString()
-                    binding.teacherVideoFeed.addRemoteMediaView(remoteMedia.view)
+                    binding.teacherVideoFeed.addView(remoteMedia.view, 1)
                 }
             }
 
-            STUDENT_ROLE -> {
-                val numberOfDownstreamConnection =
-                    liveClassManager.getNumberOfActiveDownStreamConnections()
-                uiThreadPoster.post {
-                    when (numberOfDownstreamConnection) {
-                        1 -> {
-                            binding.firstStudentVideoFeed.hideRaiseHand()
-
-                            binding.firstStudentVideoFeed.tag =
-                                remoteConnectionInfo.clientId ?: emptyString()
-                            binding.firstStudentVideoFeed.visibility = View.VISIBLE
-                            binding.firstStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
-                        }
-                        2 -> {
-                            binding.firstStudentVideoFeed.hideRaiseHand()
-
-                            binding.secondStudentVideoFeed.tag =
-                                remoteConnectionInfo.clientId ?: emptyString()
-                            binding.secondStudentVideoFeed.visibility = View.VISIBLE
-                            binding.secondStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
-                        }
-                        3 -> {
-                            binding.firstStudentVideoFeed.hideRaiseHand()
-
-                            binding.thirdStudentVideoFeed.tag =
-                                remoteConnectionInfo.clientId ?: emptyString()
-                            binding.thirdStudentVideoFeed.visibility = View.VISIBLE
-                            binding.thirdStudentVideoFeed.addRemoteMediaView(remoteMedia.view)
-                        }
-                    }
-                }
+            STUDENT_ROLE -> uiThreadPoster.post {
+                studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
             }
         }
 
@@ -257,22 +234,10 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
                 uiThreadPoster.post {
                     if (view != null) {
-                        when (clientId) {
-                            binding.firstStudentVideoFeed.tag -> {
-                                binding.firstStudentVideoFeed.removeRemoteMediaView()
-                                binding.firstStudentVideoFeed.visibility = View.GONE
-                            }
-                            binding.secondStudentVideoFeed.tag -> {
-                                binding.secondStudentVideoFeed.removeRemoteMediaView()
-                                binding.secondStudentVideoFeed.visibility = View.GONE
-                            }
-                            binding.thirdStudentVideoFeed.tag -> {
-                                binding.thirdStudentVideoFeed.removeRemoteMediaView()
-                                binding.thirdStudentVideoFeed.visibility = View.GONE
-                            }
-                            binding.teacherVideoFeed.tag -> {
-                                binding.teacherVideoFeed.removeRemoteMediaView()
-                            }
+                        if (binding.teacherVideoFeed.tag == clientId) {
+                            binding.teacherVideoFeed.removeViewAt(1)
+                        } else {
+                            studentsFeedAdapter.removeVideoFeed(clientId)
                         }
                     }
                 }
@@ -326,22 +291,14 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                uiThreadPoster.post {
-                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                    viewModel.joinLiveClass()
-                }
-            }, { exception -> })
+                                          uiThreadPoster.post {
+                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                                              viewModel.joinLiveClass()
+                                          }
+                                      }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
-    }
-
-    private fun turnOnLocalMedia() {
-        //here we should add functionality in order to turn on camera for yourself
-    }
-
-    private fun turnOffLocalMedia() {
-        //here we should add functionality in order to turn off local media
     }
 
     private fun openSfuUpstreamConnection() {
@@ -365,8 +322,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 ConnectionState.Failed -> {
                     // Reconnect if the connection failed.
                     openSfuUpstreamConnection()
-                }
-                else -> {
                 }
             }
         }
@@ -393,33 +348,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
     override fun onRaiseHand(clientId: String) {
         uiThreadPoster.post {
-            when (clientId) {
-                binding.firstStudentVideoFeed.tag -> {
-                    binding.firstStudentVideoFeed.showHandRaised()
-                }
-                binding.secondStudentVideoFeed.tag -> {
-                    binding.secondStudentVideoFeed.showHandRaised()
-                }
-                binding.thirdStudentVideoFeed.tag -> {
-                    binding.thirdStudentVideoFeed.showHandRaised()
-                }
-            }
+            studentsFeedAdapter.onHandRaised(clientId)
         }
     }
 
     override fun onLowerHand(clientId: String) {
         uiThreadPoster.post {
-            when (clientId) {
-                binding.firstStudentVideoFeed.tag -> {
-                    binding.firstStudentVideoFeed.hideRaiseHand()
-                }
-                binding.secondStudentVideoFeed.tag -> {
-                    binding.secondStudentVideoFeed.hideRaiseHand()
-                }
-                binding.thirdStudentVideoFeed.tag -> {
-                    binding.thirdStudentVideoFeed.hideRaiseHand()
-                }
-            }
+            studentsFeedAdapter.onHandLowered(clientId)
         }
     }
 }
