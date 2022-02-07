@@ -26,8 +26,11 @@
         android:id="@+id/raise_hand_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:maxHeight="12dp"
+        android:maxWidth="10dp"
         android:layout_gravity="center"
         android:contentDescription="@null"
-        android:src="@drawable/ic_raise_hand_selected" />
+        android:elevation="@dimen/space_20"
+        android:src="@drawable/ic_raise_hand_selected"
+        android:visibility="gone" />
 </merge>

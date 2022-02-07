@@ -17,6 +17,35 @@
             app:barrierDirection="start"
             app:constraint_referenced_ids="local_media_container,guidelineVertical" />
 
+        <ImageView
+            android:id="@+id/more_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/space_13"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_more_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/raise_hand_btn"
+            android:layout_width="50dp"
+            android:layout_height="70dp"
+            android:layout_marginEnd="@dimen/space_13"
+            android:contentDescription="@null"
+            android:scaleType="fitEnd"
+            android:src="@drawable/selector_raise_hand_btn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineVertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/space_190" />
+
         <uk.co.kidsloop.features.liveclass.localmedia.LocalMediaCustomContainer
             android:id="@+id/local_media_container"
             android:layout_width="0dp"
@@ -28,34 +57,6 @@
             app:layout_constraintStart_toEndOf="@+id/guidelineVertical"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0" />
-
-        <ImageView
-            android:id="@+id/more_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_more_btn"
-            android:layout_marginEnd="@dimen/space_13"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/raise_hand_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:contentDescription="@null"
-            android:layout_marginEnd="@dimen/space_13"
-            android:src="@drawable/selector_raise_hand_btn"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineVertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="@dimen/space_190" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/student_feeds_recyclerview"

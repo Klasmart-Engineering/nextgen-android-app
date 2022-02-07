@@ -1,7 +1,10 @@
 package uk.co.kidsloop.features.liveclass
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +17,7 @@ import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
+import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
@@ -43,6 +47,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     lateinit var uiThreadPoster: UiThreadPoster
 
     private val binding by viewBinding(LiveClassFragmentBinding::bind)
+    private lateinit var window: Window
     private var localMedia: LocalMedia<View>? = null
 
     private val viewModel by viewModels<LiveClassViewModel>()
@@ -51,11 +56,18 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        localMedia = CameraLocalMedia(requireContext(), false, false, AecContext())
+        localMedia = CameraLocalMedia(
+            requireContext(),
+            disableAudio = false,
+            disableVideo = false,
+            aecContext = AecContext()
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        window = requireActivity().window
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding.toggleCameraBtn.isChecked =
             !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         binding.toggleMicrophoneBtn.isChecked =
@@ -87,6 +99,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         setControls()
 
         liveClassManager.dataChannelActionsHandler = this
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     private fun setUiForTeacher() {
@@ -291,6 +308,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         )
 
+        upstreamConnection?.statsEventInterval = LiveClassManager.STATS_COLLECTING_INTERVAL
+
         upstreamConnection?.addOnStateChange { connection ->
             when (connection.state) {
                 ConnectionState.Initializing -> {
@@ -303,6 +322,14 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                     // Reconnect if the connection failed.
                     openSfuUpstreamConnection()
                 }
+            }
+        }
+
+        upstreamConnection?.addOnNetworkQuality { networkQuality ->
+            // TODO @Paul remove these after QA get their stats
+            uiThreadPoster.post {
+                shortToast(networkQuality.toString())
+                Log.d(TAG, networkQuality.toString())
             }
         }
 

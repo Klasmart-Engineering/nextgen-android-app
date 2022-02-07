@@ -1,3 +1,4 @@
+# Main release pipeline
 name: Main Build Pipeline
 
 on:
@@ -54,24 +55,32 @@ jobs:
         run: |            
             echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
             echo $SIGNING_PROPERTIES | base64 -di > "${GITHUB_WORKSPACE}"/keystore.properties
-           
-      - name: Run Gradle
-        run: ./gradlew build check --continue
-
-      - if: ${{ (github.event != 'pull_request')  }}
-        name: Run Android Lint 
-        uses: dvdandroid/action-android-lint@master        
+      
+      - name: Run ktlint checks
+        if: ${{ (github.event != 'pull_request') }}
+        uses: ScaCap/action-ktlint@master
         with:
           github_token: ${{ secrets.github_token }}
-          lint_xml_file: app/build/reports/lint-results-debug.xml   
-
-      - if: ${{ (github.event.pull_request)  }}
-        name: Run Android Lint For Pull Requests
-        uses: dvdandroid/action-android-lint@master
+          reporter: github-check
+          android: true 
+      
+      - name: Run ktlint checks for PR
+        if: ${{ (github.event.pull_request) }}
+        uses: ScaCap/action-ktlint@master
         with:
           github_token: ${{ secrets.github_token }}
-          lint_xml_file: app/build/reports/lint-results-debug.xml 
-          reporter: github-pr-review       
+          reporter: github-pr-review
+          android: true
+      
+         
+      - name: Run Gradle Build
+        run: ./gradlew build check --continue  
+
+      - name: Upload Detekt Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: Detekt_reports
+          path: app/build/reports/detekt/*  
 
       - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
         name: Create Debug APK

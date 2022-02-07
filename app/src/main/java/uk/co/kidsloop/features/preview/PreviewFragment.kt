@@ -98,14 +98,18 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
             isPermissionGranted(
                 requireContext(),
                 KidsloopPermissions.RECORD_AUDIO.type
-            ) && !viewModel.havePermissionsBeenPreviouslyDenied
+            )
         ) {
-            if(isMicRecording){
+            if (isMicRecording) {
                 isRecordingAudio = true
                 startRecording()
             }
-            handleNoPermissionViews()
-            handleToggles()
+            if (viewModel.havePermissionsBeenPreviouslyDenied) {
+                viewModel.havePermissionsBeenPreviouslyDenied = false
+                handleCameraFeed()
+                handleNoPermissionViews()
+                handleToggles()
+            }
         }
     }
 
@@ -327,7 +331,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     }
 
     private fun animateView(view: ToggleButton) {
-        if(getView() != null){
+        if (getView() != null) {
             when (val drawable = view.background) {
                 is AnimatedVectorDrawableCompat -> {
                     drawable.start()

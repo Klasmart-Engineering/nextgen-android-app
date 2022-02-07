@@ -24,4 +24,5 @@
     <string name="set_your_mic_and_video">Set your mic and video</string>
     <string name="join_live_class">Join Live Class</string>
     <string name="my_live_class">My Live Class</string>
+    <string name="channel_id">Channel ID</string>
 </resources>
