@@ -70,7 +70,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
         studentsFeedAdapter = StudentsFeedAdapter()
         binding.studentFeedsRecyclerview.apply {
-            setHasFixedSize(true)
             adapter = studentsFeedAdapter
             layoutManager = LinearLayoutManager(context)
         }
