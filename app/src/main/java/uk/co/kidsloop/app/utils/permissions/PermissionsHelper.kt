@@ -6,13 +6,11 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import uk.co.kidsloop.R
-import uk.co.kidsloop.data.enums.KidsloopPermissions
 
 /**
  *  Created by paulbisioc on 07.01.2022
@@ -27,10 +25,10 @@ fun Fragment.isPermissionGranted(context: Context, permission: String): Boolean 
 }
 
 private fun isPermissionGrantedImpl(context: Context, permission: String): Boolean {
-    val isAndroidQOrLater: Boolean =
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+    val isAndroidMOrLater: Boolean =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 
-    return if (isAndroidQOrLater.not()) {
+    return if (isAndroidMOrLater.not()) {
         true
     } else {
         PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
