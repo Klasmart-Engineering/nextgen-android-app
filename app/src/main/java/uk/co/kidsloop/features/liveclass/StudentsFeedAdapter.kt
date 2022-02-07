@@ -15,7 +15,7 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
     companion object {
         private const val RAISE_HAND = "raise_hand"
         private const val LOWER_HAND = "lower_hand"
-        private const val MAX_STUDENT_VIDEO_FEEDS = 3
+        private const val MAX_STUDENT_VIDEO_FEEDS = 4
     }
 
     private var remoteStudentFeeds = mutableListOf<StudentFeedItem>()
@@ -33,6 +33,7 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.setIsRecyclable(false)
         val videoFeedContainer = holder.binding.studentVideoFeed
         val videoFeed = remoteStudentFeeds[position].remoteView
         val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
