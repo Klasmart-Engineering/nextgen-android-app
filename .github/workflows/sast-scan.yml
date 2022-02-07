@@ -19,12 +19,7 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-
-      - name: mobsfscan
-        uses: MobSF/mobsfscan@main
-        with:
-          args: '. --html --output results.html || true'
-      
+   
       - name: mobsfscan
         uses: MobSF/mobsfscan@main
         with:
@@ -34,20 +29,13 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: results.sarif
-
-      # - name: Upload Scan results
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: sast-results
-      #     path: |
-      #       results.html
-      #       results.json
-      
+     
       - name: Publish to Slack 
         if: always()
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
           fields: repo,commit,message,author,ref,pullRequest,eventName,workflow
+          text: 'Check results here: "https://github.com/kidsloop-global/nextgen-android-app/security/code-scanning?query=is%3Aopen+branch%3Achore%2Freduce-sast"'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEB_HOOK }} 
