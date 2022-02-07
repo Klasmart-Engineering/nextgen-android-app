@@ -73,7 +73,7 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
 
     fun removeVideoFeed(clientId: String) {
         val iterator = remoteStudentFeeds.iterator()
-        var position = 0
+        var position = -1
         while (iterator.hasNext()) {
             val studentFeedItem = iterator.next()
             position = position.inc()
