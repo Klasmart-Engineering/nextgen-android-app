@@ -77,8 +77,17 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
     }
 
     fun removeVideoFeed(clientId: String) {
-        remoteStudentFeeds.removeAt(1)
-        notifyItemRemoved(1)
+        var position = -1
+        for(studentFeedItem in remoteStudentFeeds){
+            position = position.inc()
+            if(studentFeedItem.clientId == clientId){
+                break
+            }
+        }
+        if(position > -1){
+            remoteStudentFeeds.removeAt(position)
+            notifyItemRemoved(position)
+        }
     }
 
     fun onHandRaised(clientId: String) {
