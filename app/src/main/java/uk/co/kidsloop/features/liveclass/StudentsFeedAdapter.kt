@@ -35,7 +35,7 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val studentFeedItem = remoteStudentFeeds[position]
-        if(!studentFeedItem.isDisplayed){
+        if (!studentFeedItem.isDisplayed) {
             studentFeedItem.isDisplayed = true
             holder.setIsRecyclable(false)
             val videoFeed = studentFeedItem.remoteView
@@ -88,7 +88,7 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
                 break
             }
         }
-        notifyItemRangeChanged(0, remoteStudentFeeds.size)
+        notifyItemRangeChanged(0, remoteStudentFeeds.size + 1)
     }
 
     fun onHandRaised(clientId: String) {
