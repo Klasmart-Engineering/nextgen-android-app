@@ -47,7 +47,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
     private val viewModel by viewModels<LiveClassViewModel>()
 
-    private lateinit var studentsFeedAdapter: StudentsFeedAdapter
+    private lateinit var studentsFeedAdapter: StudentFeedsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +68,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
         startLocalMedia()
 
-        studentsFeedAdapter = StudentsFeedAdapter()
+        studentsFeedAdapter = StudentFeedsAdapter()
         binding.studentFeedsRecyclerview.apply {
             adapter = studentsFeedAdapter
             layoutManager = LinearLayoutManager(context)
@@ -155,8 +155,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
                 is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
                 is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
-                //                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOn -> turnOnLocalMedia()
-                //                is LiveClassViewModel.LiveClassUiState.LocalMediaTurnedOff -> turnOffLocalMedia()
                 is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
                 is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
             }

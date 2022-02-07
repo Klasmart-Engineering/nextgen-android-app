@@ -11,12 +11,12 @@ import uk.co.kidsloop.databinding.StudentFeedLayoutBinding
 import uk.co.kidsloop.databinding.StudentFeedLayoutBinding.*
 import uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
 
-class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>() {
+class StudentFeedsAdapter : RecyclerView.Adapter<StudentFeedsAdapter.ViewHolder>() {
 
     companion object {
 
-        private const val RAISE_HAND = "raise_hand"
-        private const val LOWER_HAND = "lower_hand"
+        private const val SHOW_HAND_RAISED = "show_hand_raised"
+        private const val HIDE_HAND_RAISED = "hide_hand_raised"
         private const val MAX_STUDENT_VIDEO_FEEDS = 4
     }
 
@@ -39,7 +39,7 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
         holder.setIsRecyclable(false)
         val videoFeed = studentFeedItem.remoteView
         val videoFeedContainer = holder.binding.studentVideoFeed
-        if(videoFeed.parent != null){
+        if (videoFeed.parent != null) {
             (videoFeed.parent as RemoteMediaCustomContainer).removeRemoteMediaView()
         }
         val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
@@ -59,8 +59,8 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
         if (payloads.isNotEmpty()) {
             when (payloads[0]) {
-                RAISE_HAND -> holder.binding.studentVideoFeed.showHandRaised()
-                LOWER_HAND -> holder.binding.studentVideoFeed.hideRaiseHand()
+                SHOW_HAND_RAISED -> holder.binding.studentVideoFeed.showHandRaised()
+                HIDE_HAND_RAISED -> holder.binding.studentVideoFeed.hideRaiseHand()
             }
         } else {
             super.onBindViewHolder(holder, position, payloads)
@@ -79,13 +79,7 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
     }
 
     fun removeVideoFeed(clientId: String) {
-        var position = -1
-        for (studentFeedItem in remoteStudentFeeds) {
-            position = position.inc()
-            if (studentFeedItem.clientId == clientId) {
-                break
-            }
-        }
+        val position = remoteStudentFeeds.indexOfFirst { it.clientId == clientId }
         if (position > -1) {
             remoteStudentFeeds.removeAt(position)
             notifyDataSetChanged()
@@ -93,24 +87,16 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
     }
 
     fun onHandRaised(clientId: String) {
-        var position = -1
-        for (studentFeed in remoteStudentFeeds) {
-            position = position.inc()
-            if (studentFeed.clientId == clientId) {
-                break
-            }
+        val position = remoteStudentFeeds.indexOfFirst { it.clientId == clientId }
+        if (position > -1) {
+            notifyItemChanged(position, SHOW_HAND_RAISED)
         }
-        notifyItemChanged(position, RAISE_HAND)
     }
 
     fun onHandLowered(clientId: String) {
-        var position = -1
-        for (studentFeed in remoteStudentFeeds) {
-            position = position.inc()
-            if (studentFeed.clientId == clientId) {
-                break
-            }
+        val position = remoteStudentFeeds.indexOfFirst { it.clientId == clientId }
+        if (position > -1) {
+            notifyItemChanged(position, HIDE_HAND_RAISED)
         }
-        notifyItemChanged(position, LOWER_HAND)
     }
 }
