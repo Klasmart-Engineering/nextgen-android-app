@@ -84,6 +84,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         binding.studentFeedsRecyclerview.apply {
             adapter = studentsFeedAdapter
             layoutManager = LinearLayoutManager(context)
+            itemAnimator = null
         }
 
         when (viewModel.sharedPrefsWrapper.getRole()) {
