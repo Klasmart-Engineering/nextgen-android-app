@@ -67,7 +67,7 @@
             app:layout_constraintStart_toEndOf="@+id/guidelineVertical"
             app:layout_constraintEnd_toStartOf="@+id/more_btn"/>
 
-        <uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
+        <androidx.cardview.widget.CardView
             android:id="@+id/teacher_video_feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -76,7 +76,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/barrierVertical"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/local_video_student_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_local_media_turned_off_teacher"
+                android:visibility="visible" />
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

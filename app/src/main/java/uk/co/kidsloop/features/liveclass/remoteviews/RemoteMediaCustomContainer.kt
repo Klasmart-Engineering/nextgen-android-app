@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.utils.gone
@@ -24,7 +23,7 @@ class RemoteMediaCustomContainer @JvmOverloads constructor(
     private val binding = RemoteMediaContainerBinding.inflate(LayoutInflater.from(context), this)
 
     fun addRemoteMediaView(remoteMediaView: View?) {
-        addView(remoteMediaView, 1)
+       addView(remoteMediaView, 1)
     }
 
     fun removeRemoteMediaView() {

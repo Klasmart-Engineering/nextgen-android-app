@@ -6,15 +6,20 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
+import uk.co.kidsloop.R
 import uk.co.kidsloop.databinding.StudentFeedLayoutBinding
 import uk.co.kidsloop.databinding.StudentFeedLayoutBinding.*
-import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
 
 class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>() {
 
-    private var remoteStudentsFeedList: ArrayList<SFURemoteMedia> = ArrayList(3)
+    companion object {
 
-    override fun getItemCount() = remoteStudentsFeedList.size
+        private const val MAX_STUDENT_VIDEO_FEEDS = 3
+    }
+
+    private var remoteStudentFeeds = mutableListOf<StudentFeedItem>()
+
+    override fun getItemCount() = remoteStudentFeeds.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -27,11 +32,14 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val videoFeedContainer =  holder.binding.studentVideoFeed
-        val videoFeed = remoteStudentsFeedList[position].view
+        val videoFeedContainer = holder.binding.studentVideoFeed
+        val videoFeed = remoteStudentFeeds[position].remoteView
+        val isHandRaised = remoteStudentFeeds[position].showHandRaised
         val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
         videoFeed.layoutParams = layoutParams
         videoFeed.id = View.generateViewId()
+        videoFeed.setBackgroundResource(R.drawable.rounded_bg)
+        videoFeed.clipToOutline = true
         videoFeedContainer.addRemoteMediaView(videoFeed)
 
         val constraintSet = ConstraintSet()
@@ -39,16 +47,60 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
         constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
         constraintSet.setDimensionRatio(videoFeed.id, "4:3")
         constraintSet.applyTo(videoFeedContainer)
+
+        if (isHandRaised) {
+            videoFeedContainer.showHandRaised()
+        } else {
+            videoFeedContainer.hideRaiseHand()
+        }
     }
 
     inner class ViewHolder(val binding: StudentFeedLayoutBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    fun addVideoFeed(remoteMedia: SFURemoteMedia) {
-        remoteStudentsFeedList.add(remoteMedia)
-        notifyDataSetChanged()
+    fun addVideoFeed(clientId: String, remoteMediaView: View) {
+        val studentFeedsCount = remoteStudentFeeds.size
+        if (studentFeedsCount < MAX_STUDENT_VIDEO_FEEDS) {
+            remoteStudentFeeds.add(StudentFeedItem(remoteMediaView, clientId))
+            notifyItemInserted(studentFeedsCount)
+        }
     }
 
-    fun removeVideoFeed() {
+    fun removeVideoFeed(clientId: String) {
+        val iterator = remoteStudentFeeds.iterator()
+        var position = 0
+        while (iterator.hasNext()) {
+            val studentFeedItem = iterator.next()
+            position = position.inc()
+            if (studentFeedItem.clientId == clientId) {
+                iterator.remove()
+                break
+            }
+        }
+        notifyItemRemoved(position)
+    }
+
+    fun onHandRaised(clientId: String) {
+        var position = 0
+        for (studentFeed in remoteStudentFeeds) {
+            position = position.inc()
+            if (studentFeed.clientId == clientId) {
+                studentFeed.showHandRaised = true
+                break
+            }
+        }
+        notifyItemChanged(position)
+    }
+
+    fun onHandLowered(clientId: String) {
+        var position = 0
+        for (studentFeed in remoteStudentFeeds) {
+            position = position.inc()
+            if (studentFeed.clientId == clientId) {
+                studentFeed.showHandRaised = false
+                break
+            }
+        }
+        notifyItemChanged(position)
     }
 }
