@@ -19,6 +19,8 @@ import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.data.enums.DataChannelActions
+import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
+import uk.co.kidsloop.data.enums.TeacherFeedQuality
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
@@ -376,6 +378,21 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             uiThreadPoster.post {
                 shortToast(networkQuality.toString())
                 Log.d(TAG, networkQuality.toString())
+            }
+
+            when (networkQuality) {
+                in LiveSwitchNetworkQuality.MODERATE.lowerLimit..LiveSwitchNetworkQuality.MODERATE.upperLimit -> {
+                    if (viewModel.sharedPrefsWrapper.getRole() == TEACHER_ROLE) {
+                        upstreamConnection.videoStream.maxSendBitrate =
+                            TeacherFeedQuality.MODERATE.bitrate
+                    }
+                }
+                in LiveSwitchNetworkQuality.GOOD.lowerLimit..LiveSwitchNetworkQuality.GOOD.upperLimit -> {
+                    if (viewModel.sharedPrefsWrapper.getRole() == TEACHER_ROLE) {
+                        upstreamConnection.videoStream.maxSendBitrate =
+                            TeacherFeedQuality.GOOD.bitrate
+                    }
+                }
             }
         }
 
