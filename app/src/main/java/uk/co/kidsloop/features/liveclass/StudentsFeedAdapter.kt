@@ -40,7 +40,7 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
         val videoFeed = studentFeedItem.remoteView
         val videoFeedContainer = holder.binding.studentVideoFeed
         if(videoFeed.parent != null){
-            (videoFeedContainer.parent as RemoteMediaCustomContainer).removeRemoteMediaView()
+            (videoFeed.parent as RemoteMediaCustomContainer).removeRemoteMediaView()
         }
         val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
         videoFeed.layoutParams = layoutParams
