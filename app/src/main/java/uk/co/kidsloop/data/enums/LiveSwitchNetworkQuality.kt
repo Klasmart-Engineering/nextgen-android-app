@@ -8,12 +8,12 @@ enum class LiveSwitchNetworkQuality(val lowerLimit: Double, val upperLimit: Doub
     GOOD(0.5, 1.0)
 }
 
-enum class Bitrates(val type: String, val value: Int) {
-    P480("480p", 2000),
-    P720("720p", 3000)
+enum class Bitrates(val type: String, val videoBitrate: Int) {
+    P480("480p", 256),
+    P720("720p", 512)
 }
 
 enum class TeacherFeedQuality(val type: String, val bitrate: Int) {
-    MODERATE("teacher_moderate", Bitrates.P480.value),
-    GOOD("teacher_high", Bitrates.P720.value)
+    MODERATE("teacher_moderate", Bitrates.P480.videoBitrate),
+    GOOD("teacher_high", Bitrates.P720.videoBitrate)
 }
