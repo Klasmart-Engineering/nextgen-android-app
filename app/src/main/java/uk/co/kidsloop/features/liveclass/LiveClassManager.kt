@@ -161,6 +161,8 @@ class LiveClassManager @Inject constructor() {
         client = null
         remoteChannel = null
         upstreamConnection = null
+        upstreamDataChannel = null
+        upstreamDataStream = null
         token = null
         liveClassState = LiveClassState.IDLE
     }
