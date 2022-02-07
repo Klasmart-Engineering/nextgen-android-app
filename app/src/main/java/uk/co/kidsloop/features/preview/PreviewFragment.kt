@@ -233,7 +233,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 )) {
                     true -> {
                         viewModel.havePermissionsBeenPreviouslyDenied = false
-                        handleCameraFeed()
                     }
                     false -> {
                         viewModel.havePermissionsBeenPreviouslyDenied = true
