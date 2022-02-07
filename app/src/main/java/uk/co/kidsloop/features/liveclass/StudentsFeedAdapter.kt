@@ -37,31 +37,33 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
         val studentFeedItem = remoteStudentFeeds[position]
         holder.setIsRecyclable(false)
         val videoFeed = studentFeedItem.remoteView
-        val videoFeedContainer = holder.binding.studentVideoFeed
-        val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
-        videoFeed.layoutParams = layoutParams
-        videoFeed.id = View.generateViewId()
-        videoFeed.setBackgroundResource(R.drawable.rounded_bg)
-        videoFeed.clipToOutline = true
-        videoFeedContainer.addRemoteMediaView(videoFeed)
+        if(videoFeed.parent != null){
+            val videoFeedContainer = holder.binding.studentVideoFeed
+            val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
+            videoFeed.layoutParams = layoutParams
+            videoFeed.id = View.generateViewId()
+            videoFeed.setBackgroundResource(R.drawable.rounded_bg)
+            videoFeed.clipToOutline = true
+            videoFeedContainer.addRemoteMediaView(videoFeed)
 
-        val constraintSet = ConstraintSet()
-        constraintSet.clone(videoFeedContainer)
-        constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
-        constraintSet.setDimensionRatio(videoFeed.id, "4:3")
-        constraintSet.applyTo(videoFeedContainer)
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(videoFeedContainer)
+            constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
+            constraintSet.setDimensionRatio(videoFeed.id, "4:3")
+            constraintSet.applyTo(videoFeedContainer)
+        }
     }
 
-//    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
-//        if (payloads.isNotEmpty()) {
-//            when (payloads[0]) {
-//                RAISE_HAND -> holder.binding.studentVideoFeed.showHandRaised()
-//                LOWER_HAND -> holder.binding.studentVideoFeed.hideRaiseHand()
-//            }
-//        } else {
-//            super.onBindViewHolder(holder, position, payloads)
-//        }
-//    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isNotEmpty()) {
+            when (payloads[0]) {
+                RAISE_HAND -> holder.binding.studentVideoFeed.showHandRaised()
+                LOWER_HAND -> holder.binding.studentVideoFeed.hideRaiseHand()
+            }
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
+    }
 
     inner class ViewHolder(val binding: StudentFeedLayoutBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -85,7 +87,7 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
                 break
             }
         }
-        notifyItemRemoved(position)
+        notifyDataSetChanged()
     }
 
     fun onHandRaised(clientId: String) {
