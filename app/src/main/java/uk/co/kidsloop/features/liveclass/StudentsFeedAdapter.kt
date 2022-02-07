@@ -33,21 +33,25 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.setIsRecyclable(false)
-        val videoFeedContainer = holder.binding.studentVideoFeed
-        val videoFeed = remoteStudentFeeds[position].remoteView
-        val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
-        videoFeed.layoutParams = layoutParams
-        videoFeed.id = View.generateViewId()
-        videoFeed.setBackgroundResource(R.drawable.rounded_bg)
-        videoFeed.clipToOutline = true
-        videoFeedContainer.addRemoteMediaView(videoFeed)
+        val studentFeedItem = remoteStudentFeeds[position]
+        if(!studentFeedItem.isDisplayed){
+            studentFeedItem.isDisplayed = true
+            holder.setIsRecyclable(false)
+            val videoFeed = remoteStudentFeeds[position].remoteView
+            val videoFeedContainer = holder.binding.studentVideoFeed
+            val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
+            videoFeed.layoutParams = layoutParams
+            videoFeed.id = View.generateViewId()
+            videoFeed.setBackgroundResource(R.drawable.rounded_bg)
+            videoFeed.clipToOutline = true
+            videoFeedContainer.addRemoteMediaView(videoFeed)
 
-        val constraintSet = ConstraintSet()
-        constraintSet.clone(videoFeedContainer)
-        constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
-        constraintSet.setDimensionRatio(videoFeed.id, "4:3")
-        constraintSet.applyTo(videoFeedContainer)
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(videoFeedContainer)
+            constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
+            constraintSet.setDimensionRatio(videoFeed.id, "4:3")
+            constraintSet.applyTo(videoFeedContainer)
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
@@ -83,8 +87,7 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
                 break
             }
         }
-        notifyItemRemoved(position)
-        notifyItemChanged(position)
+        notifyDataSetChanged()
     }
 
     fun onHandRaised(clientId: String) {
