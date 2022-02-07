@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.R
 import uk.co.kidsloop.databinding.StudentFeedLayoutBinding
 import uk.co.kidsloop.databinding.StudentFeedLayoutBinding.*
+import uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
 
 class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>() {
 
@@ -37,21 +38,22 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
         val studentFeedItem = remoteStudentFeeds[position]
         holder.setIsRecyclable(false)
         val videoFeed = studentFeedItem.remoteView
-        if(videoFeed.parent == null){
-            val videoFeedContainer = holder.binding.studentVideoFeed
-            val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
-            videoFeed.layoutParams = layoutParams
-            videoFeed.id = View.generateViewId()
-            videoFeed.setBackgroundResource(R.drawable.rounded_bg)
-            videoFeed.clipToOutline = true
-            videoFeedContainer.addRemoteMediaView(videoFeed)
-
-            val constraintSet = ConstraintSet()
-            constraintSet.clone(videoFeedContainer)
-            constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
-            constraintSet.setDimensionRatio(videoFeed.id, "4:3")
-            constraintSet.applyTo(videoFeedContainer)
+        val videoFeedContainer = holder.binding.studentVideoFeed
+        if(videoFeed.parent != null){
+            (videoFeedContainer.parent as RemoteMediaCustomContainer).removeRemoteMediaView()
         }
+        val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
+        videoFeed.layoutParams = layoutParams
+        videoFeed.id = View.generateViewId()
+        videoFeed.setBackgroundResource(R.drawable.rounded_bg)
+        videoFeed.clipToOutline = true
+        videoFeedContainer.addRemoteMediaView(videoFeed)
+
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(videoFeedContainer)
+        constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
+        constraintSet.setDimensionRatio(videoFeed.id, "4:3")
+        constraintSet.applyTo(videoFeedContainer)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
@@ -78,15 +80,15 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
 
     fun removeVideoFeed(clientId: String) {
         var position = -1
-        for(studentFeedItem in remoteStudentFeeds){
+        for (studentFeedItem in remoteStudentFeeds) {
             position = position.inc()
-            if(studentFeedItem.clientId == clientId){
+            if (studentFeedItem.clientId == clientId) {
                 break
             }
         }
-        if(position > -1){
+        if (position > -1) {
             remoteStudentFeeds.removeAt(position)
-            notifyItemRemoved(position)
+            notifyDataSetChanged()
         }
     }
 
