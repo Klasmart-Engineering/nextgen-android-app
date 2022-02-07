@@ -5,14 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.R
 import uk.co.kidsloop.databinding.StudentFeedLayoutBinding
 import uk.co.kidsloop.databinding.StudentFeedLayoutBinding.*
 
-class StudentsFeedAdapter : ListAdapter<StudentFeedItem, StudentsFeedAdapter.ViewHolder>(VideoFeedDiffCallBack()) {
+class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>() {
 
     companion object {
 
@@ -72,7 +70,7 @@ class StudentsFeedAdapter : ListAdapter<StudentFeedItem, StudentsFeedAdapter.Vie
         val studentFeedsCount = remoteStudentFeeds.size
         if (studentFeedsCount < MAX_STUDENT_VIDEO_FEEDS) {
             remoteStudentFeeds.add(StudentFeedItem(remoteMediaView, clientId))
-            submitList(remoteStudentFeeds)
+            notifyItemInserted(studentFeedsCount)
         }
     }
 
@@ -87,7 +85,7 @@ class StudentsFeedAdapter : ListAdapter<StudentFeedItem, StudentsFeedAdapter.Vie
                 break
             }
         }
-        submitList(remoteStudentFeeds)
+        notifyItemRemoved(position)
     }
 
     fun onHandRaised(clientId: String) {
@@ -110,16 +108,5 @@ class StudentsFeedAdapter : ListAdapter<StudentFeedItem, StudentsFeedAdapter.Vie
             }
         }
         notifyItemChanged(position, LOWER_HAND)
-    }
-
-    class VideoFeedDiffCallBack : DiffUtil.ItemCallback<StudentFeedItem>() {
-
-        override fun areItemsTheSame(oldItem: StudentFeedItem, newItem: StudentFeedItem): Boolean {
-            return oldItem.clientId == newItem.clientId
-        }
-
-        override fun areContentsTheSame(oldItem: StudentFeedItem, newItem: StudentFeedItem): Boolean {
-            return oldItem.clientId == newItem.clientId
-        }
     }
 }
