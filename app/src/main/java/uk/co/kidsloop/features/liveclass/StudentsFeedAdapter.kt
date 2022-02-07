@@ -52,16 +52,16 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
         constraintSet.applyTo(videoFeedContainer)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
-        if (payloads.isNotEmpty()) {
-            when (payloads[0]) {
-                RAISE_HAND -> holder.binding.studentVideoFeed.showHandRaised()
-                LOWER_HAND -> holder.binding.studentVideoFeed.hideRaiseHand()
-            }
-        } else {
-            super.onBindViewHolder(holder, position, payloads)
-        }
-    }
+//    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+//        if (payloads.isNotEmpty()) {
+//            when (payloads[0]) {
+//                RAISE_HAND -> holder.binding.studentVideoFeed.showHandRaised()
+//                LOWER_HAND -> holder.binding.studentVideoFeed.hideRaiseHand()
+//            }
+//        } else {
+//            super.onBindViewHolder(holder, position, payloads)
+//        }
+//    }
 
     inner class ViewHolder(val binding: StudentFeedLayoutBinding) :
         RecyclerView.ViewHolder(binding.root)
