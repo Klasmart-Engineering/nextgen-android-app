@@ -13,7 +13,8 @@ import uk.co.kidsloop.databinding.StudentFeedLayoutBinding.*
 class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>() {
 
     companion object {
-
+        private const val RAISE_HAND = "raise_hand"
+        private const val LOWER_HAND = "lower_hand"
         private const val MAX_STUDENT_VIDEO_FEEDS = 3
     }
 
@@ -34,7 +35,6 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val videoFeedContainer = holder.binding.studentVideoFeed
         val videoFeed = remoteStudentFeeds[position].remoteView
-        val isHandRaised = remoteStudentFeeds[position].showHandRaised
         val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
         videoFeed.layoutParams = layoutParams
         videoFeed.id = View.generateViewId()
@@ -47,11 +47,16 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
         constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
         constraintSet.setDimensionRatio(videoFeed.id, "4:3")
         constraintSet.applyTo(videoFeedContainer)
+    }
 
-        if (isHandRaised) {
-            videoFeedContainer.showHandRaised()
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isNotEmpty()) {
+            when(payloads[0]){
+                RAISE_HAND -> holder.binding.studentVideoFeed.showHandRaised()
+                LOWER_HAND -> holder.binding.studentVideoFeed.hideRaiseHand()
+            }
         } else {
-            videoFeedContainer.hideRaiseHand()
+            super.onBindViewHolder(holder, position, payloads)
         }
     }
 
@@ -81,26 +86,24 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
     }
 
     fun onHandRaised(clientId: String) {
-        var position = 0
+        var position = -1
         for (studentFeed in remoteStudentFeeds) {
             position = position.inc()
             if (studentFeed.clientId == clientId) {
-                studentFeed.showHandRaised = true
                 break
             }
         }
-        notifyItemChanged(position)
+        notifyItemChanged(position, RAISE_HAND)
     }
 
     fun onHandLowered(clientId: String) {
-        var position = 0
+        var position = -1
         for (studentFeed in remoteStudentFeeds) {
             position = position.inc()
             if (studentFeed.clientId == clientId) {
-                studentFeed.showHandRaised = false
                 break
             }
         }
-        notifyItemChanged(position)
+        notifyItemChanged(position, LOWER_HAND)
     }
 }
