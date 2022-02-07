@@ -3,7 +3,8 @@ name: SAST Scan Pipeline
 on:
   push:
     branches:
-      - main      
+      - main  
+  # will run on the default branch (/develop)        
   schedule:
     - cron: '30 1 * * *'
 
