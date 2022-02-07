@@ -84,6 +84,7 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
             }
         }
         notifyItemRemoved(position)
+        notifyItemChanged(position)
     }
 
     fun onHandRaised(clientId: String) {
