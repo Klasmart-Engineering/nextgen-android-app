@@ -13,6 +13,7 @@ import uk.co.kidsloop.databinding.StudentFeedLayoutBinding.*
 class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>() {
 
     companion object {
+
         private const val RAISE_HAND = "raise_hand"
         private const val LOWER_HAND = "lower_hand"
         private const val MAX_STUDENT_VIDEO_FEEDS = 4
@@ -34,29 +35,26 @@ class StudentsFeedAdapter : RecyclerView.Adapter<StudentsFeedAdapter.ViewHolder>
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val studentFeedItem = remoteStudentFeeds[position]
-        if(!studentFeedItem.isDisplayed){
-            studentFeedItem.isDisplayed = true
-            holder.setIsRecyclable(false)
-            val videoFeed = remoteStudentFeeds[position].remoteView
-            val videoFeedContainer = holder.binding.studentVideoFeed
-            val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
-            videoFeed.layoutParams = layoutParams
-            videoFeed.id = View.generateViewId()
-            videoFeed.setBackgroundResource(R.drawable.rounded_bg)
-            videoFeed.clipToOutline = true
-            videoFeedContainer.addRemoteMediaView(videoFeed)
+        holder.setIsRecyclable(false)
+        val videoFeed = remoteStudentFeeds[position].remoteView
+        val videoFeedContainer = holder.binding.studentVideoFeed
+        val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
+        videoFeed.layoutParams = layoutParams
+        videoFeed.id = View.generateViewId()
+        videoFeed.setBackgroundResource(R.drawable.rounded_bg)
+        videoFeed.clipToOutline = true
+        videoFeedContainer.addRemoteMediaView(videoFeed)
 
-            val constraintSet = ConstraintSet()
-            constraintSet.clone(videoFeedContainer)
-            constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
-            constraintSet.setDimensionRatio(videoFeed.id, "4:3")
-            constraintSet.applyTo(videoFeedContainer)
-        }
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(videoFeedContainer)
+        constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
+        constraintSet.setDimensionRatio(videoFeed.id, "4:3")
+        constraintSet.applyTo(videoFeedContainer)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
         if (payloads.isNotEmpty()) {
-            when(payloads[0]){
+            when (payloads[0]) {
                 RAISE_HAND -> holder.binding.studentVideoFeed.showHandRaised()
                 LOWER_HAND -> holder.binding.studentVideoFeed.hideRaiseHand()
             }
