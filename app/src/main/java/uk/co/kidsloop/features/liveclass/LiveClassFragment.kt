@@ -380,15 +380,16 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 Log.d(TAG, networkQuality.toString())
             }
 
+            val userRole = viewModel.sharedPrefsWrapper.getRole()
             when (networkQuality) {
                 in LiveSwitchNetworkQuality.MODERATE.lowerLimit..LiveSwitchNetworkQuality.MODERATE.upperLimit -> {
-                    if (viewModel.sharedPrefsWrapper.getRole() == TEACHER_ROLE) {
+                    if (userRole == TEACHER_ROLE) {
                         upstreamConnection.videoStream.maxSendBitrate =
                             TeacherFeedQuality.MODERATE.bitrate
                     }
                 }
                 in LiveSwitchNetworkQuality.GOOD.lowerLimit..LiveSwitchNetworkQuality.GOOD.upperLimit -> {
-                    if (viewModel.sharedPrefsWrapper.getRole() == TEACHER_ROLE) {
+                    if (userRole == TEACHER_ROLE) {
                         upstreamConnection.videoStream.maxSendBitrate =
                             TeacherFeedQuality.GOOD.bitrate
                     }
