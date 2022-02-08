@@ -123,7 +123,7 @@ jobs:
         run: |
           echo "Run number: ${GITHUB_RUN_ID}"
           curl -L -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.github_token }}" \
-          "https://api.github.com/repos/kidsloop-global/nextgen-android-app/actions/artifacts" | jq
+          "https://api.github.com/repos/KL-Engineering/nextgen-android-app/actions/artifacts" | jq
         shell: bash
 
       # - if: ${{ github.ref == 'refs/heads/main' }}
