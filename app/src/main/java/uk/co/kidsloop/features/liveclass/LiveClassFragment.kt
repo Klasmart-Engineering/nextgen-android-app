@@ -20,6 +20,9 @@ import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.data.enums.DataChannelActions
+import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
+import uk.co.kidsloop.data.enums.StudentFeedQuality
+import uk.co.kidsloop.data.enums.TeacherFeedQuality
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
@@ -206,12 +209,18 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 liveClassManager.getNewDownstreamDataStream()
             )
 
-        if (remoteConnectionInfo.clientRoles[0] == STUDENT_ROLE) {
-            // Store the downstream connection.
-            liveClassManager.saveDownStreamConnections(
-                remoteConnectionInfo.clientId ?: emptyString(),
-                connection
-            )
+        (remoteConnectionInfo.clientId ?: emptyString()).let { clientId ->
+            liveClassManager.saveDownStreamConnection(clientId, connection)
+            when (remoteConnectionInfo.clientRoles[0]) {
+                STUDENT_ROLE -> liveClassManager.saveDownStreamConnectionRole(
+                    clientId,
+                    STUDENT_ROLE
+                )
+                TEACHER_ROLE -> liveClassManager.saveDownStreamConnectionRole(
+                    clientId,
+                    TEACHER_ROLE
+                )
+            }
         }
 
         // Adding remote view to UI.
@@ -243,6 +252,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 }
                 remoteMedia.destroy()
                 liveClassManager.removeDownStreamConnection(clientId)
+                liveClassManager.removeDownStreamConnectionRole(clientId)
             } else if (conn.state == ConnectionState.Failed) {
                 // Reconnect if the connection failed.
                 openSfuDownstreamConnection(remoteConnectionInfo, channel)
@@ -291,11 +301,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                                          uiThreadPoster.post {
-                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                                              viewModel.joinLiveClass()
-                                          }
-                                      }, { exception -> })
+                uiThreadPoster.post {
+                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                    viewModel.joinLiveClass()
+                }
+            }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
@@ -331,6 +341,73 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             uiThreadPoster.post {
                 shortToast(networkQuality.toString())
                 Log.d(TAG, networkQuality.toString())
+            }
+
+            val averageNetworkQuality = when (liveClassManager.getNetworkQualityArray().size) {
+                0 -> {
+                    liveClassManager.addToNetworkQualityArray(networkQuality)
+                    // If there is no value inside the array, take the current reading as it is
+                    networkQuality
+                }
+                else -> {
+                    liveClassManager.addToNetworkQualityArray(networkQuality)
+                    val networkQualityArray = liveClassManager.getNetworkQualityArray()
+                    // Calculate the average of the last 2 readings
+                    networkQualityArray.subList(
+                        networkQualityArray.size - 2,
+                        networkQualityArray.size - 1
+                    ).average()
+                }
+            }
+
+            // Handle averageNetworkQuality only if it is different from the latest reading
+            if(averageNetworkQuality != networkQuality) {
+                when (averageNetworkQuality) {
+                    in LiveSwitchNetworkQuality.MODERATE.lowerLimit..LiveSwitchNetworkQuality.MODERATE.upperLimit -> {
+                        liveClassManager.getDownStreamConnections().let { connectionsMap ->
+                            liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
+                                connectionsMap.forEach { connection ->
+                                    when (rolesMap[connection.key]) {
+                                        STUDENT_ROLE -> {
+                                            connection.value.videoStream.maxReceiveBitrate =
+                                                StudentFeedQuality.MODERATE.bitrate
+                                            connection.value.videoStream.maxSendBitrate =
+                                                StudentFeedQuality.MODERATE.bitrate
+                                        }
+                                        TEACHER_ROLE -> {
+                                            connection.value.videoStream.maxReceiveBitrate =
+                                                TeacherFeedQuality.MODERATE.bitrate
+                                            connection.value.videoStream.maxSendBitrate =
+                                                TeacherFeedQuality.MODERATE.bitrate
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    in LiveSwitchNetworkQuality.GOOD.lowerLimit..LiveSwitchNetworkQuality.GOOD.upperLimit -> {
+                        liveClassManager.getDownStreamConnections().let { connectionsMap ->
+                            liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
+                                connectionsMap.forEach { connection ->
+                                    when (rolesMap[connection.key]) {
+                                        STUDENT_ROLE -> {
+                                            connection.value.videoStream.maxReceiveBitrate =
+                                                StudentFeedQuality.GOOD.bitrate
+                                            connection.value.videoStream.maxSendBitrate =
+                                                StudentFeedQuality.GOOD.bitrate
+                                        }
+                                        TEACHER_ROLE -> {
+                                            connection.value.videoStream.maxReceiveBitrate =
+                                                TeacherFeedQuality.GOOD.bitrate
+                                            connection.value.videoStream.maxSendBitrate =
+                                                TeacherFeedQuality.GOOD.bitrate
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
