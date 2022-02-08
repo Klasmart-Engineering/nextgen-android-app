@@ -112,6 +112,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
     private fun setUiForTeacher() {
         binding.raiseHandBtn.gone()
+        binding.toggleStudentsMic.visible()
     }
 
     private fun setUiForStudent() {
