@@ -10,14 +10,17 @@ import fm.liveswitch.IAction1
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
+import uk.co.kidsloop.features.liveclass.teacher.ToggleVideoForStudentsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class LiveClassViewModel @Inject constructor(
     private val joinLiveClassUseCase: JoinLiveClassUseCase,
     private val openSfuUpstreamConnectionUseCase: OpenSfuUpstreamConnectionUseCase,
+    private val toggleVideoForStudentsUseCase: ToggleVideoForStudentsUseCase,
     private val liveClassManager: LiveClassManager
 ) : ViewModel() {
+
     @Inject
     lateinit var sharedPrefsWrapper: SharedPrefsWrapper
 
@@ -74,6 +77,10 @@ class LiveClassViewModel @Inject constructor(
             config.localVideoMuted = !config.localVideoMuted
             upstreamConnection.update(config)
         }
+    }
+
+    fun toggleVideoForStudents(shouldTurnOff:Boolean){
+        toggleVideoForStudentsUseCase.toggleVideo(shouldTurnOff)
     }
 
     fun leaveLiveClass() {

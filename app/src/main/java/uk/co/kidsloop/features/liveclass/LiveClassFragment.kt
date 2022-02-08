@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ToggleButton
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -115,7 +116,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
     private fun setUiForTeacher() {
         binding.raiseHandBtn.gone()
-        binding.toggleStudentsCamera.visible()
+        binding.toggleStudentsVideo.visible()
     }
 
     private fun setUiForStudent() {
@@ -154,13 +155,17 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             binding.liveClassOverlay.visibility = View.VISIBLE
         }
 
+        binding.toggleStudentsVideo.setOnClickListener { view->
+            viewModel.toggleVideoForStudents((view as ToggleButton).isChecked)
+        }
+
         binding.raiseHandBtn.setOnClickListener {
             binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
             if (binding.raiseHandBtn.isSelected) {
-                liveClassManager.sendDataString(DataChannelActions.RAISE_HAND)
+                //liveClassManager.sendDataString(DataChannelActions.RAISE_HAND)
                 binding.localMediaContainer.showHandRaised()
             } else {
-                liveClassManager.sendDataString(DataChannelActions.LOWER_HAND)
+                //liveClassManager.sendDataString(DataChannelActions.LOWER_HAND)
                 binding.localMediaContainer.hideRaiseHand()
             }
         }

@@ -108,16 +108,10 @@ class LiveClassManager @Inject constructor() {
         upstreamDataStream = DataStream(upstreamDataChannel)
     }
 
-    fun sendDataString(dataChannelActions: DataChannelActions) {
+    fun sendDataString(data: String) {
         if (isUpstreamDataChannelConnected()) {
-            val data = dataChannelActions.type + ":" + getUpstreamConnection()?.id
             upstreamDataChannel?.sendDataString(data)
         }
-    }
-
-    fun sendDataBytes(data: ByteArray) {
-        if (isUpstreamDataChannelConnected())
-            upstreamDataChannel?.sendDataBytes(DataBuffer.wrap(data))
     }
 
     private fun parseReceivedDataString(data: String?) {
