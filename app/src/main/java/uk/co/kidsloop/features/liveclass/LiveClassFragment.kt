@@ -360,45 +360,48 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 }
             }
 
-            when (averageNetworkQuality) {
-                in LiveSwitchNetworkQuality.MODERATE.lowerLimit..LiveSwitchNetworkQuality.MODERATE.upperLimit -> {
-                    liveClassManager.getDownStreamConnections().let { connectionsMap ->
-                        liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
-                            connectionsMap.forEach { connection ->
-                                when (rolesMap[connection.key]) {
-                                    STUDENT_ROLE -> {
-                                        connection.value.videoStream.maxReceiveBitrate =
-                                            StudentFeedQuality.MODERATE.bitrate
-                                        connection.value.videoStream.maxSendBitrate =
-                                            StudentFeedQuality.MODERATE.bitrate
-                                    }
-                                    TEACHER_ROLE -> {
-                                        connection.value.videoStream.maxReceiveBitrate =
-                                            TeacherFeedQuality.MODERATE.bitrate
-                                        connection.value.videoStream.maxSendBitrate =
-                                            TeacherFeedQuality.MODERATE.bitrate
+            // Handle averageNetworkQuality only if it is different from the latest reading
+            if(averageNetworkQuality != networkQuality) {
+                when (averageNetworkQuality) {
+                    in LiveSwitchNetworkQuality.MODERATE.lowerLimit..LiveSwitchNetworkQuality.MODERATE.upperLimit -> {
+                        liveClassManager.getDownStreamConnections().let { connectionsMap ->
+                            liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
+                                connectionsMap.forEach { connection ->
+                                    when (rolesMap[connection.key]) {
+                                        STUDENT_ROLE -> {
+                                            connection.value.videoStream.maxReceiveBitrate =
+                                                StudentFeedQuality.MODERATE.bitrate
+                                            connection.value.videoStream.maxSendBitrate =
+                                                StudentFeedQuality.MODERATE.bitrate
+                                        }
+                                        TEACHER_ROLE -> {
+                                            connection.value.videoStream.maxReceiveBitrate =
+                                                TeacherFeedQuality.MODERATE.bitrate
+                                            connection.value.videoStream.maxSendBitrate =
+                                                TeacherFeedQuality.MODERATE.bitrate
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-                in LiveSwitchNetworkQuality.GOOD.lowerLimit..LiveSwitchNetworkQuality.GOOD.upperLimit -> {
-                    liveClassManager.getDownStreamConnections().let { connectionsMap ->
-                        liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
-                            connectionsMap.forEach { connection ->
-                                when (rolesMap[connection.key]) {
-                                    STUDENT_ROLE -> {
-                                        connection.value.videoStream.maxReceiveBitrate =
-                                            StudentFeedQuality.GOOD.bitrate
-                                        connection.value.videoStream.maxSendBitrate =
-                                            StudentFeedQuality.GOOD.bitrate
-                                    }
-                                    TEACHER_ROLE -> {
-                                        connection.value.videoStream.maxReceiveBitrate =
-                                            TeacherFeedQuality.GOOD.bitrate
-                                        connection.value.videoStream.maxSendBitrate =
-                                            TeacherFeedQuality.GOOD.bitrate
+                    in LiveSwitchNetworkQuality.GOOD.lowerLimit..LiveSwitchNetworkQuality.GOOD.upperLimit -> {
+                        liveClassManager.getDownStreamConnections().let { connectionsMap ->
+                            liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
+                                connectionsMap.forEach { connection ->
+                                    when (rolesMap[connection.key]) {
+                                        STUDENT_ROLE -> {
+                                            connection.value.videoStream.maxReceiveBitrate =
+                                                StudentFeedQuality.GOOD.bitrate
+                                            connection.value.videoStream.maxSendBitrate =
+                                                StudentFeedQuality.GOOD.bitrate
+                                        }
+                                        TEACHER_ROLE -> {
+                                            connection.value.videoStream.maxReceiveBitrate =
+                                                TeacherFeedQuality.GOOD.bitrate
+                                            connection.value.videoStream.maxSendBitrate =
+                                                TeacherFeedQuality.GOOD.bitrate
+                                        }
                                     }
                                 }
                             }
