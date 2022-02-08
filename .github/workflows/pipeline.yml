@@ -13,15 +13,15 @@ on:
       - '*'  
 
 jobs:
-  # validation:
-  #   name: Validation Stage
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout latest code
-  #       uses: actions/checkout@v2
+  validation:
+    name: Validation Stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout latest code
+        uses: actions/checkout@v2
         
-  #     - name: Validate Gradle Wrapper
-  #       uses: gradle/wrapper-validation-action@v1
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
 
   build:
     name: Build Stage
@@ -34,91 +34,97 @@ jobs:
           "https://api.github.com/repos/kidsloop-global/nextgen-android-app/actions/artifacts"
         shell: bash
 
-      # - name: Checkout Repo
-      #   uses: actions/checkout@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v2
 
-      # - name: Change wrapper permissions
-      #   run: chmod +x ./gradlew
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
       
-      # - name: Cache Gradle Files
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: |
-      #       ~/.gradle/caches/
-      #       ~/.gradle/wrapper/
-      #     key: cache-gradle
+      - name: Cache Gradle Files
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches/
+            ~/.gradle/wrapper/
+          key: cache-gradle
           
-      # - name: Setup Java
-      #   uses: actions/setup-java@v2
-      #   with:
-      #     distribution: 'adopt'
-      #     java-version: '11'
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
 
-      # - name: Decode Keystore
-      #   env:
-      #       ENCODED_KEYSTORE: ${{ secrets.DEBUG_PROPERTIES  }}
-      #       SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
-      #   run: |            
-      #       echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
-      #       echo $SIGNING_PROPERTIES | base64 -di > "${GITHUB_WORKSPACE}"/keystore.properties
+      - name: Decode Keystore
+        env:
+            ENCODED_KEYSTORE: ${{ secrets.DEBUG_PROPERTIES  }}
+            SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
+        run: |            
+            echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
+            echo $SIGNING_PROPERTIES | base64 -di > "${GITHUB_WORKSPACE}"/keystore.properties
       
-      # - name: Run ktlint checks
-      #   if: ${{ (github.event != 'pull_request') }}
-      #   uses: ScaCap/action-ktlint@master
-      #   with:
-      #     github_token: ${{ secrets.github_token }}
-      #     reporter: github-check
-      #     android: true 
+      - name: Run ktlint checks
+        if: ${{ (github.event != 'pull_request') }}
+        uses: ScaCap/action-ktlint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-check
+          android: true 
       
-      # - name: Run ktlint checks for PR
-      #   if: ${{ (github.event.pull_request) }}
-      #   uses: ScaCap/action-ktlint@master
-      #   with:
-      #     github_token: ${{ secrets.github_token }}
-      #     reporter: github-pr-review
-      #     android: true
+      - name: Run ktlint checks for PR
+        if: ${{ (github.event.pull_request) }}
+        uses: ScaCap/action-ktlint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review
+          android: true
       
          
-      # - name: Run Gradle Build
-      #   run: ./gradlew build check --continue  
+      - name: Run Gradle Build
+        run: ./gradlew build check --continue  
 
-      # - name: Upload Detekt Reports
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: Detekt_reports
-      #     path: app/build/reports/detekt/*  
+      - name: Upload Detekt Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: Detekt_reports
+          path: app/build/reports/detekt/*  
 
-      # - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
-      #   name: Create Debug APK
-      #   run: ./gradlew -Pci --console=plain :app:assembleDebug
+      - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
+        name: Create Debug APK
+        run: ./gradlew -Pci --console=plain :app:assembleDebug
 
-      # - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
-      #   name: Upload Debug APK
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: debug-apk
-      #     path: app/build/outputs/apk/debug/app-debug.apk
+      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
+        name: Upload Debug APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
 
-      # - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
-      #   name: Create Release APK
-      #   run: ./gradlew -Pci --console=plain :app:assembleRelease
+      - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
+        name: Create Release APK
+        run: ./gradlew -Pci --console=plain :app:assembleRelease
 
-      # - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
-      #   name: Upload Debug APK
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: release-apk
-      #     path: app/build/outputs/apk/release/app-release-unsigned.apk 
+      - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
+        name: Upload Debug APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: release-apk
+          path: app/build/outputs/apk/release/app-release-unsigned.apk 
           
-      # - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
-      #   name: Stop Gradle
-      #   run: ./gradlew --stop
+      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
+        name: Stop Gradle
+        run: ./gradlew --stop
       
-      # - if: always() 
-      #   name: Cleanup Keystore        
-      #   run: |            
-      #       rm -rf  "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
-      #       rm -rf  "${GITHUB_WORKSPACE}"/keystore.properties
+      - if: always() 
+        name: Cleanup Keystore        
+        run: |            
+            rm -rf  "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
+            rm -rf  "${GITHUB_WORKSPACE}"/keystore.properties
+      - name: test script
+        run: |
+          echo "Run number: ${{ GITHUB_RUN_ID }}"
+          curl -L -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.github_token }}" \
+          "https://api.github.com/repos/kidsloop-global/nextgen-android-app/actions/artifacts" | jq
+        shell: bash
 
       # - if: ${{ github.ref == 'refs/heads/main' }}
       #   name: Create Release
