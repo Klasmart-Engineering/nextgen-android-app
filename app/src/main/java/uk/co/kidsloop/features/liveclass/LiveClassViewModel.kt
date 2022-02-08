@@ -26,8 +26,6 @@ class LiveClassViewModel @Inject constructor(
 
     sealed class LiveClassUiState {
         object Loading : LiveClassUiState()
-        object LocalMediaTurnedOn : LiveClassUiState()
-        object LocalMediaTurnedOff : LiveClassUiState()
         data class RegistrationSuccessful(val channel: Channel) : LiveClassUiState()
         data class FailedToJoiningLiveClass(val message: String?) : LiveClassUiState()
         object UnregisterSuccessful : LiveClassUiState()
@@ -75,7 +73,6 @@ class LiveClassViewModel @Inject constructor(
             val config = upstreamConnection.config
             config.localVideoMuted = !config.localVideoMuted
             upstreamConnection.update(config)
-            _classroomStateLiveData.value = if (config.localVideoMuted) LiveClassUiState.LocalMediaTurnedOff else LiveClassUiState.LocalMediaTurnedOn
         }
     }
 
