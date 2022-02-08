@@ -29,7 +29,8 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     steps:
       - name: test script
-        run: echo "Hello from Skynet"
+        run: |
+          curl -H "Accept: application/vnd.github.v3+json" "https://github.com/kidsloop-global/nextgen-android-app/actions/artifacts"
         shell: bash
 
       # - name: Checkout Repo
