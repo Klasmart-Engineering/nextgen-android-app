@@ -10,11 +10,10 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import fm.liveswitch.*
+import fm.liveswitch.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.app.UiThreadPoster
+import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.shortToast
@@ -23,14 +22,15 @@ import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
 import uk.co.kidsloop.data.enums.StudentFeedQuality
 import uk.co.kidsloop.data.enums.TeacherFeedQuality
+import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
+import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
-import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
-import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
+import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -171,16 +171,21 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     }
 
     private fun observe() = with(viewModel) {
-        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
-        {
-            when (it) {
-                is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
-                is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
-                is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+        viewModel.classroomStateLiveData.observe(
+            viewLifecycleOwner,
+            Observer
+            {
+                when (it) {
+                    is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
+                    is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(
+                        it.channel
+                    )
+                    is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
+                    is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
+                    is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+                }
             }
-        })
+        )
     }
 
     private fun openSfuDownstreamConnection(
@@ -294,7 +299,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
-            //TODO This is added for testing purpouse and it will be removed later on
+            // TODO This is added for testing purpouse and it will be removed later on
             requireActivity().finish()
         }
     }
@@ -362,7 +367,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             }
 
             // Handle averageNetworkQuality only if it is different from the latest reading
-            if(averageNetworkQuality != networkQuality) {
+            if (averageNetworkQuality != networkQuality) {
                 when (averageNetworkQuality) {
                     in LiveSwitchNetworkQuality.MODERATE.lowerLimit..LiveSwitchNetworkQuality.MODERATE.upperLimit -> {
                         liveClassManager.getDownStreamConnections().let { connectionsMap ->
