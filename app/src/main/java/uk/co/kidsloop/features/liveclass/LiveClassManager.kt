@@ -22,6 +22,7 @@ class LiveClassManager @Inject constructor() {
     private var upstreamDataStream: DataStream? = null
 
     private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection>()
+    private val connectionsRoleMap = mutableMapOf<String, String>()
 
     private var token: String? = null
     private var remoteChannel: Channel? = null
@@ -77,20 +78,28 @@ class LiveClassManager @Inject constructor() {
         return DataStream(dataChannel)
     }
 
-    fun saveDownStreamConnections(clientId: String, connection: SfuDownstreamConnection) {
+    fun saveDownStreamConnection(clientId: String, connection: SfuDownstreamConnection) {
         downstreamConnectionsMap[clientId] = connection
+    }
+
+    fun removeDownStreamConnection(clientId: String) {
+        downstreamConnectionsMap.remove(clientId)
     }
 
     fun getDownStreamConnections(): Map<String, SfuDownstreamConnection> {
         return downstreamConnectionsMap.toMap()
     }
 
-    fun getNumberOfActiveDownStreamConnections(): Int {
-        return downstreamConnectionsMap.size
+    fun saveDownStreamConnectionRole(clientId: String, role: String) {
+        connectionsRoleMap[clientId] = role
     }
 
-    fun removeDownStreamConnection(clientId: String) {
-        downstreamConnectionsMap.remove(clientId)
+    fun removeDownStreamConnectionRole(clientId: String) {
+        connectionsRoleMap.remove(clientId)
+    }
+
+    fun getDownStreamConnectionsRoles(): Map<String, String> {
+        return connectionsRoleMap.toMap()
     }
 
     fun setUpstreamConnection(upstreamConnection: SfuUpstreamConnection) {

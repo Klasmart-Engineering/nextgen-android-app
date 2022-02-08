@@ -21,6 +21,7 @@ import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
+import uk.co.kidsloop.data.enums.StudentFeedQuality
 import uk.co.kidsloop.data.enums.TeacherFeedQuality
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
@@ -173,7 +174,9 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         {
             when (it) {
                 is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
+                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(
+                    it.channel
+                )
                 is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
                 is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
                 is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
@@ -208,12 +211,18 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 liveClassManager.getNewDownstreamDataStream()
             )
 
-        if (remoteConnectionInfo.clientRoles[0] == STUDENT_ROLE) {
-            // Store the downstream connection.
-            liveClassManager.saveDownStreamConnections(
-                remoteConnectionInfo.clientId ?: emptyString(),
-                connection
-            )
+        (remoteConnectionInfo.clientId ?: emptyString()).let { clientId ->
+            liveClassManager.saveDownStreamConnection(clientId, connection)
+            when (remoteConnectionInfo.clientRoles[0]) {
+                STUDENT_ROLE -> liveClassManager.saveDownStreamConnectionRole(
+                    clientId,
+                    STUDENT_ROLE
+                )
+                TEACHER_ROLE -> liveClassManager.saveDownStreamConnectionRole(
+                    clientId,
+                    TEACHER_ROLE
+                )
+            }
         }
 
         // Adding remote view to UI.
@@ -245,6 +254,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 }
                 remoteMedia.destroy()
                 liveClassManager.removeDownStreamConnection(clientId)
+                liveClassManager.removeDownStreamConnectionRole(clientId)
             } else if (conn.state == ConnectionState.Failed) {
                 // Reconnect if the connection failed.
                 openSfuDownstreamConnection(remoteConnectionInfo, channel)
@@ -293,11 +303,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                                          uiThreadPoster.post {
-                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                                              viewModel.joinLiveClass()
-                                          }
-                                      }, { exception -> })
+                uiThreadPoster.post {
+                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                    viewModel.joinLiveClass()
+                }
+            }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
@@ -335,18 +345,49 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 Log.d(TAG, networkQuality.toString())
             }
 
-            val userRole = viewModel.sharedPrefsWrapper.getRole()
             when (networkQuality) {
                 in LiveSwitchNetworkQuality.MODERATE.lowerLimit..LiveSwitchNetworkQuality.MODERATE.upperLimit -> {
-                    if (userRole == TEACHER_ROLE) {
-                        upstreamConnection.videoStream.maxSendBitrate =
-                            TeacherFeedQuality.MODERATE.bitrate
+                    liveClassManager.getDownStreamConnections().let { connectionsMap ->
+                        liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
+                            connectionsMap.forEach { connection ->
+                                when (rolesMap[connection.key]) {
+                                    STUDENT_ROLE -> {
+                                        connection.value.videoStream.maxReceiveBitrate =
+                                            StudentFeedQuality.MODERATE.bitrate
+                                        connection.value.videoStream.maxSendBitrate =
+                                            StudentFeedQuality.MODERATE.bitrate
+                                    }
+                                    TEACHER_ROLE -> {
+                                        connection.value.videoStream.maxReceiveBitrate =
+                                            TeacherFeedQuality.MODERATE.bitrate
+                                        connection.value.videoStream.maxSendBitrate =
+                                            TeacherFeedQuality.MODERATE.bitrate
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 in LiveSwitchNetworkQuality.GOOD.lowerLimit..LiveSwitchNetworkQuality.GOOD.upperLimit -> {
-                    if (userRole == TEACHER_ROLE) {
-                        upstreamConnection.videoStream.maxSendBitrate =
-                            TeacherFeedQuality.GOOD.bitrate
+                    liveClassManager.getDownStreamConnections().let { connectionsMap ->
+                        liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
+                            connectionsMap.forEach { connection ->
+                                when (rolesMap[connection.key]) {
+                                    STUDENT_ROLE -> {
+                                        connection.value.videoStream.maxReceiveBitrate =
+                                            StudentFeedQuality.GOOD.bitrate
+                                        connection.value.videoStream.maxSendBitrate =
+                                            StudentFeedQuality.GOOD.bitrate
+                                    }
+                                    TEACHER_ROLE -> {
+                                        connection.value.videoStream.maxReceiveBitrate =
+                                            TeacherFeedQuality.GOOD.bitrate
+                                        connection.value.videoStream.maxSendBitrate =
+                                            TeacherFeedQuality.GOOD.bitrate
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
