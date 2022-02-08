@@ -174,9 +174,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         {
             when (it) {
                 is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(
-                    it.channel
-                )
+                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
                 is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
                 is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
                 is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
