@@ -24,6 +24,8 @@ class LiveClassManager @Inject constructor() {
     private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection>()
     private val connectionsRoleMap = mutableMapOf<String, String>()
 
+
+    // TODO @Paul modify this to a 2-element array if the strategy doesn't changes
     private val networkQualityArray = mutableListOf<Double>()
 
     private var token: String? = null
