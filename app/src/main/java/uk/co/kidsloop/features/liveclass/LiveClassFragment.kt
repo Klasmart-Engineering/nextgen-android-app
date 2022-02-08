@@ -343,7 +343,24 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 Log.d(TAG, networkQuality.toString())
             }
 
-            when (networkQuality) {
+            val averageNetworkQuality = when(liveClassManager.getNetworkQualityArray().size) {
+                0 -> {
+                    liveClassManager.addToNetworkQualityArray(networkQuality)
+                    // If there is no value inside the array, take the current reading as it is
+                    networkQuality
+                }
+                else -> {
+                    liveClassManager.addToNetworkQualityArray(networkQuality)
+                    val networkQualityArray = liveClassManager.getNetworkQualityArray()
+                    // Calculate the average of the last 2 readings
+                    networkQualityArray.subList(
+                        networkQualityArray.size - 2,
+                        networkQualityArray.size - 1
+                    ).average()
+                }
+            }
+
+            when (averageNetworkQuality) {
                 in LiveSwitchNetworkQuality.MODERATE.lowerLimit..LiveSwitchNetworkQuality.MODERATE.upperLimit -> {
                     liveClassManager.getDownStreamConnections().let { connectionsMap ->
                         liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->

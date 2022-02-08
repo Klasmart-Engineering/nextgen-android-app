@@ -24,6 +24,8 @@ class LiveClassManager @Inject constructor() {
     private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection>()
     private val connectionsRoleMap = mutableMapOf<String, String>()
 
+    private val networkQualityArray = mutableListOf<Double>()
+
     private var token: String? = null
     private var remoteChannel: Channel? = null
     private var client: Client? = null
@@ -110,6 +112,18 @@ class LiveClassManager @Inject constructor() {
         return upstreamConnection
     }
 
+    fun getNetworkQualityArray(): MutableList<Double> {
+        return networkQualityArray
+    }
+
+    fun addToNetworkQualityArray(element: Double) {
+        networkQualityArray.add(element)
+    }
+
+    private fun clearNetworkQualityArray() {
+        networkQualityArray.clear()
+    }
+
     private fun setUpstreamDataChannel() {
         // TODO @Paul see what you do with this label
         upstreamDataChannel = DataChannel("testDataChannel")
@@ -173,6 +187,7 @@ class LiveClassManager @Inject constructor() {
         upstreamDataChannel = null
         upstreamDataStream = null
         token = null
+        clearNetworkQualityArray()
         liveClassState = LiveClassState.IDLE
     }
 
