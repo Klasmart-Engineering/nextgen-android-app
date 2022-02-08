@@ -11,6 +11,7 @@ import javax.inject.Singleton
 class LiveClassManager @Inject constructor() {
 
     companion object {
+
         const val STATS_COLLECTING_INTERVAL = 2500
     }
 
@@ -107,9 +108,11 @@ class LiveClassManager @Inject constructor() {
         upstreamDataStream = DataStream(upstreamDataChannel)
     }
 
-    fun sendDataString(data: String) {
-        if (isUpstreamDataChannelConnected())
+    fun sendDataString(dataChannelActions: DataChannelActions) {
+        if (isUpstreamDataChannelConnected()) {
+            val data = dataChannelActions.type + ":" + getUpstreamConnection()?.id
             upstreamDataChannel?.sendDataString(data)
+        }
     }
 
     fun sendDataBytes(data: ByteArray) {

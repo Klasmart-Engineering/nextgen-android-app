@@ -27,17 +27,27 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/raise_hand_btn"
-            android:layout_width="50dp"
-            android:layout_height="70dp"
+            android:layout_width="@dimen/space_50"
+            android:layout_height="@dimen/space_70"
             android:layout_marginEnd="@dimen/space_13"
             android:contentDescription="@null"
             android:scaleType="fitEnd"
             android:src="@drawable/selector_raise_hand_btn"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/toggle_students_camera"
+            android:layout_width="@dimen/space_70"
+            android:layout_height="@dimen/space_70"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:lines="2"
+            android:visibility="gone"
+            android:text="@string/turn_off_students_camera"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/local_media_container"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineVertical"

@@ -88,16 +88,22 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
 
         when (viewModel.sharedPrefsWrapper.getRole()) {
-            TEACHER_ROLE -> {
-                setUiForTeacher()
-            }
-            STUDENT_ROLE -> {
-                setUiForStudent()
-            }
+            TEACHER_ROLE -> setUiForTeacher()
+            STUDENT_ROLE -> setUiForStudent()
         }
 
-        observe()
         setControls()
+
+        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
+        {
+            when (it) {
+                is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
+                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
+                is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
+                is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
+                is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+            }
+        })
 
         liveClassManager.dataChannelActionsHandler = this
     }
@@ -109,6 +115,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
     private fun setUiForTeacher() {
         binding.raiseHandBtn.gone()
+        binding.toggleStudentsCamera.visible()
     }
 
     private fun setUiForStudent() {
@@ -148,35 +155,15 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
 
         binding.raiseHandBtn.setOnClickListener {
-            if (liveClassManager.getUpstreamConnection()?.state == ConnectionState.Connected) {
-                binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
-                val id = liveClassManager.getUpstreamConnection()?.clientId ?: emptyString()
-
-                when (binding.raiseHandBtn.isSelected) {
-                    true -> {
-                        liveClassManager.sendDataString(DataChannelActions.RAISE_HAND.type + ":" + id)
-                        binding.localMediaContainer.showHandRaised()
-                    }
-                    false -> {
-                        liveClassManager.sendDataString(DataChannelActions.LOWER_HAND.type + ":" + id)
-                        binding.localMediaContainer.hideRaiseHand()
-                    }
-                }
+            binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
+            if (binding.raiseHandBtn.isSelected) {
+                liveClassManager.sendDataString(DataChannelActions.RAISE_HAND)
+                binding.localMediaContainer.showHandRaised()
+            } else {
+                liveClassManager.sendDataString(DataChannelActions.LOWER_HAND)
+                binding.localMediaContainer.hideRaiseHand()
             }
         }
-    }
-
-    private fun observe() = with(viewModel) {
-        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
-        {
-            when (it) {
-                is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
-                is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
-                is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
-            }
-        })
     }
 
     private fun openSfuDownstreamConnection(
@@ -308,9 +295,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true),
             requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         )
-
-        upstreamConnection?.statsEventInterval = LiveClassManager.STATS_COLLECTING_INTERVAL
-
         upstreamConnection?.addOnStateChange { connection ->
             when (connection.state) {
                 ConnectionState.Initializing -> {
@@ -333,9 +317,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 Log.d(TAG, networkQuality.toString())
             }
         }
-
-        upstreamConnection?.open()
-        liveClassManager.setState(LiveClassState.JOINED)
     }
 
     private fun onConnectionInitializing() {

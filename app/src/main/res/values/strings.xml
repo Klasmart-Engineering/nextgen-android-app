@@ -25,4 +25,6 @@
     <string name="join_live_class">Join Live Class</string>
     <string name="my_live_class">My Live Class</string>
     <string name="channel_id">Channel ID</string>
+    <string name="turn_off_students_camera">Turn off camera for students</string>
+    <string name="allow_students_to_turn_on_camera">Allow students to turn on camera</string>
 </resources>
