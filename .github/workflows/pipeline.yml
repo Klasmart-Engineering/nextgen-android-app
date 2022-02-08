@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: test script
         run: |
-          curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.github_token }}" \
+          curl -L -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.github_token }}" \
           "https://api.github.com/repos/kidsloop-global/nextgen-android-app/actions/artifacts"
         shell: bash
 
