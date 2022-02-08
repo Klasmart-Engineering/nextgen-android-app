@@ -30,7 +30,8 @@ jobs:
     steps:
       - name: test script
         run: |
-          curl -H "Accept: application/vnd.github.v3+json" "https://github.com/kidsloop-global/nextgen-android-app/actions/artifacts"
+          curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.github_token }}" \
+          "https://github.com/kidsloop-global/nextgen-android-app/actions/artifacts"
         shell: bash
 
       # - name: Checkout Repo
