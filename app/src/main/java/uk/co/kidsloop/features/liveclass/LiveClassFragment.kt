@@ -1,7 +1,12 @@
 package uk.co.kidsloop.features.liveclass
 
+import android.content.Context
+import android.hardware.display.DisplayManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Display
+import android.view.Surface
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -13,9 +18,8 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.*
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.app.UiThreadPoster
+import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.shortToast
@@ -23,18 +27,22 @@ import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
 import uk.co.kidsloop.data.enums.StudentFeedQuality
 import uk.co.kidsloop.data.enums.TeacherFeedQuality
+import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
+import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
-import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
-import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
+import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChannelActionsHandler {
+class LiveClassFragment :
+    BaseFragment(R.layout.live_class_fragment),
+    DataChannelActionsHandler,
+    DisplayManager.DisplayListener {
 
     companion object {
 
@@ -52,6 +60,9 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     private val binding by viewBinding(LiveClassFragmentBinding::bind)
     private lateinit var window: Window
     private var localMedia: LocalMedia<View>? = null
+    private lateinit var displayManager: DisplayManager
+    private lateinit var display: Display
+    private var initialDisplayOrientation: Int = 1
 
     private val viewModel by viewModels<LiveClassViewModel>()
 
@@ -65,6 +76,17 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             disableVideo = false,
             aecContext = AecContext()
         )
+
+        displayManager =
+            requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+        displayManager.registerDisplayListener(this, null)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display = activity?.display!!
+        } else {
+            @Suppress("DEPRECATION")
+            display = activity?.windowManager?.defaultDisplay!!
+        }
+        initialDisplayOrientation = displayManager.getDisplay(display.displayId).rotation
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,16 +119,21 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
         setControls()
 
-        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
-        {
-            when (it) {
-                is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
-                is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
-                is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+        viewModel.classroomStateLiveData.observe(
+            viewLifecycleOwner,
+            Observer
+            {
+                when (it) {
+                    is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
+                    is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(
+                        it.channel
+                    )
+                    is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
+                    is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
+                    is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+                }
             }
-        })
+        )
 
         liveClassManager.dataChannelActionsHandler = this
     }
@@ -116,9 +143,15 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        displayManager.unregisterDisplayListener(this)
+    }
+
     private fun setUiForTeacher() {
         binding.raiseHandBtn.gone()
         binding.toggleStudentsVideo.visible()
+        binding.toggleStudentsAudio.visible()
     }
 
     private fun setUiForStudent() {
@@ -285,7 +318,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
-            //TODO This is added for testing purpouse and it will be removed later on
+            // TODO This is added for testing purpouse and it will be removed later on
             requireActivity().finish()
         }
     }
@@ -293,11 +326,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                                          uiThreadPoster.post {
-                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                                              viewModel.joinLiveClass()
-                                          }
-                                      }, { exception -> })
+                uiThreadPoster.post {
+                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                    viewModel.joinLiveClass()
+                }
+            }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
@@ -419,6 +452,36 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     override fun onLowerHand(clientId: String?) {
         uiThreadPoster.post {
             studentsFeedAdapter.onHandLowered(clientId)
+        }
+    }
+
+    override fun onDisplayAdded(displayId: Int) {}
+
+    override fun onDisplayRemoved(displayId: Int) {}
+
+    override fun onDisplayChanged(displayId: Int) {
+        if (initialDisplayOrientation == Surface.ROTATION_90) {
+            if (display.rotation == Surface.ROTATION_90) {
+                binding.localMediaContainer.updateLocalMediaViewOrientationDefault(
+                    localMedia?.view
+                )
+            }
+            if (display.rotation == Surface.ROTATION_270) {
+                binding.localMediaContainer.updateLocalMediaViewOrientationReverse(
+                    localMedia?.view
+                )
+            }
+        } else {
+            if (display.rotation == Surface.ROTATION_90) {
+                binding.localMediaContainer.updateLocalMediaViewOrientationReverse(
+                    localMedia?.view
+                )
+            }
+            if (display.rotation == Surface.ROTATION_270) {
+                binding.localMediaContainer.updateLocalMediaViewOrientationDefault(
+                    localMedia?.view
+                )
+            }
         }
     }
 }

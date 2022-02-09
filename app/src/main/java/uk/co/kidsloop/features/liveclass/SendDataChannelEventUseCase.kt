@@ -1,9 +1,9 @@
 package uk.co.kidsloop.features.liveclass
 
 import com.squareup.moshi.Moshi
-import javax.inject.Inject
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.KidsLoopDataChannel
+import javax.inject.Inject
 
 class SendDataChannelEventUseCase @Inject constructor(
     private val liveClassManager: LiveClassManager,
