@@ -3,11 +3,12 @@ package uk.co.kidsloop.features.liveclass
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import fm.liveswitch.*
-import uk.co.kidsloop.data.enums.DataChannelActionsType
-import uk.co.kidsloop.features.liveclass.state.LiveClassState
-import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.co.kidsloop.data.enums.DataChannelActionsType
+import uk.co.kidsloop.data.enums.KidsLoopDataChannel
+import uk.co.kidsloop.features.liveclass.state.LiveClassState
+import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 
 @Singleton
 class LiveClassManager @Inject constructor(private val moshi: Moshi) {
@@ -37,11 +38,11 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
     var dataChannelActionsHandler: DataChannelActionsHandler? = null
     private var liveClassState: LiveClassState = LiveClassState.IDLE
 
-    private val dataChannelAdapter: JsonAdapter<uk.co.kidsloop.data.enums.DataChannel>
+    private val dataChannelAdapter: JsonAdapter<KidsLoopDataChannel>
 
     init {
         setUpstreamDataChannel()
-        dataChannelAdapter = moshi.adapter(uk.co.kidsloop.data.enums.DataChannel::class.java)
+        dataChannelAdapter = moshi.adapter(KidsLoopDataChannel::class.java)
     }
 
     fun setToken(token: String) {
@@ -151,7 +152,7 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         }
     }
 
-    private fun handleReceivedDataString(dataChannel: uk.co.kidsloop.data.enums.DataChannel?) {
+    private fun handleReceivedDataString(dataChannel: KidsLoopDataChannel?) {
         when (dataChannel?.eventType) {
             DataChannelActionsType.RAISE_HAND -> dataChannelActionsHandler?.onRaiseHand(dataChannel.clientId)
             DataChannelActionsType.LOWER_HAND -> dataChannelActionsHandler?.onLowerHand(dataChannel.clientId)
