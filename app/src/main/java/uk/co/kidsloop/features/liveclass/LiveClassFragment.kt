@@ -311,8 +311,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         )
 
-        upstreamConnection?.statsEventInterval = LiveClassManager.STATS_COLLECTING_INTERVAL
-
         upstreamConnection?.addOnStateChange { connection ->
             when (connection.state) {
                 ConnectionState.Initializing -> {
@@ -402,9 +400,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 }
             }
         }
-
-        upstreamConnection?.open()
-        liveClassManager.setState(LiveClassState.JOINED)
     }
 
     private fun onConnectionInitializing() {

@@ -16,6 +16,9 @@ class OpenSfuUpstreamConnectionUseCase @Inject constructor(private val liveClass
         val upstreamConnection = channel?.createSfuUpstreamConnection(audioStream, videoStream, dataStream)
         upstreamConnection?.statsEventInterval = LiveClassManager.STATS_COLLECTING_INTERVAL
         upstreamConnection?.open()
+        upstreamConnection?.let {
+            liveClassManager.setUpstreamConnection(it)
+        }
         liveClassManager.setState(LiveClassState.JOINED)
         return upstreamConnection
     }
