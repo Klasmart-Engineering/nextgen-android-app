@@ -5,18 +5,25 @@ import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.Display
+import android.view.Surface
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.*
+import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.app.UiThreadPoster
-import uk.co.kidsloop.app.utils.*
+import uk.co.kidsloop.app.utils.emptyString
+import uk.co.kidsloop.app.utils.gone
+import uk.co.kidsloop.app.utils.shortToast
+import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
@@ -26,10 +33,11 @@ import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChannelActionsHandler,
+class LiveClassFragment :
+    BaseFragment(R.layout.live_class_fragment),
+    DataChannelActionsHandler,
     DisplayManager.DisplayListener {
 
     companion object {
@@ -184,9 +192,8 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
     }
 
-    private fun observe() = with(viewModel) {
-        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
-        {
+    private fun observe() {
+        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, {
             when (it) {
                 is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
                 is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(
