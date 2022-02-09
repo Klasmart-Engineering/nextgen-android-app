@@ -11,7 +11,7 @@ class SendDataChannelEventUseCase @Inject constructor(
 ) {
 
     fun sendDataChannelEvent(eventType: DataChannelActionsType) {
-        val jsonAdapter = moshi.adapter<DataChannel>(DataChannel::class.java)
+        val jsonAdapter = moshi.adapter(DataChannel::class.java)
         val json = jsonAdapter.toJson(DataChannel(liveClassManager.getUpstreamClientId(), eventType))
         liveClassManager.sendDataString(json.toString())
     }
