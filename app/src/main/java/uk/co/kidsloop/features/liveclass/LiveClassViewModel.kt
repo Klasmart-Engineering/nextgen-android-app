@@ -81,11 +81,11 @@ class LiveClassViewModel @Inject constructor(
     }
 
     fun showHandRaised(){
-        sendDataChannelEventUseCase.senDataChannelEvent(DataChannelActionsType.RAISE_HAND)
+        sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.RAISE_HAND)
     }
 
     fun showHandLowered(){
-        sendDataChannelEventUseCase.senDataChannelEvent(DataChannelActionsType.LOWER_HAND)
+        sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.LOWER_HAND)
     }
 
     fun leaveLiveClass() {
