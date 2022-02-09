@@ -10,6 +10,7 @@ import fm.liveswitch.Channel
 import fm.liveswitch.IAction1
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.co.kidsloop.data.enums.DataChannelActionsType
@@ -43,7 +44,11 @@ class LiveClassViewModel @Inject constructor(
             _classroomStateLiveData.postValue(LiveClassUiState.RegistrationSuccessful(channels[0]))
         }.fail(
             IAction1 { exception ->
-                _classroomStateLiveData.postValue(LiveClassUiState.FailedToJoiningLiveClass(exception.message))
+                _classroomStateLiveData.postValue(
+                    LiveClassUiState.FailedToJoiningLiveClass(
+                        exception.message
+                    )
+                )
             }
         )
     }
@@ -97,6 +102,18 @@ class LiveClassViewModel @Inject constructor(
     fun enableVideoForStudents() {
         viewModelScope.launch {
             sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.ENABLE_VIDEO)
+        }
+    }
+
+    fun disableMicForStudents() {
+        viewModelScope.launch {
+            sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.DISABLE_AUDIO)
+        }
+    }
+
+    fun enableMicForStudents() {
+        viewModelScope.launch {
+            sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.ENABLE_AUDIO)
         }
     }
 

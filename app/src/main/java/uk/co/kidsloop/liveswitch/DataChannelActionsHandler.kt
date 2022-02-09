@@ -8,4 +8,6 @@ interface DataChannelActionsHandler {
     fun onLowerHand(clientId: String?)
     fun onVideoTurnedOff()
     fun onVideoEnabled()
+    fun onEnableMic()
+    fun onDisableMic()
 }

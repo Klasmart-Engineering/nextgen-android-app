@@ -15,8 +15,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import fm.liveswitch.*
 import javax.inject.Inject
+import fm.liveswitch.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -213,6 +213,14 @@ class LiveClassFragment :
                 binding.localMediaContainer.hideRaiseHand()
             }
         }
+
+        binding.toggleStudentsAudio.setOnClickListener {
+            if (binding.toggleStudentsAudio.isChecked) {
+                viewModel.disableMicForStudents()
+            } else {
+                viewModel.enableMicForStudents()
+            }
+        }
     }
 
     private fun openSfuDownstreamConnection(
@@ -370,7 +378,7 @@ class LiveClassFragment :
         upstreamConnection?.addOnNetworkQuality { networkQuality ->
             // TODO @Paul remove these after QA get their stats
             uiThreadPoster.post {
-                shortToast(networkQuality.toString())
+//                shortToast(networkQuality.toString())
                 Log.d(TAG, networkQuality.toString())
             }
 
@@ -504,6 +512,18 @@ class LiveClassFragment :
                     localMedia?.view
                 )
             }
+        }
+    }
+
+    override fun onEnableMic() {
+    }
+
+    override fun onDisableMic() {
+        viewModel.toggleLocalAudio()
+        uiThreadPoster.post {
+            binding.localMediaContainer.showMicMuted()
+            binding.toggleMicrophoneBtn.isActivated = false
+            shortToast("mic muted by teacher")
         }
     }
 }

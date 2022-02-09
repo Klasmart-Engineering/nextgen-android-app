@@ -8,5 +8,7 @@ enum class DataChannelActionsType(val type: String) {
     RAISE_HAND("raise_hand"),
     LOWER_HAND("lower_hand"),
     DISABLE_VIDEO("disable_video"),
-    ENABLE_VIDEO("enable_video")
+    ENABLE_VIDEO("enable_video"),
+    DISABLE_AUDIO("disable_audio"),
+    ENABLE_AUDIO("enable_audio")
 }
