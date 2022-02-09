@@ -113,7 +113,7 @@ class LiveClassManager @Inject constructor() {
 
     fun sendDataString(dataChannelActions: DataChannelActions) {
         if (isUpstreamDataChannelConnected()) {
-            val data = dataChannelActions.type + ":" + getUpstreamConnection()?.id
+            val data = dataChannelActions.type + ":" + getUpstreamConnection()?.clientId
             upstreamDataChannel?.sendDataString(data)
         }
     }

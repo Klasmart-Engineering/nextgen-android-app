@@ -7,9 +7,9 @@ import javax.inject.Inject
 
 class RaiseOrLowerHandUseCase @Inject constructor(private val liveClassManager: LiveClassManager, private val moshi:Moshi) {
 
-    fun raiseOrLowerHand(dataChannelActions: DataChannelActions){
+    fun raiseOrLowerHand(data:DataChannelActions){
 //        val jsonAdapter = moshi.adapter<RaiseHand>(RaiseHand::class.java)
 //        val json = jsonAdapter.toJson(RaiseHand(shouldRaiseHand, shouldLowerHand))
-        liveClassManager.sendDataString(dataChannelActions)
+        liveClassManager.sendDataString(data)
     }
 }

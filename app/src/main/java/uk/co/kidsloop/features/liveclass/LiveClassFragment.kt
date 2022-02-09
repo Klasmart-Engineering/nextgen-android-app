@@ -20,6 +20,7 @@ import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.app.utils.visible
+import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
@@ -154,12 +155,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             binding.liveClassOverlay.visibility = View.VISIBLE
         }
 
-        binding.toggleStudentsVideo.setOnClickListener { view->
+        binding.toggleStudentsVideo.setOnClickListener { view ->
             viewModel.toggleVideoForStudents((view as ToggleButton).isChecked)
         }
 
         binding.raiseHandBtn.setOnClickListener {
             binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
+
             if (binding.raiseHandBtn.isSelected) {
                 viewModel.showHandRaised()
                 binding.localMediaContainer.showHandRaised()
@@ -168,178 +170,178 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 binding.localMediaContainer.hideRaiseHand()
             }
         }
-    }
+}
 
-    private fun openSfuDownstreamConnection(
-        remoteConnectionInfo: ConnectionInfo,
-        channel: Channel
-    ): SfuDownstreamConnection {
-        // Create remote media.
-        val remoteMedia = SFURemoteMedia(
-            requireContext(),
-            disableAudio = false,
-            disableVideo = false,
-            aecContext = AecContext()
+private fun openSfuDownstreamConnection(
+    remoteConnectionInfo: ConnectionInfo,
+    channel: Channel
+): SfuDownstreamConnection {
+    // Create remote media.
+    val remoteMedia = SFURemoteMedia(
+        requireContext(),
+        disableAudio = false,
+        disableVideo = false,
+        aecContext = AecContext()
+    )
+
+    // Create audio and video streams from remote media.
+    val audioStream: AudioStream? =
+        if (remoteConnectionInfo.hasAudio) AudioStream(remoteMedia) else null
+    val videoStream: VideoStream? =
+        if (remoteConnectionInfo.hasVideo) VideoStream(remoteMedia) else null
+
+    // Create a SFU downstream connection with remote audio and video and data streams.
+    val connection: SfuDownstreamConnection =
+        channel.createSfuDownstreamConnection(
+            remoteConnectionInfo,
+            audioStream,
+            videoStream,
+            liveClassManager.getNewDownstreamDataStream()
         )
 
-        // Create audio and video streams from remote media.
-        val audioStream: AudioStream? =
-            if (remoteConnectionInfo.hasAudio) AudioStream(remoteMedia) else null
-        val videoStream: VideoStream? =
-            if (remoteConnectionInfo.hasVideo) VideoStream(remoteMedia) else null
+    if (remoteConnectionInfo.clientRoles[0] == STUDENT_ROLE) {
+        // Store the downstream connection.
+        liveClassManager.saveDownStreamConnections(
+            remoteConnectionInfo.clientId ?: emptyString(),
+            connection
+        )
+    }
 
-        // Create a SFU downstream connection with remote audio and video and data streams.
-        val connection: SfuDownstreamConnection =
-            channel.createSfuDownstreamConnection(
-                remoteConnectionInfo,
-                audioStream,
-                videoStream,
-                liveClassManager.getNewDownstreamDataStream()
-            )
-
-        if (remoteConnectionInfo.clientRoles[0] == STUDENT_ROLE) {
-            // Store the downstream connection.
-            liveClassManager.saveDownStreamConnections(
-                remoteConnectionInfo.clientId ?: emptyString(),
-                connection
-            )
-        }
-
-        // Adding remote view to UI.
-        when (remoteConnectionInfo.clientRoles[0]) {
-            TEACHER_ROLE -> {
-                uiThreadPoster.post {
-                    binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId ?: emptyString()
-                    binding.teacherVideoFeed.addView(remoteMedia.view, 1)
-                }
-            }
-
-            STUDENT_ROLE -> uiThreadPoster.post {
-                studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
+    // Adding remote view to UI.
+    when (remoteConnectionInfo.clientRoles[0]) {
+        TEACHER_ROLE -> {
+            uiThreadPoster.post {
+                binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId ?: emptyString()
+                binding.teacherVideoFeed.addView(remoteMedia.view, 1)
             }
         }
 
-        connection.addOnStateChange { conn: ManagedConnection ->
-            if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
-                val clientId = remoteConnectionInfo.clientId ?: emptyString()
+        STUDENT_ROLE -> uiThreadPoster.post {
+            studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
+        }
+    }
 
-                uiThreadPoster.post {
-                    if (view != null) {
-                        if (binding.teacherVideoFeed.tag == clientId) {
-                            binding.teacherVideoFeed.removeViewAt(1)
-                        } else {
-                            studentsFeedAdapter.removeVideoFeed(clientId)
-                        }
+    connection.addOnStateChange { conn: ManagedConnection ->
+        if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
+            val clientId = remoteConnectionInfo.clientId ?: emptyString()
+
+            uiThreadPoster.post {
+                if (view != null) {
+                    if (binding.teacherVideoFeed.tag == clientId) {
+                        binding.teacherVideoFeed.removeViewAt(1)
+                    } else {
+                        studentsFeedAdapter.removeVideoFeed(clientId)
                     }
                 }
-                remoteMedia.destroy()
-                liveClassManager.removeDownStreamConnection(clientId)
-            } else if (conn.state == ConnectionState.Failed) {
+            }
+            remoteMedia.destroy()
+            liveClassManager.removeDownStreamConnection(clientId)
+        } else if (conn.state == ConnectionState.Failed) {
+            // Reconnect if the connection failed.
+            openSfuDownstreamConnection(remoteConnectionInfo, channel)
+        }
+    }
+    connection.open()
+    return connection
+}
+
+private fun getAudioStream(localMedia: LocalMedia<View>?): AudioStream? {
+    return if (localMedia?.audioTrack != null) AudioStream(localMedia.audioTrack) else null
+}
+
+private fun getVideoStream(localMedia: LocalMedia<View>?): VideoStream? {
+    return if (localMedia?.videoTrack != null) VideoStream(localMedia.videoTrack) else null
+}
+
+private fun showLoading() {
+}
+
+private fun handleFailures() {
+}
+
+private fun onClientRegistered(channel: Channel) {
+    openSfuUpstreamConnection()
+    // Check for existing remote upstream connections and open a downstream connection for
+    // each of them.
+    for (connectionInfo in channel.remoteUpstreamConnectionInfos) {
+        openSfuDownstreamConnection(connectionInfo, channel)
+    }
+
+    channel.addOnRemoteUpstreamConnectionOpen { connectionInfo ->
+        openSfuDownstreamConnection(connectionInfo, channel)
+    }
+}
+
+private fun stopLocalMedia() {
+    localMedia?.stop()?.then { _ ->
+        localMedia?.destroy()
+        localMedia = null
+        //TODO This is added for testing purpouse and it will be removed later on
+        requireActivity().finish()
+    }
+}
+
+private fun startLocalMedia() {
+    if (liveClassManager.getState() == LiveClassState.IDLE) {
+        localMedia?.start()?.then({
+                                      uiThreadPoster.post {
+                                          binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                                          viewModel.joinLiveClass()
+                                      }
+                                  }, { exception -> })
+    } else {
+        binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+    }
+}
+
+private fun openSfuUpstreamConnection() {
+    val upstreamConnection = viewModel.openSfuUpstreamConnection(
+        getAudioStream(localMedia),
+        getVideoStream(localMedia),
+        requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true),
+        requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
+    )
+    upstreamConnection?.addOnStateChange { connection ->
+        when (connection.state) {
+            ConnectionState.Initializing -> {
+                onConnectionInitializing()
+            }
+            ConnectionState.Connected -> {
+                onConnectedSuccessfully()
+            }
+            ConnectionState.Failed -> {
                 // Reconnect if the connection failed.
-                openSfuDownstreamConnection(remoteConnectionInfo, channel)
-            }
-        }
-        connection.open()
-        return connection
-    }
-
-    private fun getAudioStream(localMedia: LocalMedia<View>?): AudioStream? {
-        return if (localMedia?.audioTrack != null) AudioStream(localMedia.audioTrack) else null
-    }
-
-    private fun getVideoStream(localMedia: LocalMedia<View>?): VideoStream? {
-        return if (localMedia?.videoTrack != null) VideoStream(localMedia.videoTrack) else null
-    }
-
-    private fun showLoading() {
-    }
-
-    private fun handleFailures() {
-    }
-
-    private fun onClientRegistered(channel: Channel) {
-        openSfuUpstreamConnection()
-        // Check for existing remote upstream connections and open a downstream connection for
-        // each of them.
-        for (connectionInfo in channel.remoteUpstreamConnectionInfos) {
-            openSfuDownstreamConnection(connectionInfo, channel)
-        }
-
-        channel.addOnRemoteUpstreamConnectionOpen { connectionInfo ->
-            openSfuDownstreamConnection(connectionInfo, channel)
-        }
-    }
-
-    private fun stopLocalMedia() {
-        localMedia?.stop()?.then { _ ->
-            localMedia?.destroy()
-            localMedia = null
-            //TODO This is added for testing purpouse and it will be removed later on
-            requireActivity().finish()
-        }
-    }
-
-    private fun startLocalMedia() {
-        if (liveClassManager.getState() == LiveClassState.IDLE) {
-            localMedia?.start()?.then({
-                                          uiThreadPoster.post {
-                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                                              viewModel.joinLiveClass()
-                                          }
-                                      }, { exception -> })
-        } else {
-            binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-        }
-    }
-
-    private fun openSfuUpstreamConnection() {
-        val upstreamConnection = viewModel.openSfuUpstreamConnection(
-            getAudioStream(localMedia),
-            getVideoStream(localMedia),
-            requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true),
-            requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
-        )
-        upstreamConnection?.addOnStateChange { connection ->
-            when (connection.state) {
-                ConnectionState.Initializing -> {
-                    onConnectionInitializing()
-                }
-                ConnectionState.Connected -> {
-                    onConnectedSuccessfully()
-                }
-                ConnectionState.Failed -> {
-                    // Reconnect if the connection failed.
-                    openSfuUpstreamConnection()
-                }
-            }
-        }
-
-        upstreamConnection?.addOnNetworkQuality { networkQuality ->
-            // TODO @Paul remove these after QA get their stats
-            uiThreadPoster.post {
-                shortToast(networkQuality.toString())
-                Log.d(TAG, networkQuality.toString())
+                openSfuUpstreamConnection()
             }
         }
     }
 
-    private fun onConnectionInitializing() {
-        binding.raiseHandBtn.isActivated = false
-    }
-
-    private fun onConnectedSuccessfully() {
-        binding.raiseHandBtn.isActivated = true
-    }
-
-    override fun onRaiseHand(clientId: String) {
+    upstreamConnection?.addOnNetworkQuality { networkQuality ->
+        // TODO @Paul remove these after QA get their stats
         uiThreadPoster.post {
-            studentsFeedAdapter.onHandRaised(clientId)
+            shortToast(networkQuality.toString())
+            Log.d(TAG, networkQuality.toString())
         }
     }
+}
 
-    override fun onLowerHand(clientId: String) {
-        uiThreadPoster.post {
-            studentsFeedAdapter.onHandLowered(clientId)
-        }
+private fun onConnectionInitializing() {
+    binding.raiseHandBtn.isActivated = false
+}
+
+private fun onConnectedSuccessfully() {
+    binding.raiseHandBtn.isActivated = true
+}
+
+override fun onRaiseHand(clientId: String) {
+    uiThreadPoster.post {
+        studentsFeedAdapter.onHandRaised(clientId)
     }
+}
+
+override fun onLowerHand(clientId: String) {
+    uiThreadPoster.post {
+        studentsFeedAdapter.onHandLowered(clientId)
+    }
+}
 }
