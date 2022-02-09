@@ -9,6 +9,7 @@ import fm.liveswitch.Channel
 import fm.liveswitch.IAction1
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
+import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.features.liveclass.teacher.ToggleVideoForStudentsUseCase
 import javax.inject.Inject
@@ -18,6 +19,7 @@ class LiveClassViewModel @Inject constructor(
     private val joinLiveClassUseCase: JoinLiveClassUseCase,
     private val openSfuUpstreamConnectionUseCase: OpenSfuUpstreamConnectionUseCase,
     private val toggleVideoForStudentsUseCase: ToggleVideoForStudentsUseCase,
+    private val raiseOrLowerHandUseCase:RaiseOrLowerHandUseCase,
     private val liveClassManager: LiveClassManager
 ) : ViewModel() {
 
@@ -81,6 +83,14 @@ class LiveClassViewModel @Inject constructor(
 
     fun toggleVideoForStudents(shouldTurnOff:Boolean){
         toggleVideoForStudentsUseCase.toggleVideo(shouldTurnOff)
+    }
+
+    fun showHandRaised(){
+        raiseOrLowerHandUseCase.raiseOrLowerHand(DataChannelActions.RAISE_HAND)
+    }
+
+    fun showHandLowered(){
+        raiseOrLowerHandUseCase.raiseOrLowerHand(DataChannelActions.LOWER_HAND)
     }
 
     fun leaveLiveClass() {

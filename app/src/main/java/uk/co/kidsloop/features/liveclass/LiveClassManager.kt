@@ -71,9 +71,6 @@ class LiveClassManager @Inject constructor() {
             dataChannelReceiveArgs.dataString?.let {
                 parseReceivedDataString(it)
             }
-            dataChannelReceiveArgs.dataBytes?.let {
-                parseReceivedDataBytes(it)
-            }
         }
         return DataStream(dataChannel)
     }
@@ -114,6 +111,13 @@ class LiveClassManager @Inject constructor() {
         }
     }
 
+    fun sendDataString(dataChannelActions: DataChannelActions) {
+        if (isUpstreamDataChannelConnected()) {
+            val data = dataChannelActions.type + ":" + getUpstreamConnection()?.id
+            upstreamDataChannel?.sendDataString(data)
+        }
+    }
+
     private fun parseReceivedDataString(data: String?) {
         data?.let {
             val parsedData = data.split(":")
@@ -132,22 +136,6 @@ class LiveClassManager @Inject constructor() {
                 dataChannelActionsHandler?.onLowerHand(remoteId)
             }
         }
-    }
-
-    private fun parseReceivedDataBytes(data: DataBuffer?): ByteArray {
-        data?.let {
-            val bytes =
-                it.data // The payload byte[] might contain extra bytes that are not part of the payload.
-            val index = data.index // Starting index of the payload’s bytes you want.
-            val length = data.length // Length of the payload’s bytes you want.
-
-            val newValues = bytes.copyOfRange(index, index + length - 1)
-            // TODO parsing of the states transmitted over the DataChannel will be done here
-
-            return newValues
-        }
-
-        return ByteArray(0)
     }
 
     private fun isUpstreamDataChannelConnected(): Boolean {

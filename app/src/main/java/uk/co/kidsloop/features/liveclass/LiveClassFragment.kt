@@ -20,7 +20,6 @@ import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.app.utils.visible
-import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
@@ -162,10 +161,10 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         binding.raiseHandBtn.setOnClickListener {
             binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
             if (binding.raiseHandBtn.isSelected) {
-                //liveClassManager.sendDataString(DataChannelActions.RAISE_HAND)
+                viewModel.showHandRaised()
                 binding.localMediaContainer.showHandRaised()
             } else {
-                //liveClassManager.sendDataString(DataChannelActions.LOWER_HAND)
+                viewModel.showHandLowered()
                 binding.localMediaContainer.hideRaiseHand()
             }
         }
