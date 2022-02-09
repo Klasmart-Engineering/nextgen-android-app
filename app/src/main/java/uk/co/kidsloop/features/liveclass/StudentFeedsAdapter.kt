@@ -86,14 +86,14 @@ class StudentFeedsAdapter : RecyclerView.Adapter<StudentFeedsAdapter.ViewHolder>
         }
     }
 
-    fun onHandRaised(clientId: String) {
+    fun onHandRaised(clientId: String?) {
         val position = remoteStudentFeeds.indexOfFirst { it.clientId == clientId }
         if (position > -1) {
             notifyItemChanged(position, SHOW_HAND_RAISED)
         }
     }
 
-    fun onHandLowered(clientId: String) {
+    fun onHandLowered(clientId: String?) {
         val position = remoteStudentFeeds.indexOfFirst { it.clientId == clientId }
         if (position > -1) {
             notifyItemChanged(position, HIDE_HAND_RAISED)
