@@ -5,10 +5,10 @@ import android.view.View
 import fm.liveswitch.LayoutScale
 import fm.liveswitch.VideoConfig
 import fm.liveswitch.VideoSource
-import fm.liveswitch.android.CameraPreview
-import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import fm.liveswitch.ViewSink
 import fm.liveswitch.android.Camera2Source
+import fm.liveswitch.android.CameraPreview
+import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 
 class CameraLocalMedia(
     context: Context,
@@ -34,6 +34,7 @@ class CameraLocalMedia(
     }
 
     // Return an Android View for local preview rather than using ViewSink.
-    override fun getView(): View { return viewSink.view
+    override fun getView(): View {
+        return viewSink.view
     }
 }

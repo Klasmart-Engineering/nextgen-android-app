@@ -3,6 +3,7 @@ package uk.co.kidsloop.features.liveclass
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fm.liveswitch.AudioStream
 import fm.liveswitch.Channel
@@ -10,6 +11,7 @@ import fm.liveswitch.IAction1
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 
@@ -78,16 +80,28 @@ class LiveClassViewModel @Inject constructor(
         }
     }
 
-    fun toggleVideoForStudents(shouldTurnOff: Boolean) {
-        //
+    fun turnOffVideoForStudents() {
+        viewModelScope.launch {
+            sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.DISABLE_VIDEO)
+        }
+    }
+
+    fun enableVideoForStudents() {
+        viewModelScope.launch {
+            sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.ENABLE_VIDEO)
+        }
     }
 
     fun showHandRaised() {
-        sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.RAISE_HAND)
+        viewModelScope.launch {
+            sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.RAISE_HAND)
+        }
     }
 
     fun showHandLowered() {
-        sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.LOWER_HAND)
+        viewModelScope.launch {
+            sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.LOWER_HAND)
+        }
     }
 
     fun leaveLiveClass() {

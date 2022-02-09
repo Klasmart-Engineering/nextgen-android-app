@@ -5,17 +5,17 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.ToggleButton
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.*
+import javax.inject.Inject
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.app.UiThreadPoster
+import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.shortToast
@@ -23,15 +23,15 @@ import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
 import uk.co.kidsloop.data.enums.StudentFeedQuality
 import uk.co.kidsloop.data.enums.TeacherFeedQuality
+import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
+import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
-import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
-import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
-import javax.inject.Inject
+import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 
 @AndroidEntryPoint
 class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChannelActionsHandler {
@@ -97,16 +97,19 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
         setControls()
 
-        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
-        {
-            when (it) {
-                is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
-                is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
-                is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+        viewModel.classroomStateLiveData.observe(
+            viewLifecycleOwner,
+            Observer
+            {
+                when (it) {
+                    is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
+                    is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
+                    is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
+                    is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
+                    is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+                }
             }
-        })
+        )
 
         liveClassManager.dataChannelActionsHandler = this
     }
@@ -158,7 +161,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
 
         binding.toggleStudentsVideo.setOnClickListener { view ->
-            viewModel.toggleVideoForStudents((view as ToggleButton).isChecked)
+            if (binding.toggleStudentsVideo.isChecked) {
+                viewModel.turnOffVideoForStudents()
+            } else {
+                viewModel.enableVideoForStudents()
+            }
         }
 
         binding.raiseHandBtn.setOnClickListener {
@@ -285,7 +292,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
-            //TODO This is added for testing purpouse and it will be removed later on
+            // TODO This is added for testing purpouse and it will be removed later on
             requireActivity().finish()
         }
     }
@@ -293,11 +300,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                                          uiThreadPoster.post {
-                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                                              viewModel.joinLiveClass()
-                                          }
-                                      }, { exception -> })
+                uiThreadPoster.post {
+                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                    viewModel.joinLiveClass()
+                }
+            }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
@@ -420,5 +427,15 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         uiThreadPoster.post {
             studentsFeedAdapter.onHandLowered(clientId)
         }
+    }
+
+    override fun onVideoEnabled() {
+    }
+
+    override fun onVideoTurnedOff() {
+        viewModel.toggleLocalVideo()
+        binding.localMediaContainer.showCameraTurnedOff()
+        binding.toggleCameraBtn.isActivated = false
+        Toast.makeText(requireContext(), R.string.teacher_turned_off_all_students_camera, Toast.LENGTH_SHORT).show()
     }
 }

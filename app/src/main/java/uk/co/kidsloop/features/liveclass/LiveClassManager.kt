@@ -14,7 +14,6 @@ import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 class LiveClassManager @Inject constructor(private val moshi: Moshi) {
 
     companion object {
-
         const val STATS_COLLECTING_INTERVAL = 2500
     }
 
@@ -156,6 +155,11 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         when (dataChannel?.eventType) {
             DataChannelActionsType.RAISE_HAND -> dataChannelActionsHandler?.onRaiseHand(dataChannel.clientId)
             DataChannelActionsType.LOWER_HAND -> dataChannelActionsHandler?.onLowerHand(dataChannel.clientId)
+            DataChannelActionsType.ENABLE_VIDEO -> dataChannelActionsHandler?.onVideoEnabled()
+            DataChannelActionsType.DISABLE_VIDEO -> {
+                setState(LiveClassState.CAMERA_TURNED_OFF_BY_TEACHER)
+                dataChannelActionsHandler?.onVideoTurnedOff()
+            }
         }
     }
 
