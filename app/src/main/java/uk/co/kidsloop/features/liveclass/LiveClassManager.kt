@@ -1,16 +1,20 @@
 package uk.co.kidsloop.features.liveclass
 
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import fm.liveswitch.*
-import uk.co.kidsloop.data.enums.DataChannelActions
-import uk.co.kidsloop.features.liveclass.state.LiveClassState
-import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.co.kidsloop.data.enums.DataChannelActionsType
+import uk.co.kidsloop.data.enums.KidsLoopDataChannel
+import uk.co.kidsloop.features.liveclass.state.LiveClassState
+import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 
 @Singleton
-class LiveClassManager @Inject constructor() {
+class LiveClassManager @Inject constructor(private val moshi: Moshi) {
 
     companion object {
+
         const val STATS_COLLECTING_INTERVAL = 2500
     }
 
@@ -24,7 +28,6 @@ class LiveClassManager @Inject constructor() {
     private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection>()
     private val connectionsRoleMap = mutableMapOf<String, String>()
 
-
     // TODO @Paul modify this to a 2-element array if the strategy doesn't changes
     private val networkQualityArray = mutableListOf<Double>()
 
@@ -35,8 +38,11 @@ class LiveClassManager @Inject constructor() {
     var dataChannelActionsHandler: DataChannelActionsHandler? = null
     private var liveClassState: LiveClassState = LiveClassState.IDLE
 
+    private val dataChannelAdapter: JsonAdapter<KidsLoopDataChannel>
+
     init {
         setUpstreamDataChannel()
+        dataChannelAdapter = moshi.adapter(KidsLoopDataChannel::class.java)
     }
 
     fun setToken(token: String) {
@@ -75,9 +81,6 @@ class LiveClassManager @Inject constructor() {
             dataChannelReceiveArgs.dataString?.let {
                 parseReceivedDataString(it)
             }
-            dataChannelReceiveArgs.dataBytes?.let {
-                parseReceivedDataBytes(it)
-            }
         }
         return DataStream(dataChannel)
     }
@@ -114,6 +117,10 @@ class LiveClassManager @Inject constructor() {
         return upstreamConnection
     }
 
+    fun getUpstreamClientId(): String? {
+        return upstreamConnection?.clientId
+    }
+
     fun getNetworkQualityArray(): MutableList<Double> {
         return networkQualityArray
     }
@@ -133,49 +140,23 @@ class LiveClassManager @Inject constructor() {
     }
 
     fun sendDataString(data: String) {
-        if (isUpstreamDataChannelConnected())
+        if (isUpstreamDataChannelConnected()) {
             upstreamDataChannel?.sendDataString(data)
-    }
-
-    fun sendDataBytes(data: ByteArray) {
-        if (isUpstreamDataChannelConnected())
-            upstreamDataChannel?.sendDataBytes(DataBuffer.wrap(data))
+        }
     }
 
     private fun parseReceivedDataString(data: String?) {
         data?.let {
-            val parsedData = data.split(":")
-            handleReceivedDataString(parsedData)
+            val dataChannel = dataChannelAdapter.fromJson(data)
+            handleReceivedDataString(dataChannel)
         }
     }
 
-    private fun handleReceivedDataString(data: List<String>) {
-        when (data[0]) {
-            DataChannelActions.RAISE_HAND.type -> {
-                val clientId = data[1]
-                dataChannelActionsHandler?.onRaiseHand(clientId)
-            }
-            DataChannelActions.LOWER_HAND.type -> {
-                val remoteId = data[1]
-                dataChannelActionsHandler?.onLowerHand(remoteId)
-            }
+    private fun handleReceivedDataString(dataChannel: KidsLoopDataChannel?) {
+        when (dataChannel?.eventType) {
+            DataChannelActionsType.RAISE_HAND -> dataChannelActionsHandler?.onRaiseHand(dataChannel.clientId)
+            DataChannelActionsType.LOWER_HAND -> dataChannelActionsHandler?.onLowerHand(dataChannel.clientId)
         }
-    }
-
-    private fun parseReceivedDataBytes(data: DataBuffer?): ByteArray {
-        data?.let {
-            val bytes =
-                it.data // The payload byte[] might contain extra bytes that are not part of the payload.
-            val index = data.index // Starting index of the payload’s bytes you want.
-            val length = data.length // Length of the payload’s bytes you want.
-
-            val newValues = bytes.copyOfRange(index, index + length - 1)
-            // TODO parsing of the states transmitted over the DataChannel will be done here
-
-            return newValues
-        }
-
-        return ByteArray(0)
     }
 
     private fun isUpstreamDataChannelConnected(): Boolean {

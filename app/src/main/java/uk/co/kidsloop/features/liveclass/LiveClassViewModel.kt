@@ -9,15 +9,18 @@ import fm.liveswitch.Channel
 import fm.liveswitch.IAction1
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
-import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import javax.inject.Inject
+import uk.co.kidsloop.data.enums.DataChannelActionsType
+import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 
 @HiltViewModel
 class LiveClassViewModel @Inject constructor(
     private val joinLiveClassUseCase: JoinLiveClassUseCase,
     private val openSfuUpstreamConnectionUseCase: OpenSfuUpstreamConnectionUseCase,
+    private val sendDataChannelEventUseCase: SendDataChannelEventUseCase,
     private val liveClassManager: LiveClassManager
 ) : ViewModel() {
+
     @Inject
     lateinit var sharedPrefsWrapper: SharedPrefsWrapper
 
@@ -36,9 +39,11 @@ class LiveClassViewModel @Inject constructor(
         _classroomStateLiveData.value = LiveClassUiState.Loading
         joinLiveClassUseCase.joinAsync().then { channels ->
             _classroomStateLiveData.postValue(LiveClassUiState.RegistrationSuccessful(channels[0]))
-        }.fail(IAction1 { exception ->
-            _classroomStateLiveData.postValue(LiveClassUiState.FailedToJoiningLiveClass(exception.message))
-        })
+        }.fail(
+            IAction1 { exception ->
+                _classroomStateLiveData.postValue(LiveClassUiState.FailedToJoiningLiveClass(exception.message))
+            }
+        )
     }
 
     fun openSfuUpstreamConnection(
@@ -49,9 +54,6 @@ class LiveClassViewModel @Inject constructor(
     ): SfuUpstreamConnection? {
         val upstreamConnection =
             openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream)
-        upstreamConnection?.let {
-            liveClassManager.setUpstreamConnection(it)
-        }
         val config = upstreamConnection?.config
         config?.localVideoMuted = !isVideoTurnedOn
         config?.localAudioMuted = !isAudioTurnedOn
@@ -76,15 +78,29 @@ class LiveClassViewModel @Inject constructor(
         }
     }
 
+    fun toggleVideoForStudents(shouldTurnOff: Boolean) {
+        //
+    }
+
+    fun showHandRaised() {
+        sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.RAISE_HAND)
+    }
+
+    fun showHandLowered() {
+        sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.LOWER_HAND)
+    }
+
     fun leaveLiveClass() {
         val client = liveClassManager.getClient()
         client?.unregister()?.then {
             liveClassManager.cleanConnection()
             _classroomStateLiveData.postValue(LiveClassUiState.UnregisterSuccessful)
-        }?.fail(IAction1 { exception ->
-            liveClassManager.cleanConnection()
-            _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
-        })
+        }?.fail(
+            IAction1 { exception ->
+                liveClassManager.cleanConnection()
+                _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
+            }
+        )
     }
 
     override fun onCleared() {

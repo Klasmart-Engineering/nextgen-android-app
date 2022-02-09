@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ToggleButton
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +20,6 @@ import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.app.utils.visible
-import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
 import uk.co.kidsloop.data.enums.StudentFeedQuality
 import uk.co.kidsloop.data.enums.TeacherFeedQuality
@@ -91,16 +91,22 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
 
         when (viewModel.sharedPrefsWrapper.getRole()) {
-            TEACHER_ROLE -> {
-                setUiForTeacher()
-            }
-            STUDENT_ROLE -> {
-                setUiForStudent()
-            }
+            TEACHER_ROLE -> setUiForTeacher()
+            STUDENT_ROLE -> setUiForStudent()
         }
 
-        observe()
         setControls()
+
+        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
+        {
+            when (it) {
+                is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
+                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
+                is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
+                is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
+                is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+            }
+        })
 
         liveClassManager.dataChannelActionsHandler = this
     }
@@ -112,6 +118,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
     private fun setUiForTeacher() {
         binding.raiseHandBtn.gone()
+        binding.toggleStudentsVideo.visible()
     }
 
     private fun setUiForStudent() {
@@ -150,36 +157,21 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             binding.liveClassOverlay.visibility = View.VISIBLE
         }
 
-        binding.raiseHandBtn.setOnClickListener {
-            if (liveClassManager.getUpstreamConnection()?.state == ConnectionState.Connected) {
-                binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
-                val id = liveClassManager.getUpstreamConnection()?.clientId ?: emptyString()
+        binding.toggleStudentsVideo.setOnClickListener { view ->
+            viewModel.toggleVideoForStudents((view as ToggleButton).isChecked)
+        }
 
-                when (binding.raiseHandBtn.isSelected) {
-                    true -> {
-                        liveClassManager.sendDataString(DataChannelActions.RAISE_HAND.type + ":" + id)
-                        binding.localMediaContainer.showHandRaised()
-                    }
-                    false -> {
-                        liveClassManager.sendDataString(DataChannelActions.LOWER_HAND.type + ":" + id)
-                        binding.localMediaContainer.hideRaiseHand()
-                    }
-                }
+        binding.raiseHandBtn.setOnClickListener {
+            binding.raiseHandBtn.isSelected = binding.raiseHandBtn.isSelected.not()
+
+            if (binding.raiseHandBtn.isSelected) {
+                viewModel.showHandRaised()
+                binding.localMediaContainer.showHandRaised()
+            } else {
+                viewModel.showHandLowered()
+                binding.localMediaContainer.hideRaiseHand()
             }
         }
-    }
-
-    private fun observe() = with(viewModel) {
-        viewModel.classroomStateLiveData.observe(viewLifecycleOwner, Observer
-        {
-            when (it) {
-                is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
-                is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
-                is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
-                is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
-            }
-        })
     }
 
     private fun openSfuDownstreamConnection(
@@ -301,11 +293,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                uiThreadPoster.post {
-                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                    viewModel.joinLiveClass()
-                }
-            }, { exception -> })
+                                          uiThreadPoster.post {
+                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                                              viewModel.joinLiveClass()
+                                          }
+                                      }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
@@ -318,8 +310,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true),
             requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         )
-
-        upstreamConnection?.statsEventInterval = LiveClassManager.STATS_COLLECTING_INTERVAL
 
         upstreamConnection?.addOnStateChange { connection ->
             when (connection.state) {
@@ -361,7 +351,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             }
 
             // Handle averageNetworkQuality only if it is different from the latest reading
-            if(averageNetworkQuality != networkQuality) {
+            if (averageNetworkQuality != networkQuality) {
                 when (averageNetworkQuality) {
                     in LiveSwitchNetworkQuality.MODERATE.lowerLimit..LiveSwitchNetworkQuality.MODERATE.upperLimit -> {
                         liveClassManager.getDownStreamConnections().let { connectionsMap ->
@@ -410,9 +400,6 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
                 }
             }
         }
-
-        upstreamConnection?.open()
-        liveClassManager.setState(LiveClassState.JOINED)
     }
 
     private fun onConnectionInitializing() {
@@ -423,13 +410,13 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         binding.raiseHandBtn.isActivated = true
     }
 
-    override fun onRaiseHand(clientId: String) {
+    override fun onRaiseHand(clientId: String?) {
         uiThreadPoster.post {
             studentsFeedAdapter.onHandRaised(clientId)
         }
     }
 
-    override fun onLowerHand(clientId: String) {
+    override fun onLowerHand(clientId: String?) {
         uiThreadPoster.post {
             studentsFeedAdapter.onHandLowered(clientId)
         }

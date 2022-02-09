@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.preference.PreferenceManager
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,6 +37,12 @@ object AppModule {
 
     @Provides
     fun providesMoshiConverterFactory(): MoshiConverterFactory = MoshiConverterFactory.create()
+
+    @Provides
+    fun providesMoshi(): Moshi {
+        return Moshi.Builder()
+            .build()
+    }
 
     @Provides
     fun providesOkHttpClient(): OkHttpClient {
