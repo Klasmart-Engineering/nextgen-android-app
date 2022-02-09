@@ -10,9 +10,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LiveClassManager @Inject constructor(private val moshi:Moshi) {
+class LiveClassManager @Inject constructor(private val moshi: Moshi) {
 
     companion object {
+
         const val STATS_COLLECTING_INTERVAL = 2500
     }
 
@@ -24,6 +25,10 @@ class LiveClassManager @Inject constructor(private val moshi:Moshi) {
     private var upstreamDataStream: DataStream? = null
 
     private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection>()
+    private val connectionsRoleMap = mutableMapOf<String, String>()
+
+    // TODO @Paul modify this to a 2-element array if the strategy doesn't changes
+    private val networkQualityArray = mutableListOf<Double>()
 
     private var token: String? = null
     private var remoteChannel: Channel? = null
@@ -32,7 +37,7 @@ class LiveClassManager @Inject constructor(private val moshi:Moshi) {
     var dataChannelActionsHandler: DataChannelActionsHandler? = null
     private var liveClassState: LiveClassState = LiveClassState.IDLE
 
-    private val  dataChannelAdapter:JsonAdapter<uk.co.kidsloop.data.enums.DataChannel>
+    private val dataChannelAdapter: JsonAdapter<uk.co.kidsloop.data.enums.DataChannel>
 
     init {
         setUpstreamDataChannel()
@@ -79,12 +84,28 @@ class LiveClassManager @Inject constructor(private val moshi:Moshi) {
         return DataStream(dataChannel)
     }
 
-    fun saveDownStreamConnections(clientId: String, connection: SfuDownstreamConnection) {
+    fun saveDownStreamConnection(clientId: String, connection: SfuDownstreamConnection) {
         downstreamConnectionsMap[clientId] = connection
     }
 
     fun removeDownStreamConnection(clientId: String) {
         downstreamConnectionsMap.remove(clientId)
+    }
+
+    fun getDownStreamConnections(): Map<String, SfuDownstreamConnection> {
+        return downstreamConnectionsMap.toMap()
+    }
+
+    fun saveDownStreamConnectionRole(clientId: String, role: String) {
+        connectionsRoleMap[clientId] = role
+    }
+
+    fun removeDownStreamConnectionRole(clientId: String) {
+        connectionsRoleMap.remove(clientId)
+    }
+
+    fun getDownStreamConnectionsRoles(): Map<String, String> {
+        return connectionsRoleMap.toMap()
     }
 
     fun setUpstreamConnection(upstreamConnection: SfuUpstreamConnection) {
@@ -97,6 +118,18 @@ class LiveClassManager @Inject constructor(private val moshi:Moshi) {
 
     fun getUpstreamClientId(): String? {
         return upstreamConnection?.clientId
+    }
+
+    fun getNetworkQualityArray(): MutableList<Double> {
+        return networkQualityArray
+    }
+
+    fun addToNetworkQualityArray(element: Double) {
+        networkQualityArray.add(element)
+    }
+
+    private fun clearNetworkQualityArray() {
+        networkQualityArray.clear()
     }
 
     private fun setUpstreamDataChannel() {
@@ -118,7 +151,7 @@ class LiveClassManager @Inject constructor(private val moshi:Moshi) {
         }
     }
 
-    private fun handleReceivedDataString(dataChannel:uk.co.kidsloop.data.enums.DataChannel?) {
+    private fun handleReceivedDataString(dataChannel: uk.co.kidsloop.data.enums.DataChannel?) {
         when (dataChannel?.eventType) {
             DataChannelActionsType.RAISE_HAND -> dataChannelActionsHandler?.onRaiseHand(dataChannel.clientId)
             DataChannelActionsType.LOWER_HAND -> dataChannelActionsHandler?.onLowerHand(dataChannel.clientId)
@@ -136,6 +169,7 @@ class LiveClassManager @Inject constructor(private val moshi:Moshi) {
         upstreamDataChannel = null
         upstreamDataStream = null
         token = null
+        clearNetworkQualityArray()
         liveClassState = LiveClassState.IDLE
     }
 
