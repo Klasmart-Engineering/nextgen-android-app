@@ -1,17 +1,18 @@
 package uk.co.kidsloop.features.liveclass
 
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import fm.liveswitch.*
-import uk.co.kidsloop.data.enums.DataChannelActions
+import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LiveClassManager @Inject constructor() {
+class LiveClassManager @Inject constructor(private val moshi:Moshi) {
 
     companion object {
-
         const val STATS_COLLECTING_INTERVAL = 2500
     }
 
@@ -31,8 +32,11 @@ class LiveClassManager @Inject constructor() {
     var dataChannelActionsHandler: DataChannelActionsHandler? = null
     private var liveClassState: LiveClassState = LiveClassState.IDLE
 
+    private val  dataChannelAdapter:JsonAdapter<uk.co.kidsloop.data.enums.DataChannel>
+
     init {
         setUpstreamDataChannel()
+        dataChannelAdapter = moshi.adapter(uk.co.kidsloop.data.enums.DataChannel::class.java)
     }
 
     fun setToken(token: String) {
@@ -79,14 +83,6 @@ class LiveClassManager @Inject constructor() {
         downstreamConnectionsMap[clientId] = connection
     }
 
-    fun getDownStreamConnections(): Map<String, SfuDownstreamConnection> {
-        return downstreamConnectionsMap.toMap()
-    }
-
-    fun getNumberOfActiveDownStreamConnections(): Int {
-        return downstreamConnectionsMap.size
-    }
-
     fun removeDownStreamConnection(clientId: String) {
         downstreamConnectionsMap.remove(clientId)
     }
@@ -97,6 +93,10 @@ class LiveClassManager @Inject constructor() {
 
     fun getUpstreamConnection(): SfuUpstreamConnection? {
         return upstreamConnection
+    }
+
+    fun getUpstreamClientId(): String? {
+        return upstreamConnection?.clientId
     }
 
     private fun setUpstreamDataChannel() {
@@ -111,30 +111,17 @@ class LiveClassManager @Inject constructor() {
         }
     }
 
-    fun sendDataString(dataChannelActions: DataChannelActions) {
-        if (isUpstreamDataChannelConnected()) {
-            val data = dataChannelActions.type + ":" + getUpstreamConnection()?.clientId
-            upstreamDataChannel?.sendDataString(data)
-        }
-    }
-
     private fun parseReceivedDataString(data: String?) {
         data?.let {
-            val parsedData = data.split(":")
-            handleReceivedDataString(parsedData)
+            val dataChannel = dataChannelAdapter.fromJson(data)
+            handleReceivedDataString(dataChannel)
         }
     }
 
-    private fun handleReceivedDataString(data: List<String>) {
-        when (data[0]) {
-            DataChannelActions.RAISE_HAND.type -> {
-                val clientId = data[1]
-                dataChannelActionsHandler?.onRaiseHand(clientId)
-            }
-            DataChannelActions.LOWER_HAND.type -> {
-                val remoteId = data[1]
-                dataChannelActionsHandler?.onLowerHand(remoteId)
-            }
+    private fun handleReceivedDataString(dataChannel:uk.co.kidsloop.data.enums.DataChannel?) {
+        when (dataChannel?.eventType) {
+            DataChannelActionsType.RAISE_HAND -> dataChannelActionsHandler?.onRaiseHand(dataChannel.clientId)
+            DataChannelActionsType.LOWER_HAND -> dataChannelActionsHandler?.onLowerHand(dataChannel.clientId)
         }
     }
 

@@ -9,7 +9,7 @@ import fm.liveswitch.Channel
 import fm.liveswitch.IAction1
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
-import uk.co.kidsloop.data.enums.DataChannelActions
+import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.features.liveclass.teacher.ToggleVideoForStudentsUseCase
 import javax.inject.Inject
@@ -86,11 +86,11 @@ class LiveClassViewModel @Inject constructor(
     }
 
     fun showHandRaised(){
-        raiseOrLowerHandUseCase.raiseOrLowerHand(DataChannelActions.RAISE_HAND)
+        raiseOrLowerHandUseCase.raiseOrLowerHand(DataChannelActionsType.RAISE_HAND)
     }
 
     fun showHandLowered(){
-        raiseOrLowerHandUseCase.raiseOrLowerHand(DataChannelActions.LOWER_HAND)
+        raiseOrLowerHandUseCase.raiseOrLowerHand(DataChannelActionsType.LOWER_HAND)
     }
 
     fun leaveLiveClass() {

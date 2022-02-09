@@ -20,7 +20,6 @@ import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.app.utils.visible
-import uk.co.kidsloop.data.enums.DataChannelActions
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
@@ -333,13 +332,13 @@ private fun onConnectedSuccessfully() {
     binding.raiseHandBtn.isActivated = true
 }
 
-override fun onRaiseHand(clientId: String) {
+override fun onRaiseHand(clientId: String?) {
     uiThreadPoster.post {
         studentsFeedAdapter.onHandRaised(clientId)
     }
 }
 
-override fun onLowerHand(clientId: String) {
+override fun onLowerHand(clientId: String?) {
     uiThreadPoster.post {
         studentsFeedAdapter.onHandLowered(clientId)
     }

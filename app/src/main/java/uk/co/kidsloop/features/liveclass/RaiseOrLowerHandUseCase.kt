@@ -1,15 +1,15 @@
 package uk.co.kidsloop.features.liveclass
 
 import com.squareup.moshi.Moshi
-import uk.co.kidsloop.data.enums.DataChannelActions
-import uk.co.kidsloop.features.liveclass.datachannel.RaiseHand
+import uk.co.kidsloop.data.enums.DataChannel
+import uk.co.kidsloop.data.enums.DataChannelActionsType
 import javax.inject.Inject
 
 class RaiseOrLowerHandUseCase @Inject constructor(private val liveClassManager: LiveClassManager, private val moshi:Moshi) {
 
-    fun raiseOrLowerHand(data:DataChannelActions){
-//        val jsonAdapter = moshi.adapter<RaiseHand>(RaiseHand::class.java)
-//        val json = jsonAdapter.toJson(RaiseHand(shouldRaiseHand, shouldLowerHand))
-        liveClassManager.sendDataString(data)
+    fun raiseOrLowerHand(actionType:DataChannelActionsType){
+        val jsonAdapter = moshi.adapter<DataChannel>(DataChannel::class.java)
+        val json = jsonAdapter.toJson(DataChannel(liveClassManager.getUpstreamClientId(), actionType))
+        liveClassManager.sendDataString(json.toString())
     }
 }
