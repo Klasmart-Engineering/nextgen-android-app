@@ -15,15 +15,11 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import fm.liveswitch.*
-import javax.inject.Inject
+import fm.liveswitch.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.app.utils.emptyString
-import uk.co.kidsloop.app.utils.gone
-import uk.co.kidsloop.app.utils.shortToast
-import uk.co.kidsloop.app.utils.visible
+import uk.co.kidsloop.app.utils.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
 import uk.co.kidsloop.data.enums.StudentFeedQuality
 import uk.co.kidsloop.data.enums.TeacherFeedQuality
@@ -36,6 +32,7 @@ import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -44,7 +41,6 @@ class LiveClassFragment :
     DisplayManager.DisplayListener {
 
     companion object {
-
         val TAG = LiveClassFragment::class.qualifiedName
         const val IS_CAMERA_TURNED_ON = "isCameraTurnedOn"
         const val IS_MICROPHONE_TURNED_ON = "isMicrophoneTurnedOn"
@@ -95,6 +91,7 @@ class LiveClassFragment :
         binding.toggleCameraBtn.isActivated = true
         binding.toggleCameraBtn.isChecked =
             !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
+        binding.toggleMicrophoneBtn.isActivated = true
         binding.toggleMicrophoneBtn.isChecked =
             !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
         if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
@@ -161,12 +158,16 @@ class LiveClassFragment :
 
     private fun setControls() {
         binding.toggleMicrophoneBtn.setOnClickListener {
-            if (binding.toggleMicrophoneBtn.isChecked) {
-                binding.localMediaContainer.showMicMuted()
+            if (binding.toggleMicrophoneBtn.isActivated) {
+                if (binding.toggleMicrophoneBtn.isChecked) {
+                    binding.localMediaContainer.showMicMuted()
+                } else {
+                    binding.localMediaContainer.showMicTurnedOn()
+                }
+                viewModel.toggleLocalAudio()
             } else {
-                binding.localMediaContainer.showMicTurnedOn()
+                shortToast(getString(R.string.teacher_turned_off_all_students_mic))
             }
-            viewModel.toggleLocalAudio()
         }
 
         binding.toggleCameraBtn.setOnClickListener {
@@ -211,6 +212,14 @@ class LiveClassFragment :
             } else {
                 viewModel.showHandLowered()
                 binding.localMediaContainer.hideRaiseHand()
+            }
+        }
+
+        binding.toggleStudentsAudio.setOnClickListener {
+            if (binding.toggleStudentsAudio.isChecked) {
+                viewModel.disableMicForStudents()
+            } else {
+                viewModel.enableMicForStudents()
             }
         }
     }
@@ -334,11 +343,11 @@ class LiveClassFragment :
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                                          uiThreadPoster.post {
-                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                                              viewModel.joinLiveClass()
-                                          }
-                                      }, { exception -> })
+                uiThreadPoster.post {
+                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                    viewModel.joinLiveClass()
+                }
+            }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
@@ -370,7 +379,7 @@ class LiveClassFragment :
         upstreamConnection?.addOnNetworkQuality { networkQuality ->
             // TODO @Paul remove these after QA get their stats
             uiThreadPoster.post {
-                shortToast(networkQuality.toString())
+//                shortToast(networkQuality.toString())
                 Log.d(TAG, networkQuality.toString())
             }
 
@@ -504,6 +513,30 @@ class LiveClassFragment :
                     localMedia?.view
                 )
             }
+        }
+    }
+
+    override fun onEnableMic() {
+        uiThreadPoster.post {
+            binding.toggleMicrophoneBtn.isActivated = true
+            binding.toggleMicrophoneBtn.isChecked = true
+        }
+    }
+
+    override fun onDisableMic() {
+        turnOffAudio()
+        uiThreadPoster.post {
+            binding.localMediaContainer.showMicMuted()
+            binding.toggleMicrophoneBtn.isActivated = false
+            shortToast(getString(R.string.teacher_turned_off_all_students_mic))
+        }
+    }
+
+    private fun turnOffAudio() {
+        liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
+            val config = upstreamConnection.config
+            config.localAudioMuted = true
+            upstreamConnection.update(config)
         }
     }
 }

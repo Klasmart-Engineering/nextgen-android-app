@@ -28,4 +28,7 @@
     <string name="turn_off_students_camera">Turn off camera</string>
     <string name="enable_students_camera">Enable camera</string>
     <string name="teacher_turned_off_all_students_camera">Your teacher turned off all students camera</string>
+    <string name="teacher_turned_off_all_students_mic">Your teacher turned off all students microphone</string>
+    <string name="mic_on">Mic on</string>
+    <string name="mic_off">Mic off</string>
 </resources>

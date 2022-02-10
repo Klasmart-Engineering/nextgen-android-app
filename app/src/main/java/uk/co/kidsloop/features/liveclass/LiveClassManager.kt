@@ -2,13 +2,13 @@ package uk.co.kidsloop.features.liveclass
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import fm.liveswitch.*
-import javax.inject.Inject
-import javax.inject.Singleton
+import fm.liveswitch.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.KidsLoopDataChannel
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class LiveClassManager @Inject constructor(private val moshi: Moshi) {
@@ -159,6 +159,11 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
             DataChannelActionsType.DISABLE_VIDEO -> {
                 setState(LiveClassState.CAMERA_TURNED_OFF_BY_TEACHER)
                 dataChannelActionsHandler?.onVideoTurnedOff()
+            }
+            DataChannelActionsType.ENABLE_AUDIO -> dataChannelActionsHandler?.onEnableMic()
+            DataChannelActionsType.DISABLE_AUDIO -> {
+                setState(LiveClassState.MIC_DISABLED_BY_TEACHER)
+                dataChannelActionsHandler?.onDisableMic()
             }
         }
     }
