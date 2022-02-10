@@ -57,8 +57,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:lines="2"
             android:visibility="gone"
-            android:textOn="Mic on"
-            android:textOff="Mic off"
+            android:textOn="@string/mic_on"
+            android:textOff="@string/mic_off"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/local_media_container"
             app:layout_constraintBottom_toTopOf="@id/toggle_students_video"/>
