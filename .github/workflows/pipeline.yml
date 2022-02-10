@@ -99,7 +99,7 @@ jobs:
         run: ./gradlew -Pci --console=plain :app:assembleRelease
 
       - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
-        name: Upload Debug APK
+        name: Upload Release APK
         uses: actions/upload-artifact@v2
         with:
           name: release-apk
