@@ -15,12 +15,11 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.app.utils.*
+import uk.co.kidsloop.app.utils.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
 import uk.co.kidsloop.data.enums.StudentFeedQuality
 import uk.co.kidsloop.data.enums.TeacherFeedQuality
@@ -33,6 +32,7 @@ import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -338,11 +338,11 @@ class LiveClassFragment :
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                                          uiThreadPoster.post {
-                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                                              viewModel.joinLiveClass()
-                                          }
-                                      }, { exception -> })
+                uiThreadPoster.post {
+                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                    viewModel.joinLiveClass()
+                }
+            }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
