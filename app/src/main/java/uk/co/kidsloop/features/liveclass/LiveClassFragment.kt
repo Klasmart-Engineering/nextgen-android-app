@@ -10,13 +10,13 @@ import android.view.Surface
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.ToggleButton
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.*
+import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -36,7 +36,6 @@ import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -93,6 +92,7 @@ class LiveClassFragment :
         super.onViewCreated(view, savedInstanceState)
         window = requireActivity().window
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        binding.toggleCameraBtn.isActivated = true
         binding.toggleCameraBtn.isChecked =
             !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         binding.toggleMicrophoneBtn.isChecked =
@@ -170,12 +170,16 @@ class LiveClassFragment :
         }
 
         binding.toggleCameraBtn.setOnClickListener {
-            if (binding.toggleCameraBtn.isChecked) {
-                binding.localMediaContainer.showCameraTurnedOff()
+            if (binding.toggleCameraBtn.isActivated) {
+                if (binding.toggleCameraBtn.isChecked) {
+                    binding.localMediaContainer.showCameraTurnedOff()
+                } else {
+                    binding.localMediaContainer.showCameraTurnedOn()
+                }
+                viewModel.toggleLocalVideo()
             } else {
-                binding.localMediaContainer.showCameraTurnedOn()
+                shortToast(getString(R.string.teacher_turned_off_all_students_camera))
             }
-            viewModel.toggleLocalVideo()
         }
 
         binding.exitClassBtn.setOnClickListener {
@@ -191,7 +195,11 @@ class LiveClassFragment :
         }
 
         binding.toggleStudentsVideo.setOnClickListener { view ->
-            viewModel.toggleVideoForStudents((view as ToggleButton).isChecked)
+            if (binding.toggleStudentsVideo.isChecked) {
+                viewModel.turnOffVideoForStudents()
+            } else {
+                viewModel.enableVideoForStudents()
+            }
         }
 
         binding.raiseHandBtn.setOnClickListener {
@@ -326,11 +334,11 @@ class LiveClassFragment :
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                uiThreadPoster.post {
-                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                    viewModel.joinLiveClass()
-                }
-            }, { exception -> })
+                                          uiThreadPoster.post {
+                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                                              viewModel.joinLiveClass()
+                                          }
+                                      }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
@@ -452,6 +460,20 @@ class LiveClassFragment :
     override fun onLowerHand(clientId: String?) {
         uiThreadPoster.post {
             studentsFeedAdapter.onHandLowered(clientId)
+        }
+    }
+
+    override fun onVideoEnabled() {
+        binding.toggleCameraBtn.isActivated = true
+        binding.toggleCameraBtn.isChecked = true
+    }
+
+    override fun onVideoTurnedOff() {
+        viewModel.turnOffVideo()
+        uiThreadPoster.post {
+            binding.localMediaContainer.showCameraTurnedOff()
+            binding.toggleCameraBtn.isActivated = false
+            shortToast(getString(R.string.teacher_turned_off_all_students_camera))
         }
     }
 

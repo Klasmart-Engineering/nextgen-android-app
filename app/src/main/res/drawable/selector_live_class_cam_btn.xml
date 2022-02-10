@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_camera_disabled_off" android:state_activated="false" />
+    <item android:drawable="@drawable/ic_camera_off" android:state_activated="true" android:state_enabled="false" />
+    <item android:drawable="@drawable/ic_cam_enabled_btn" android:state_activated="true" android:state_checked="false" />
+    <item android:drawable="@drawable/ic_camera_off" android:state_activated="true" android:state_checked="true" />
+</selector>

@@ -26,5 +26,6 @@
     <string name="my_live_class">My Live Class</string>
     <string name="channel_id">Channel ID</string>
     <string name="turn_off_students_camera">Turn off camera</string>
-    <string name="allow_students_to_turn_on_camera">Turn on camera</string>
+    <string name="enable_students_camera">Enable camera</string>
+    <string name="teacher_turned_off_all_students_camera">Your teacher turned off all students camera</string>
 </resources>
