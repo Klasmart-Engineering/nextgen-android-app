@@ -20,10 +20,7 @@ import fm.liveswitch.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.app.utils.emptyString
-import uk.co.kidsloop.app.utils.gone
-import uk.co.kidsloop.app.utils.shortToast
-import uk.co.kidsloop.app.utils.visible
+import uk.co.kidsloop.app.utils.*
 import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
 import uk.co.kidsloop.data.enums.StudentFeedQuality
 import uk.co.kidsloop.data.enums.TeacherFeedQuality
@@ -44,7 +41,6 @@ class LiveClassFragment :
     DisplayManager.DisplayListener {
 
     companion object {
-
         val TAG = LiveClassFragment::class.qualifiedName
         const val IS_CAMERA_TURNED_ON = "isCameraTurnedOn"
         const val IS_MICROPHONE_TURNED_ON = "isMicrophoneTurnedOn"
@@ -522,6 +518,7 @@ class LiveClassFragment :
         viewModel.toggleLocalAudio()
         uiThreadPoster.post {
             binding.localMediaContainer.showMicMuted()
+            binding.toggleMicrophoneBtn.disable()
             binding.toggleMicrophoneBtn.isActivated = false
             shortToast("mic muted by teacher")
         }

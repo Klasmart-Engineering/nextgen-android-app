@@ -160,7 +160,10 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
                 setState(LiveClassState.CAMERA_TURNED_OFF_BY_TEACHER)
                 dataChannelActionsHandler?.onVideoTurnedOff()
             }
-            DataChannelActionsType.ENABLE_AUDIO -> dataChannelActionsHandler?.onEnableMic()
+            DataChannelActionsType.ENABLE_AUDIO -> {
+                setState(LiveClassState.MIC_ENABLED_BY_TEACHER)
+                dataChannelActionsHandler?.onEnableMic()
+            }
             DataChannelActionsType.DISABLE_AUDIO -> {
                 setState(LiveClassState.MIC_DISABLED_BY_TEACHER)
                 dataChannelActionsHandler?.onDisableMic()
