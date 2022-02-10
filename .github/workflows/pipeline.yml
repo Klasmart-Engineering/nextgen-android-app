@@ -88,11 +88,11 @@ jobs:
           name: Detekt_reports
           path: app/build/reports/detekt/*  
 
-      - if: always() #${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
+      - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
         name: Create Debug APK
         run: ./gradlew -Pci --console=plain :app:assembleDebug
 
-      - if: always() #${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
+      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
         name: Upload Debug APK
         uses: actions/upload-artifact@v2
         with:
@@ -118,13 +118,7 @@ jobs:
         name: Cleanup Keystore        
         run: |            
             rm -rf  "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
-            rm -rf  "${GITHUB_WORKSPACE}"/keystore.properties
-      - name: test script
-        run: |
-          echo "Run number: ${GITHUB_RUN_ID}"
-          curl -L -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.github_token }}" \
-          "https://api.github.com/repos/KL-Engineering/nextgen-android-app/actions/artifacts" | jq
-        shell: bash
+            rm -rf  "${GITHUB_WORKSPACE}"/keystore.properties      
 
       # - if: ${{ github.ref == 'refs/heads/main' }}
       #   name: Create Release
@@ -134,11 +128,11 @@ jobs:
       #     tag_name: latest
       #     files: app/build/outputs/apk/release/app-release-unsigned.apk
 
-      # - name: Publish to Slack 
-      #   if: ${{ always() && github.ref == 'refs/heads/develop' }} 
-      #   uses: 8398a7/action-slack@v3
-      #   with:
-      #     status: ${{ job.status }}
-      #     fields: repo,commit,message,author,ref,pullRequest,eventName,workflow
-      #   env:
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEB_HOOK }}      
+      - name: Publish to Slack 
+        if: ${{ always() && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main' }} 
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,commit,message,author,ref,pullRequest,eventName,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEB_HOOK }}      
