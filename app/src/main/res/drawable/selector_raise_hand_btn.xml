@@ -3,16 +3,13 @@
 
     <!--Disable-->
     <item android:drawable="@drawable/ic_raise_hand_disabled"
-        android:state_activated="false"
-        android:state_pressed="false" />
+        android:state_activated="false" />
 
     <!--Default-->
     <item android:drawable="@drawable/ic_raise_hand_unselected"
-        android:state_pressed="false"
         android:state_selected="false" />
 
     <!--Active-->
     <item android:drawable="@drawable/ic_raise_hand_selected"
-        android:state_pressed="false"
         android:state_selected="true" />
 </selector>

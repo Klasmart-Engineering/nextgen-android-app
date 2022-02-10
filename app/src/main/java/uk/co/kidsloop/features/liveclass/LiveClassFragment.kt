@@ -1,7 +1,12 @@
 package uk.co.kidsloop.features.liveclass
 
+import android.content.Context
+import android.hardware.display.DisplayManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Display
+import android.view.Surface
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -33,7 +38,10 @@ import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 
 @AndroidEntryPoint
-class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChannelActionsHandler {
+class LiveClassFragment :
+    BaseFragment(R.layout.live_class_fragment),
+    DataChannelActionsHandler,
+    DisplayManager.DisplayListener {
 
     companion object {
 
@@ -51,6 +59,9 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     private val binding by viewBinding(LiveClassFragmentBinding::bind)
     private lateinit var window: Window
     private var localMedia: LocalMedia<View>? = null
+    private lateinit var displayManager: DisplayManager
+    private lateinit var display: Display
+    private var initialDisplayOrientation: Int = 1
 
     private val viewModel by viewModels<LiveClassViewModel>()
 
@@ -64,6 +75,17 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             disableVideo = false,
             aecContext = AecContext()
         )
+
+        displayManager =
+            requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+        displayManager.registerDisplayListener(this, null)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display = activity?.display!!
+        } else {
+            @Suppress("DEPRECATION")
+            display = activity?.windowManager?.defaultDisplay!!
+        }
+        initialDisplayOrientation = displayManager.getDisplay(display.displayId).rotation
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,7 +125,9 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             {
                 when (it) {
                     is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
-                    is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(it.channel)
+                    is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(
+                        it.channel
+                    )
                     is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
                     is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
                     is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
@@ -119,9 +143,15 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        displayManager.unregisterDisplayListener(this)
+    }
+
     private fun setUiForTeacher() {
         binding.raiseHandBtn.gone()
         binding.toggleStudentsVideo.visible()
+        binding.toggleStudentsAudio.visible()
     }
 
     private fun setUiForStudent() {
@@ -304,11 +334,11 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                uiThreadPoster.post {
-                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                    viewModel.joinLiveClass()
-                }
-            }, { exception -> })
+                                          uiThreadPoster.post {
+                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                                              viewModel.joinLiveClass()
+                                          }
+                                      }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
@@ -444,6 +474,36 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
             binding.localMediaContainer.showCameraTurnedOff()
             binding.toggleCameraBtn.isActivated = false
             Toast.makeText(requireContext(), R.string.teacher_turned_off_all_students_camera, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onDisplayAdded(displayId: Int) {}
+
+    override fun onDisplayRemoved(displayId: Int) {}
+
+    override fun onDisplayChanged(displayId: Int) {
+        if (initialDisplayOrientation == Surface.ROTATION_90) {
+            if (display.rotation == Surface.ROTATION_90) {
+                binding.localMediaContainer.updateLocalMediaViewOrientationDefault(
+                    localMedia?.view
+                )
+            }
+            if (display.rotation == Surface.ROTATION_270) {
+                binding.localMediaContainer.updateLocalMediaViewOrientationReverse(
+                    localMedia?.view
+                )
+            }
+        } else {
+            if (display.rotation == Surface.ROTATION_90) {
+                binding.localMediaContainer.updateLocalMediaViewOrientationReverse(
+                    localMedia?.view
+                )
+            }
+            if (display.rotation == Surface.ROTATION_270) {
+                binding.localMediaContainer.updateLocalMediaViewOrientationDefault(
+                    localMedia?.view
+                )
+            }
         }
     }
 }
