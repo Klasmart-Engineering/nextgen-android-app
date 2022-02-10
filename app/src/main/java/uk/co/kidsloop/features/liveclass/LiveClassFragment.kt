@@ -515,12 +515,20 @@ class LiveClassFragment :
     }
 
     override fun onDisableMic() {
-        viewModel.toggleLocalAudio()
+        turnOffAudio()
         uiThreadPoster.post {
             binding.localMediaContainer.showMicMuted()
             binding.toggleMicrophoneBtn.disable()
             binding.toggleMicrophoneBtn.isActivated = false
             shortToast("mic muted by teacher")
+        }
+    }
+
+    private fun turnOffAudio() {
+        liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
+            val config = upstreamConnection.config
+            config.localAudioMuted = true
+            upstreamConnection.update(config)
         }
     }
 }
