@@ -156,7 +156,7 @@
             android:layout_marginBottom="@dimen/space_32"
             android:layout_toStartOf="@+id/toggle_camera_btn"
             android:background="@null"
-            android:button="@drawable/ic_mic_live_class_selector"
+            android:button="@drawable/selector_live_class_mic_btn"
             android:textOff=""
             android:textOn="" />
 
