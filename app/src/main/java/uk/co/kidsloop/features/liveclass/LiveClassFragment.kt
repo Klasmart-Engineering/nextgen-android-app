@@ -18,7 +18,6 @@ import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
-import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
 import uk.co.kidsloop.data.enums.StudentFeedQuality
@@ -71,6 +70,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         super.onViewCreated(view, savedInstanceState)
         window = requireActivity().window
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        binding.toggleCameraBtn.isActivated = true
         binding.toggleCameraBtn.isChecked =
             !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         binding.toggleMicrophoneBtn.isChecked =
@@ -340,7 +340,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         upstreamConnection?.addOnNetworkQuality { networkQuality ->
             // TODO @Paul remove these after QA get their stats
             uiThreadPoster.post {
-                shortToast(networkQuality.toString())
+                // shortToast(networkQuality.toString())
                 Log.d(TAG, networkQuality.toString())
             }
 
@@ -435,12 +435,15 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
 
     override fun onVideoEnabled() {
         binding.toggleCameraBtn.isActivated = true
+        binding.toggleCameraBtn.isChecked = true
     }
 
     override fun onVideoTurnedOff() {
         viewModel.toggleLocalVideo()
-        binding.localMediaContainer.showCameraTurnedOff()
-        binding.toggleCameraBtn.isActivated = false
-        Toast.makeText(requireContext(), R.string.teacher_turned_off_all_students_camera, Toast.LENGTH_SHORT).show()
+        uiThreadPoster.post {
+            binding.localMediaContainer.showCameraTurnedOff()
+            binding.toggleCameraBtn.isActivated = false
+            Toast.makeText(requireContext(), R.string.teacher_turned_off_all_students_camera, Toast.LENGTH_SHORT).show()
+        }
     }
 }
