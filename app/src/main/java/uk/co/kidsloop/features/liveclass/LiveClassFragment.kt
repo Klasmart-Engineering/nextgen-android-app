@@ -10,7 +10,6 @@ import android.view.Surface
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -371,7 +370,7 @@ class LiveClassFragment :
         upstreamConnection?.addOnNetworkQuality { networkQuality ->
             // TODO @Paul remove these after QA get their stats
             uiThreadPoster.post {
-                // shortToast(networkQuality.toString())
+                shortToast(networkQuality.toString())
                 Log.d(TAG, networkQuality.toString())
             }
 
