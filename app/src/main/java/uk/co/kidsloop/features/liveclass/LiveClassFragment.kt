@@ -109,6 +109,7 @@ class LiveClassFragment :
         binding.studentFeedsRecyclerview.apply {
             adapter = studentsFeedAdapter
             layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
             itemAnimator = null
         }
 
