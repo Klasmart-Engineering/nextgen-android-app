@@ -27,12 +27,7 @@ jobs:
     name: Build Stage
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    steps:
-      - name: test script
-        run: |
-          curl -L -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.github_token }}" \
-          "https://api.github.com/repos/kidsloop-global/nextgen-android-app/actions/artifacts"
-        shell: bash
+    steps:    
 
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -120,13 +115,13 @@ jobs:
             rm -rf  "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
             rm -rf  "${GITHUB_WORKSPACE}"/keystore.properties      
 
-      # - if: ${{ github.ref == 'refs/heads/main' }}
-      #   name: Create Release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     draft: false
-      #     tag_name: latest
-      #     files: app/build/outputs/apk/release/app-release-unsigned.apk
+      - if: ${{ github.ref == 'refs/heads/main' }}
+        name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          tag_name: latest
+          files: app/build/outputs/apk/release/app-release-unsigned.apk
 
       - name: Publish to Slack 
         if: ${{ always() && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') }} 
