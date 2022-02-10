@@ -512,6 +512,11 @@ class LiveClassFragment :
     }
 
     override fun onEnableMic() {
+        uiThreadPoster.post {
+            binding.toggleMicrophoneBtn.enable()
+            binding.toggleMicrophoneBtn.isActivated = true
+            binding.toggleMicrophoneBtn.isChecked = true
+        }
     }
 
     override fun onDisableMic() {
@@ -519,7 +524,6 @@ class LiveClassFragment :
         uiThreadPoster.post {
             binding.localMediaContainer.showMicMuted()
             binding.toggleMicrophoneBtn.disable()
-            binding.toggleMicrophoneBtn.isActivated = false
             shortToast("mic muted by teacher")
         }
     }
