@@ -91,6 +91,7 @@ class LiveClassFragment :
         binding.toggleCameraBtn.isActivated = true
         binding.toggleCameraBtn.isChecked =
             !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
+        binding.toggleMicrophoneBtn.isActivated = true
         binding.toggleMicrophoneBtn.isChecked =
             !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
         if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
@@ -157,12 +158,16 @@ class LiveClassFragment :
 
     private fun setControls() {
         binding.toggleMicrophoneBtn.setOnClickListener {
-            if (binding.toggleMicrophoneBtn.isChecked) {
-                binding.localMediaContainer.showMicMuted()
+            if (binding.toggleMicrophoneBtn.isActivated) {
+                if (binding.toggleMicrophoneBtn.isChecked) {
+                    binding.localMediaContainer.showMicMuted()
+                } else {
+                    binding.localMediaContainer.showMicTurnedOn()
+                }
+                viewModel.toggleLocalAudio()
             } else {
-                binding.localMediaContainer.showMicTurnedOn()
+                shortToast(getString(R.string.teacher_turned_off_all_students_mic))
             }
-            viewModel.toggleLocalAudio()
         }
 
         binding.toggleCameraBtn.setOnClickListener {
@@ -513,7 +518,6 @@ class LiveClassFragment :
 
     override fun onEnableMic() {
         uiThreadPoster.post {
-            binding.toggleMicrophoneBtn.enable()
             binding.toggleMicrophoneBtn.isActivated = true
             binding.toggleMicrophoneBtn.isChecked = true
         }
@@ -523,8 +527,8 @@ class LiveClassFragment :
         turnOffAudio()
         uiThreadPoster.post {
             binding.localMediaContainer.showMicMuted()
-            binding.toggleMicrophoneBtn.disable()
-            shortToast("mic muted by teacher")
+            binding.toggleMicrophoneBtn.isActivated = false
+            shortToast(getString(R.string.teacher_turned_off_all_students_mic))
         }
     }
 
