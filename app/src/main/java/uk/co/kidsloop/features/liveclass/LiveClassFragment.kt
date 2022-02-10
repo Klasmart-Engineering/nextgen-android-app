@@ -140,12 +140,16 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
         }
 
         binding.toggleCameraBtn.setOnClickListener {
-            if (binding.toggleCameraBtn.isChecked) {
-                binding.localMediaContainer.showCameraTurnedOff()
+            if (binding.toggleCameraBtn.isActivated) {
+                if (binding.toggleCameraBtn.isChecked) {
+                    binding.localMediaContainer.showCameraTurnedOff()
+                } else {
+                    binding.localMediaContainer.showCameraTurnedOn()
+                }
+                viewModel.toggleLocalVideo()
             } else {
-                binding.localMediaContainer.showCameraTurnedOn()
+                Toast.makeText(requireContext(), R.string.teacher_turned_off_all_students_camera, Toast.LENGTH_SHORT).show()
             }
-            viewModel.toggleLocalVideo()
         }
 
         binding.exitClassBtn.setOnClickListener {
@@ -430,6 +434,7 @@ class LiveClassFragment : BaseFragment(R.layout.live_class_fragment), DataChanne
     }
 
     override fun onVideoEnabled() {
+        binding.toggleCameraBtn.isActivated = true
     }
 
     override fun onVideoTurnedOff() {
