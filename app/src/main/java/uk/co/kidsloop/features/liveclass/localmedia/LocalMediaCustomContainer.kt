@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import androidx.cardview.widget.CardView
+import androidx.core.view.updateLayoutParams
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.invisible
@@ -21,6 +22,14 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
 
     fun addLocalMediaView(localMediaView: View?) {
         addView(localMediaView, 1)
+    }
+
+    fun updateLocalMediaViewOrientationReverse(localMediaView: View?) {
+        updateLayoutParams { localMediaView?.rotation = 180F }
+    }
+
+    fun updateLocalMediaViewOrientationDefault(localMediaView: View?) {
+        updateLayoutParams { localMediaView?.rotation = 0F }
     }
 
     fun removeLocalMediaView() {

@@ -26,7 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.KidsloopActivity
 import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.app.utils.*
+import uk.co.kidsloop.app.utils.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.app.utils.permissions.isPermissionGranted
 import uk.co.kidsloop.app.utils.permissions.showSettingsDialog
 import uk.co.kidsloop.data.enums.KidsloopPermissions
@@ -55,10 +55,10 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         // 4. Request the initial permissions
         when {
             isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type) &&
-                    isPermissionGranted(
-                        requireContext(),
-                        KidsloopPermissions.RECORD_AUDIO.type
-                    ) -> {
+                isPermissionGranted(
+                    requireContext(),
+                    KidsloopPermissions.RECORD_AUDIO.type
+                ) -> {
                 viewModel.havePermissionsBeenPreviouslyDenied = false
                 handleCameraFeed()
                 startRecording()
@@ -66,10 +66,10 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 handleToggles()
             }
             isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type).not() ||
-                    isPermissionGranted(
-                        requireContext(),
-                        KidsloopPermissions.RECORD_AUDIO.type
-                    ).not() -> {
+                isPermissionGranted(
+                    requireContext(),
+                    KidsloopPermissions.RECORD_AUDIO.type
+                ).not() -> {
                 if (shouldShowRequestPermissionRationale(KidsloopPermissions.CAMERA.type) ||
                     shouldShowRequestPermissionRationale(KidsloopPermissions.RECORD_AUDIO.type)
                 ) {
@@ -96,9 +96,9 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         // Handle return in the app from settings only when the user has previously denied the permissions
         if (isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type) &&
             isPermissionGranted(
-                requireContext(),
-                KidsloopPermissions.RECORD_AUDIO.type
-            )
+                    requireContext(),
+                    KidsloopPermissions.RECORD_AUDIO.type
+                )
         ) {
             if (isMicRecording) {
                 isRecordingAudio = true
@@ -227,23 +227,26 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 }
 
                 // Handle UI
-                when (isPermissionGranted(
-                    requireContext(),
-                    KidsloopPermissions.CAMERA.type
-                )) {
+                when (
+                    isPermissionGranted(
+                        requireContext(),
+                        KidsloopPermissions.CAMERA.type
+                    )
+                ) {
                     true -> {
                         viewModel.havePermissionsBeenPreviouslyDenied = false
-                        handleCameraFeed()
                     }
                     false -> {
                         viewModel.havePermissionsBeenPreviouslyDenied = true
                     }
                 }
 
-                when (isPermissionGranted(
-                    requireContext(),
-                    KidsloopPermissions.RECORD_AUDIO.type
-                )) {
+                when (
+                    isPermissionGranted(
+                        requireContext(),
+                        KidsloopPermissions.RECORD_AUDIO.type
+                    )
+                ) {
                     true -> {
                         startRecording()
                     }
