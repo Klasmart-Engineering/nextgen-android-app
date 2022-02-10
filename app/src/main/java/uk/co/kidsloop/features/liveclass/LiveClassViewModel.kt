@@ -86,6 +86,14 @@ class LiveClassViewModel @Inject constructor(
         }
     }
 
+    fun turnOffVideo() {
+        liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
+            val config = upstreamConnection.config
+            config.localVideoMuted = true
+            upstreamConnection.update(config)
+        }
+    }
+
     fun enableVideoForStudents() {
         viewModelScope.launch {
             sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.ENABLE_VIDEO)

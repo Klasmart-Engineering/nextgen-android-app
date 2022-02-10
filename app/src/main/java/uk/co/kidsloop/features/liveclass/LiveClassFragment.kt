@@ -23,6 +23,7 @@ import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.app.utils.emptyString
 import uk.co.kidsloop.app.utils.gone
+import uk.co.kidsloop.app.utils.shortToast
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
 import uk.co.kidsloop.data.enums.StudentFeedQuality
@@ -178,7 +179,7 @@ class LiveClassFragment :
                 }
                 viewModel.toggleLocalVideo()
             } else {
-                Toast.makeText(requireContext(), R.string.teacher_turned_off_all_students_camera, Toast.LENGTH_SHORT).show()
+                shortToast(getString(R.string.teacher_turned_off_all_students_camera))
             }
         }
 
@@ -469,11 +470,11 @@ class LiveClassFragment :
     }
 
     override fun onVideoTurnedOff() {
-        viewModel.toggleLocalVideo()
+        viewModel.turnOffVideo()
         uiThreadPoster.post {
             binding.localMediaContainer.showCameraTurnedOff()
             binding.toggleCameraBtn.isActivated = false
-            Toast.makeText(requireContext(), R.string.teacher_turned_off_all_students_camera, Toast.LENGTH_SHORT).show()
+            shortToast(getString(R.string.teacher_turned_off_all_students_camera))
         }
     }
 
