@@ -8,7 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dark_bg_blue"
-        android:clipToPadding="false"
         android:padding="@dimen/space_15">
 
         <androidx.constraintlayout.widget.Barrier
@@ -41,11 +40,11 @@
             android:id="@+id/toggle_students_video"
             android:layout_width="@dimen/space_70"
             android:layout_height="@dimen/space_70"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:lines="2"
-            android:visibility="gone"
-            android:textOn="@string/enable_students_camera"
             android:textOff="@string/turn_off_students_camera"
+            android:textOn="@string/enable_students_camera"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/local_media_container" />
 
@@ -53,11 +52,11 @@
             android:id="@+id/toggle_students_audio"
             android:layout_width="@dimen/space_70"
             android:layout_height="@dimen/space_70"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:lines="2"
-            android:visibility="gone"
-            android:textOn="@string/mic_on"
             android:textOff="@string/mic_off"
+            android:textOn="@string/mic_on"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/local_media_container" />
 
@@ -85,6 +84,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="@dimen/space_8"
+            android:nestedScrollingEnabled="false"
             android:overScrollMode="never"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"

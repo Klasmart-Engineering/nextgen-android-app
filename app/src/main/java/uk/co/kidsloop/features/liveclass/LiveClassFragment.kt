@@ -105,7 +105,11 @@ class LiveClassFragment :
         studentsFeedAdapter = StudentFeedsAdapter()
         binding.studentFeedsRecyclerview.apply {
             adapter = studentsFeedAdapter
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = object : LinearLayoutManager(context) {
+                override fun canScrollVertically(): Boolean {
+                    return false
+                }
+            }
             setHasFixedSize(true)
             itemAnimator = null
         }
