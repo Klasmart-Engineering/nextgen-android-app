@@ -1,6 +1,5 @@
 package uk.co.kidsloop.features.liveclass
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.display.DisplayManager
 import android.os.Build
@@ -13,13 +12,13 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.*
-import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -39,6 +38,7 @@ import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -173,17 +173,16 @@ class LiveClassFragment :
         }
 
         binding.toggleCameraBtn.setOnClickListener {
-//            if (binding.toggleCameraBtn.isActivated) {
-//                if (binding.toggleCameraBtn.isChecked) {
-//                    binding.localMediaContainer.showCameraTurnedOff()
-//                } else {
-//                    binding.localMediaContainer.showCameraTurnedOn()
-//                }
-//                viewModel.toggleLocalVideo()
-//            } else {
-//                shortToast(getString(R.string.teacher_turned_off_all_students_camera))
-//            }
-            showCustomToast()
+            if (binding.toggleCameraBtn.isActivated) {
+                if (binding.toggleCameraBtn.isChecked) {
+                    binding.localMediaContainer.showCameraTurnedOff()
+                } else {
+                    binding.localMediaContainer.showCameraTurnedOn()
+                }
+                viewModel.toggleLocalVideo()
+            } else {
+                showCustomToast()
+            }
         }
 
         binding.exitClassBtn.setOnClickListener {
@@ -338,11 +337,11 @@ class LiveClassFragment :
     private fun startLocalMedia() {
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
-                                          uiThreadPoster.post {
-                                              binding.localMediaContainer.addLocalMediaView(localMedia?.view)
-                                              viewModel.joinLiveClass()
-                                          }
-                                      }, { exception -> })
+                uiThreadPoster.post {
+                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                    viewModel.joinLiveClass()
+                }
+            }, { exception -> })
         } else {
             binding.localMediaContainer.addLocalMediaView(localMedia?.view)
         }
@@ -482,10 +481,14 @@ class LiveClassFragment :
     }
 
     private fun showCustomToast() {
-        val view = layoutInflater.inflate(R.layout.custom_toast_layout, null)
         val toast = Toast(requireActivity())
-        toast.setGravity(Gravity.TOP, 0, 0)
-        toast.view = view
+        val toastView = layoutInflater.inflate(R.layout.custom_toast_layout, null)
+        if (binding.liveClassOverlay.isVisible) {
+            toast.setGravity(Gravity.TOP, 0, 40)
+        } else {
+            toast.setGravity(Gravity.START or Gravity.BOTTOM, 40, 40)
+        }
+        toast.view = toastView
         toast.duration = Toast.LENGTH_LONG
         toast.show()
     }
