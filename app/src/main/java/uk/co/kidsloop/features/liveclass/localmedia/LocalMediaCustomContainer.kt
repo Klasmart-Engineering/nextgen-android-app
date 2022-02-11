@@ -40,6 +40,10 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
         binding.micStatusImageView.setImageResource(R.drawable.ic_mic_muted)
     }
 
+    fun showMicDisabledMuted() {
+        binding.micStatusImageView.setImageResource(R.drawable.ic_mic_disabled_small)
+    }
+
     fun showMicTurnedOn() {
         binding.micStatusImageView.setImageResource(R.drawable.ic_mic_on)
     }
