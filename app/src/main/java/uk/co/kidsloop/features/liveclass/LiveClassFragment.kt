@@ -18,7 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import fm.liveswitch.*
+import fm.liveswitch.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -65,6 +65,7 @@ class LiveClassFragment :
     private lateinit var displayManager: DisplayManager
     private lateinit var display: Display
     private var initialDisplayOrientation: Int = 1
+    private lateinit var toastView: View
 
     private val viewModel by viewModels<LiveClassViewModel>()
 
@@ -78,7 +79,6 @@ class LiveClassFragment :
             disableVideo = false,
             aecContext = AecContext()
         )
-
         displayManager =
             requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
         displayManager.registerDisplayListener(this, null)
@@ -93,6 +93,7 @@ class LiveClassFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        toastView = layoutInflater.inflate(R.layout.custom_toast_layout, null)
         window = requireActivity().window
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding.toggleCameraBtn.isActivated = true
@@ -373,7 +374,7 @@ class LiveClassFragment :
         upstreamConnection?.addOnNetworkQuality { networkQuality ->
             // TODO @Paul remove these after QA get their stats
             uiThreadPoster.post {
-                shortToast(networkQuality.toString())
+//                shortToast(networkQuality.toString())
                 Log.d(TAG, networkQuality.toString())
             }
 
@@ -482,7 +483,6 @@ class LiveClassFragment :
 
     private fun showCustomToast() {
         val toast = Toast(requireActivity())
-        val toastView = layoutInflater.inflate(R.layout.custom_toast_layout, null)
         if (binding.liveClassOverlay.isVisible) {
             toast.setGravity(Gravity.TOP, 0, 40)
         } else {
