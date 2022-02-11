@@ -1,10 +1,12 @@
 package uk.co.kidsloop.features.liveclass
 
 import fm.liveswitch.*
-import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import javax.inject.Inject
+import uk.co.kidsloop.features.liveclass.state.LiveClassState
 
-class OpenSfuUpstreamConnectionUseCase @Inject constructor(private val liveClassManager: LiveClassManager) {
+class OpenSfuUpstreamConnectionUseCase @Inject constructor(
+    private val liveClassManager: LiveClassManager
+) {
 
     fun openSfuUpstreamConnection(
         audioStream: AudioStream?,
