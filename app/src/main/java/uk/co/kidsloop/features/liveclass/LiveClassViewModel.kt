@@ -98,6 +98,14 @@ class LiveClassViewModel @Inject constructor(
         }
     }
 
+    fun turnOffAudio() {
+        liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
+            val config = upstreamConnection.config
+            config.localAudioMuted = true
+            upstreamConnection.update(config)
+        }
+    }
+
     fun enableVideoForStudents() {
         viewModelScope.launch {
             sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.ENABLE_VIDEO)

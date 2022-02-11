@@ -10,12 +10,14 @@ import android.view.Surface
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
+import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -32,7 +34,6 @@ import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -62,6 +63,7 @@ class LiveClassFragment :
     private val viewModel by viewModels<LiveClassViewModel>()
 
     private lateinit var studentsFeedAdapter: StudentFeedsAdapter
+    private var notificationToast: Toast? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -482,12 +484,20 @@ class LiveClassFragment :
         binding.toggleCameraBtn.isChecked = true
     }
 
-    override fun onVideoTurnedOff() {
+    override fun onVideoDisabled(state: LiveClassState) {
         viewModel.turnOffVideo()
         uiThreadPoster.post {
             binding.localMediaContainer.showCameraTurnedOff()
             binding.toggleCameraBtn.isActivated = false
-            shortToast(getString(R.string.teacher_turned_off_all_students_camera))
+
+            if (state == LiveClassState.CAMERA_DISABLED_BY_TEACHER) {
+                notificationToast = Toast.makeText(this.requireActivity(), getString(R.string.teacher_turned_off_all_students_camera), Toast.LENGTH_LONG)
+                notificationToast?.show()
+            } else {
+                notificationToast?.cancel()
+                notificationToast = Toast.makeText(this.requireActivity(), getString(R.string.teacher_turned_off_all_students_cam_and_mic), Toast.LENGTH_LONG)
+                notificationToast?.show()
+            }
         }
     }
 
@@ -529,20 +539,19 @@ class LiveClassFragment :
         }
     }
 
-    override fun onDisableMic() {
-        turnOffAudio()
+    override fun onDisableMic(state: LiveClassState) {
+        viewModel.turnOffAudio()
         uiThreadPoster.post {
             binding.localMediaContainer.showMicDisabledMuted()
             binding.toggleMicrophoneBtn.isActivated = false
-            shortToast(getString(R.string.teacher_turned_off_all_students_mic))
-        }
-    }
-
-    private fun turnOffAudio() {
-        liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
-            val config = upstreamConnection.config
-            config.localAudioMuted = true
-            upstreamConnection.update(config)
+            if (state == LiveClassState.MIC_DISABLED_BY_TEACHER) {
+                notificationToast = Toast.makeText(this.requireActivity(), getString(R.string.teacher_turned_off_all_students_mic), Toast.LENGTH_LONG)
+                notificationToast?.show()
+            } else {
+                notificationToast?.cancel()
+                notificationToast = Toast.makeText(this.requireActivity(), getString(R.string.teacher_turned_off_all_students_cam_and_mic), Toast.LENGTH_LONG)
+                notificationToast?.show()
+            }
         }
     }
 }
