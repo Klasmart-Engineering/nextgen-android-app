@@ -6,11 +6,13 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Display
+import android.view.Gravity
 import android.view.Surface
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,6 +61,7 @@ class LiveClassFragment :
     private lateinit var displayManager: DisplayManager
     private lateinit var display: Display
     private var initialDisplayOrientation: Int = 1
+    private lateinit var toastView: View
 
     private val viewModel by viewModels<LiveClassViewModel>()
 
@@ -73,7 +76,6 @@ class LiveClassFragment :
             disableVideo = false,
             aecContext = AecContext()
         )
-
         displayManager =
             requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
         displayManager.registerDisplayListener(this, null)
@@ -88,6 +90,7 @@ class LiveClassFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        toastView = layoutInflater.inflate(R.layout.custom_toast_layout, null)
         window = requireActivity().window
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding.toggleCameraBtn.isActivated = true
@@ -186,7 +189,7 @@ class LiveClassFragment :
                 }
                 viewModel.toggleLocalVideo()
             } else {
-                shortToast(getString(R.string.teacher_turned_off_all_students_camera))
+                showCustomToast()
             }
         }
 
@@ -498,7 +501,20 @@ class LiveClassFragment :
                 notificationToast = Toast.makeText(this.requireActivity(), getString(R.string.teacher_turned_off_all_students_cam_and_mic), Toast.LENGTH_LONG)
                 notificationToast?.show()
             }
+            showCustomToast()
         }
+    }
+
+    private fun showCustomToast() {
+        val toast = Toast(requireActivity())
+        if (binding.liveClassOverlay.isVisible) {
+            toast.setGravity(Gravity.TOP, 0, 40)
+        } else {
+            toast.setGravity(Gravity.START or Gravity.BOTTOM, 40, 40)
+        }
+        toast.view = toastView
+        toast.duration = Toast.LENGTH_LONG
+        toast.show()
     }
 
     override fun onDisplayAdded(displayId: Int) {}
