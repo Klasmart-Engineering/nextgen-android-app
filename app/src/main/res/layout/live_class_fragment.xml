@@ -57,6 +57,7 @@
             android:textOn="@string/mic_on"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/toggle_students_video"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/local_media_container" />
 
