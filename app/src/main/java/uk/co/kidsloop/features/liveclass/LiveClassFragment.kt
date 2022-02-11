@@ -484,7 +484,7 @@ class LiveClassFragment :
     private fun showCustomToast() {
         val view = layoutInflater.inflate(R.layout.custom_toast_layout, null)
         val toast = Toast(requireActivity())
-        toast.setGravity(Gravity.START or Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, 0)
+        toast.setGravity(Gravity.TOP, 0, 0)
         toast.view = view
         toast.duration = Toast.LENGTH_LONG
         toast.show()
