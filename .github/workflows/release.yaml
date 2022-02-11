@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Show environment v1
-        run: Echo "runnin"
+        run: Echo "Running"
