@@ -91,7 +91,6 @@
             app:layout_constraintEnd_toStartOf="@+id/more_btn"
             app:layout_constraintStart_toEndOf="@+id/guidelineVertical"
             app:layout_constraintTop_toBottomOf="@+id/local_media_container"
-            app:layout_constraintVertical_bias="0.0"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <androidx.cardview.widget.CardView
