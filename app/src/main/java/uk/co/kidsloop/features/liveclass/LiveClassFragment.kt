@@ -1,15 +1,18 @@
 package uk.co.kidsloop.features.liveclass
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Display
+import android.view.Gravity
 import android.view.Surface
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -170,16 +173,17 @@ class LiveClassFragment :
         }
 
         binding.toggleCameraBtn.setOnClickListener {
-            if (binding.toggleCameraBtn.isActivated) {
-                if (binding.toggleCameraBtn.isChecked) {
-                    binding.localMediaContainer.showCameraTurnedOff()
-                } else {
-                    binding.localMediaContainer.showCameraTurnedOn()
-                }
-                viewModel.toggleLocalVideo()
-            } else {
-                shortToast(getString(R.string.teacher_turned_off_all_students_camera))
-            }
+//            if (binding.toggleCameraBtn.isActivated) {
+//                if (binding.toggleCameraBtn.isChecked) {
+//                    binding.localMediaContainer.showCameraTurnedOff()
+//                } else {
+//                    binding.localMediaContainer.showCameraTurnedOn()
+//                }
+//                viewModel.toggleLocalVideo()
+//            } else {
+//                shortToast(getString(R.string.teacher_turned_off_all_students_camera))
+//            }
+            showCustomToast()
         }
 
         binding.exitClassBtn.setOnClickListener {
@@ -473,8 +477,17 @@ class LiveClassFragment :
         uiThreadPoster.post {
             binding.localMediaContainer.showCameraTurnedOff()
             binding.toggleCameraBtn.isActivated = false
-            shortToast(getString(R.string.teacher_turned_off_all_students_camera))
+            showCustomToast()
         }
+    }
+
+    private fun showCustomToast() {
+        val view = layoutInflater.inflate(R.layout.custom_toast_layout, null)
+        val toast = Toast(requireActivity())
+        toast.setGravity(Gravity.START or Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, 0)
+        toast.view = view
+        toast.duration = Toast.LENGTH_LONG
+        toast.show()
     }
 
     override fun onDisplayAdded(displayId: Int) {}
