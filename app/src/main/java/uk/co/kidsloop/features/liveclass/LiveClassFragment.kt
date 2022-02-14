@@ -69,8 +69,11 @@ class LiveClassFragment :
             requireContext(),
             disableAudio = false,
             disableVideo = false,
-            aecContext = AecContext()
+            aecContext = AecContext(),
+            enableSimulcast = true
         )
+        //(localMedia as CameraLocalMedia).videoSimulcastDegradationPreference = VideoDegradationPreference.Resolution
+        //(localMedia as CameraLocalMedia).videoSimulcastEncodingCount = 3
 
         displayManager =
             requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -354,6 +357,9 @@ class LiveClassFragment :
     }
 
     private fun openSfuUpstreamConnection() {
+        // Set SimulcastMode
+        getVideoStream(localMedia)?.simulcastMode = SimulcastMode.RtpStreamId
+
         val upstreamConnection = viewModel.openSfuUpstreamConnection(
             getAudioStream(localMedia),
             getVideoStream(localMedia),
@@ -410,15 +416,33 @@ class LiveClassFragment :
                                     when (rolesMap[connection.key]) {
                                         STUDENT_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
-                                                StudentFeedQuality.MODERATE.bitrate
-                                            connection.value.videoStream.maxSendBitrate =
-                                                StudentFeedQuality.MODERATE.bitrate
+                                                StudentFeedQuality.MODERATE.videoBitrate
+                                            connection.value.audioStream.maxReceiveBitrate =
+                                                StudentFeedQuality.MODERATE.audioBitrate
+                                            Log.d(
+                                                "$TAG student down-videoBitrate",
+                                                connection.value.inboundVideoBitrate.toString()
+                                            )
+                                            Log.d(
+                                                "$TAG student down-audioBitrate",
+                                                connection.value.inboundAudioBitrate.toString()
+                                            )
+                                            logEncodings(connection.value)
                                         }
                                         TEACHER_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
-                                                TeacherFeedQuality.MODERATE.bitrate
-                                            connection.value.videoStream.maxSendBitrate =
-                                                TeacherFeedQuality.MODERATE.bitrate
+                                                TeacherFeedQuality.MODERATE.videoBitrate
+                                            connection.value.audioStream.maxReceiveBitrate =
+                                                TeacherFeedQuality.MODERATE.audioBitrate
+                                            Log.d(
+                                                "$TAG teacher down-videoBitrate",
+                                                connection.value.inboundVideoBitrate.toString()
+                                            )
+                                            Log.d(
+                                                "$TAG teacher down-audioBitrate",
+                                                connection.value.inboundAudioBitrate.toString()
+                                            )
+                                            logEncodings(connection.value)
                                         }
                                     }
                                 }
@@ -432,15 +456,33 @@ class LiveClassFragment :
                                     when (rolesMap[connection.key]) {
                                         STUDENT_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
-                                                StudentFeedQuality.GOOD.bitrate
-                                            connection.value.videoStream.maxSendBitrate =
-                                                StudentFeedQuality.GOOD.bitrate
+                                                StudentFeedQuality.GOOD.videoBitrate
+                                            connection.value.audioStream.maxReceiveBitrate =
+                                                StudentFeedQuality.GOOD.audioBitrate
+                                            Log.d(
+                                                "$TAG student down-videoBitrate",
+                                                connection.value.inboundVideoBitrate.toString()
+                                            )
+                                            Log.d(
+                                                "$TAG student down-audioBitrate",
+                                                connection.value.inboundAudioBitrate.toString()
+                                            )
+                                            logEncodings(connection.value)
                                         }
                                         TEACHER_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
-                                                TeacherFeedQuality.GOOD.bitrate
-                                            connection.value.videoStream.maxSendBitrate =
-                                                TeacherFeedQuality.GOOD.bitrate
+                                                TeacherFeedQuality.GOOD.videoBitrate
+                                            connection.value.audioStream.maxReceiveBitrate =
+                                                TeacherFeedQuality.GOOD.audioBitrate
+                                            Log.d(
+                                                "$TAG teacher down-videoBitrate",
+                                                connection.value.inboundVideoBitrate.toString()
+                                            )
+                                            Log.d(
+                                                "$TAG teacher down-audioBitrate",
+                                                connection.value.inboundAudioBitrate.toString()
+                                            )
+                                            logEncodings(connection.value)
                                         }
                                     }
                                 }
@@ -448,6 +490,19 @@ class LiveClassFragment :
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun logEncodings(conn: SfuDownstreamConnection) {
+        conn.remoteConnectionInfo.videoStream.receiveEncodings?.let { array ->
+            array.forEach {
+                Log.d("$TAG receive encoding", it.bitrate.toString())
+            }
+        }
+        conn.remoteConnectionInfo.videoStream.sendEncodings?.let { array ->
+            array.forEach {
+                Log.d("$TAG send encoding", it.bitrate.toString())
             }
         }
     }
