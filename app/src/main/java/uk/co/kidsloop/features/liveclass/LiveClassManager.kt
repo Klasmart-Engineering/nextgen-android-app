@@ -195,10 +195,10 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
             this.liveClassState = LiveClassState.MIC_AND_CAMERA_DISABLED
         } else if (newState == LiveClassState.MIC_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.CAM_DISABLED_BY_TEACHER) {
             this.liveClassState = LiveClassState.MIC_AND_CAMERA_DISABLED
-        } else if (newState == LiveClassState.CAM_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_DISABLED_AND_CAM_ENABLED) {
-            this.liveClassState = LiveClassState.MIC_AND_CAMERA_DISABLED
-        } else if (newState == LiveClassState.MIC_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_ENABLED_AND_CAM_DISABLED) {
-            this.liveClassState = LiveClassState.MIC_AND_CAMERA_DISABLED
+        } else if (newState == LiveClassState.MIC_ENABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_AND_CAMERA_DISABLED) {
+            this.liveClassState = LiveClassState.CAM_DISABLED_BY_TEACHER
+        } else if (newState == LiveClassState.CAM_ENABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_AND_CAMERA_DISABLED) {
+            this.liveClassState = LiveClassState.MIC_DISABLED_BY_TEACHER
         } else {
             this.liveClassState = newState
         }
