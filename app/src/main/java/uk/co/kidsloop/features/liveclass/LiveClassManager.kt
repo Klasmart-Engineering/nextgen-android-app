@@ -3,17 +3,18 @@ package uk.co.kidsloop.features.liveclass
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
+import javax.inject.Inject
+import javax.inject.Singleton
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.KidsLoopDataChannel
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class LiveClassManager @Inject constructor(private val moshi: Moshi) {
 
     companion object {
+
         const val STATS_COLLECTING_INTERVAL = 2500
     }
 
@@ -155,15 +156,21 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         when (dataChannel?.eventType) {
             DataChannelActionsType.RAISE_HAND -> dataChannelActionsHandler?.onRaiseHand(dataChannel.clientId)
             DataChannelActionsType.LOWER_HAND -> dataChannelActionsHandler?.onLowerHand(dataChannel.clientId)
-            DataChannelActionsType.ENABLE_VIDEO -> dataChannelActionsHandler?.onVideoEnabled()
-            DataChannelActionsType.DISABLE_VIDEO -> {
-                setState(LiveClassState.CAMERA_TURNED_OFF_BY_TEACHER)
-                dataChannelActionsHandler?.onVideoTurnedOff()
+            DataChannelActionsType.ENABLE_VIDEO -> {
+                setState(LiveClassState.CAM_ENABLED_BY_TEACHER)
+                dataChannelActionsHandler?.onVideoEnabled()
             }
-            DataChannelActionsType.ENABLE_AUDIO -> dataChannelActionsHandler?.onEnableMic()
+            DataChannelActionsType.DISABLE_VIDEO -> {
+                setState(LiveClassState.CAM_DISABLED_BY_TEACHER)
+                dataChannelActionsHandler?.onVideoDisabled(getState())
+            }
+            DataChannelActionsType.ENABLE_AUDIO -> {
+                setState(LiveClassState.MIC_ENABLED_BY_TEACHER)
+                dataChannelActionsHandler?.onEnableMic()
+            }
             DataChannelActionsType.DISABLE_AUDIO -> {
                 setState(LiveClassState.MIC_DISABLED_BY_TEACHER)
-                dataChannelActionsHandler?.onDisableMic()
+                dataChannelActionsHandler?.onDisableMic(getState())
             }
         }
     }
@@ -184,7 +191,17 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
     }
 
     fun setState(newState: LiveClassState) {
-        this.liveClassState = newState
+        if (newState == LiveClassState.CAM_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_DISABLED_BY_TEACHER) {
+            this.liveClassState = LiveClassState.MIC_AND_CAMERA_DISABLED
+        } else if (newState == LiveClassState.MIC_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.CAM_DISABLED_BY_TEACHER) {
+            this.liveClassState = LiveClassState.MIC_AND_CAMERA_DISABLED
+        } else if (newState == LiveClassState.MIC_ENABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_AND_CAMERA_DISABLED) {
+            this.liveClassState = LiveClassState.CAM_DISABLED_BY_TEACHER
+        } else if (newState == LiveClassState.CAM_ENABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_AND_CAMERA_DISABLED) {
+            this.liveClassState = LiveClassState.MIC_DISABLED_BY_TEACHER
+        } else {
+            this.liveClassState = newState
+        }
     }
 
     fun getState(): LiveClassState {
