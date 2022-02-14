@@ -11,6 +11,8 @@ import android.view.Surface
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -44,6 +46,7 @@ class LiveClassFragment :
     DisplayManager.DisplayListener {
 
     companion object {
+
         val TAG = LiveClassFragment::class.qualifiedName
         const val IS_CAMERA_TURNED_ON = "isCameraTurnedOn"
         const val IS_MICROPHONE_TURNED_ON = "isMicrophoneTurnedOn"
@@ -176,7 +179,7 @@ class LiveClassFragment :
                 }
                 viewModel.toggleLocalAudio()
             } else {
-                shortToast(getString(R.string.teacher_turned_off_all_students_mic))
+                showCustomToast(getString(R.string.teacher_turned_off_all_students_mic), true, false)
             }
         }
 
@@ -189,7 +192,7 @@ class LiveClassFragment :
                 }
                 viewModel.toggleLocalVideo()
             } else {
-                showCustomToast()
+                showCustomToast(getString(R.string.teacher_turned_off_all_students_camera), false, true)
             }
         }
 
@@ -389,7 +392,7 @@ class LiveClassFragment :
         upstreamConnection?.addOnNetworkQuality { networkQuality ->
             // TODO @Paul remove these after QA get their stats
             uiThreadPoster.post {
-//                shortToast(networkQuality.toString())
+                //                shortToast(networkQuality.toString())
                 Log.d(TAG, networkQuality.toString())
             }
 
@@ -493,28 +496,28 @@ class LiveClassFragment :
             binding.localMediaContainer.showCameraTurnedOff()
             binding.toggleCameraBtn.isActivated = false
 
-            if (state == LiveClassState.CAMERA_DISABLED_BY_TEACHER) {
-                notificationToast = Toast.makeText(this.requireActivity(), getString(R.string.teacher_turned_off_all_students_camera), Toast.LENGTH_LONG)
-                notificationToast?.show()
+            if (state == LiveClassState.CAM_DISABLED_BY_TEACHER) {
+                showCustomToast(getString(R.string.teacher_turned_off_all_students_camera), false, true)
             } else {
                 notificationToast?.cancel()
-                notificationToast = Toast.makeText(this.requireActivity(), getString(R.string.teacher_turned_off_all_students_cam_and_mic), Toast.LENGTH_LONG)
-                notificationToast?.show()
+                showCustomToast(getString(R.string.teacher_turned_off_all_students_cam_and_mic), true, true)
             }
-            showCustomToast()
         }
     }
 
-    private fun showCustomToast() {
-        val toast = Toast(requireActivity())
+    private fun showCustomToast(message: String, isMicDisabled: Boolean, isCamDisabled: Boolean) {
+        notificationToast = Toast(requireActivity())
         if (binding.liveClassOverlay.isVisible) {
-            toast.setGravity(Gravity.TOP, 0, 40)
+            notificationToast?.setGravity(Gravity.TOP, 0, 40)
         } else {
-            toast.setGravity(Gravity.START or Gravity.BOTTOM, 40, 40)
+            notificationToast?.setGravity(Gravity.START or Gravity.BOTTOM, 40, 40)
         }
-        toast.view = toastView
-        toast.duration = Toast.LENGTH_LONG
-        toast.show()
+        toastView.findViewById<TextView>(R.id.status_textview).text = message
+        toastView.findViewById<ImageView>(R.id.mic_muted_imageView).isVisible = isMicDisabled
+        toastView.findViewById<ImageView>(R.id.cam_muted_imageView).isVisible = isCamDisabled
+        notificationToast?.view = toastView
+        notificationToast?.duration = Toast.LENGTH_LONG
+        notificationToast?.show()
     }
 
     override fun onDisplayAdded(displayId: Int) {}
@@ -561,12 +564,10 @@ class LiveClassFragment :
             binding.localMediaContainer.showMicDisabledMuted()
             binding.toggleMicrophoneBtn.isActivated = false
             if (state == LiveClassState.MIC_DISABLED_BY_TEACHER) {
-                notificationToast = Toast.makeText(this.requireActivity(), getString(R.string.teacher_turned_off_all_students_mic), Toast.LENGTH_LONG)
-                notificationToast?.show()
+                showCustomToast(getString(R.string.teacher_turned_off_all_students_mic), true, false)
             } else {
                 notificationToast?.cancel()
-                notificationToast = Toast.makeText(this.requireActivity(), getString(R.string.teacher_turned_off_all_students_cam_and_mic), Toast.LENGTH_LONG)
-                notificationToast?.show()
+                showCustomToast(getString(R.string.teacher_turned_off_all_students_cam_and_mic), true, true)
             }
         }
     }

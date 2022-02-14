@@ -8,8 +8,8 @@ import uk.co.kidsloop.features.liveclass.state.LiveClassState
 interface DataChannelActionsHandler {
     fun onRaiseHand(clientId: String?)
     fun onLowerHand(clientId: String?)
-    fun onVideoDisabled(state:LiveClassState)
+    fun onVideoDisabled(state: LiveClassState)
     fun onVideoEnabled()
     fun onEnableMic()
-    fun onDisableMic(state:LiveClassState)
+    fun onDisableMic(state: LiveClassState)
 }

@@ -157,11 +157,11 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
             DataChannelActionsType.RAISE_HAND -> dataChannelActionsHandler?.onRaiseHand(dataChannel.clientId)
             DataChannelActionsType.LOWER_HAND -> dataChannelActionsHandler?.onLowerHand(dataChannel.clientId)
             DataChannelActionsType.ENABLE_VIDEO -> {
-                setState(LiveClassState.CAMERA_ENABLED_BY_TEACHER)
+                setState(LiveClassState.CAM_ENABLED_BY_TEACHER)
                 dataChannelActionsHandler?.onVideoEnabled()
             }
             DataChannelActionsType.DISABLE_VIDEO -> {
-                setState(LiveClassState.CAMERA_DISABLED_BY_TEACHER)
+                setState(LiveClassState.CAM_DISABLED_BY_TEACHER)
                 dataChannelActionsHandler?.onVideoDisabled(getState())
             }
             DataChannelActionsType.ENABLE_AUDIO -> {
@@ -191,9 +191,13 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
     }
 
     fun setState(newState: LiveClassState) {
-        if (newState == LiveClassState.CAMERA_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_DISABLED_BY_TEACHER) {
+        if (newState == LiveClassState.CAM_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_DISABLED_BY_TEACHER) {
             this.liveClassState = LiveClassState.MIC_AND_CAMERA_DISABLED
-        } else if (newState == LiveClassState.MIC_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.CAMERA_DISABLED_BY_TEACHER) {
+        } else if (newState == LiveClassState.MIC_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.CAM_DISABLED_BY_TEACHER) {
+            this.liveClassState = LiveClassState.MIC_AND_CAMERA_DISABLED
+        } else if (newState == LiveClassState.CAM_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_DISABLED_AND_CAM_ENABLED) {
+            this.liveClassState = LiveClassState.MIC_AND_CAMERA_DISABLED
+        } else if (newState == LiveClassState.MIC_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_ENABLED_AND_CAM_DISABLED) {
             this.liveClassState = LiveClassState.MIC_AND_CAMERA_DISABLED
         } else {
             this.liveClassState = newState
