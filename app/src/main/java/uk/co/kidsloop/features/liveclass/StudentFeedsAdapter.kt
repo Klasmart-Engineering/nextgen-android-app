@@ -3,10 +3,7 @@ package uk.co.kidsloop.features.liveclass
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
-import uk.co.kidsloop.R
 import uk.co.kidsloop.databinding.StudentFeedLayoutBinding
 import uk.co.kidsloop.databinding.StudentFeedLayoutBinding.*
 import uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
@@ -42,18 +39,7 @@ class StudentFeedsAdapter : RecyclerView.Adapter<StudentFeedsAdapter.ViewHolder>
         if (videoFeed.parent != null) {
             (videoFeed.parent as RemoteMediaCustomContainer).removeRemoteMediaView()
         }
-        val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
-        videoFeed.layoutParams = layoutParams
-        videoFeed.id = View.generateViewId()
-        videoFeed.setBackgroundResource(R.drawable.rounded_bg)
-        videoFeed.clipToOutline = true
         videoFeedContainer.addRemoteMediaView(videoFeed)
-
-        val constraintSet = ConstraintSet()
-        constraintSet.clone(videoFeedContainer)
-        constraintSet.constrainDefaultHeight(videoFeed.id, ConstraintSet.MATCH_CONSTRAINT)
-        constraintSet.setDimensionRatio(videoFeed.id, "4:3")
-        constraintSet.applyTo(videoFeedContainer)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {

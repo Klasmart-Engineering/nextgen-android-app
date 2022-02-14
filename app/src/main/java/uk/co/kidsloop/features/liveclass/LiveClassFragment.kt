@@ -18,6 +18,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
@@ -114,6 +115,15 @@ class LiveClassFragment :
         binding.studentFeedsRecyclerview.apply {
             adapter = studentsFeedAdapter
             layoutManager = object : LinearLayoutManager(context) {
+
+                override fun checkLayoutParams(lp: RecyclerView.LayoutParams?): Boolean {
+                    val height = height / 3 - resources.getDimensionPixelSize(R.dimen.space_8)
+                    val width = height * 4 / 3
+                    lp?.height = height
+                    lp?.width = width
+                    return true
+                }
+
                 override fun canScrollVertically(): Boolean {
                     return false
                 }
