@@ -5,13 +5,9 @@ import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.Display
-import android.view.Gravity
-import android.view.Surface
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -21,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
-import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -38,6 +33,7 @@ import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -507,10 +503,18 @@ class LiveClassFragment :
 
     private fun showCustomToast(message: String, isMicDisabled: Boolean, isCamDisabled: Boolean) {
         notificationToast = Toast(requireActivity())
+        val params =
+            (toastView.findViewById<RelativeLayout>(R.id.toast_container).layoutParams as ViewGroup.MarginLayoutParams)
         if (binding.liveClassOverlay.isVisible) {
-            notificationToast?.setGravity(Gravity.TOP, 0, 40)
+            notificationToast?.setGravity(Gravity.TOP or Gravity.FILL, 0, 0)
+            toastView.findViewById<TextView>(R.id.start_space).visibility = View.VISIBLE
+            toastView.findViewById<TextView>(R.id.end_space).visibility = View.VISIBLE
+            params.marginStart = 0
         } else {
-            notificationToast?.setGravity(Gravity.START or Gravity.BOTTOM, 40, 40)
+            notificationToast?.setGravity(Gravity.START or Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 40, 40)
+            toastView.findViewById<TextView>(R.id.start_space).visibility = View.GONE
+            toastView.findViewById<TextView>(R.id.end_space).visibility = View.GONE
+            params.marginStart = 30
         }
         toastView.findViewById<TextView>(R.id.status_textview).text = message
         toastView.findViewById<ImageView>(R.id.mic_muted_imageView).isVisible = isMicDisabled
