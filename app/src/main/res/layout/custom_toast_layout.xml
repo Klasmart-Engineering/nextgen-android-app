@@ -1,40 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="@dimen/space_53"
-    android:background="@drawable/rounded_white_bg"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingTop="@dimen/space_10"
-    android:paddingBottom="@dimen/space_13"
-    android:paddingStart="@dimen/space_25"
-    android:layout_marginStart="@dimen/space_18"
-    android:layout_marginEnd="@dimen/space_18"
-    android:gravity="center_vertical"
-    android:paddingEnd="@dimen/space_12">
-
-    <ImageView
-        android:id="@+id/mic_muted_imageView"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        android:src="@drawable/ic_mic_muted_small"
-        android:layout_marginEnd="@dimen/space_18" />
-
-    <ImageView
-        android:id="@+id/cam_muted_imageView"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        android:src="@drawable/ic_cam_muted_small"
-        android:layout_marginEnd="@dimen/space_18" />
+    android:paddingHorizontal="@dimen/space_15">
 
     <TextView
-        android:id="@+id/status_textview"
-        style="@style/ToastStyle"
-        android:text="@string/teacher_turned_off_all_students_camera"
+        android:id="@+id/start_space"
         android:layout_width="0dp"
-        android:layout_weight="10"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="53dp"
+        android:paddingTop="@dimen/space_10"
+        android:paddingBottom="@dimen/space_13"
+        android:paddingStart="@dimen/space_15"
+        android:paddingEnd="@dimen/space_12"
+        android:background="@drawable/rounded_white_bg">
+
+        <ImageView
+            android:id="@+id/mic_muted_imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/ic_mic_muted_small"
+            android:layout_marginEnd="@dimen/space_10"/>
+
+        <ImageView
+            android:id="@+id/cam_muted_imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_cam_muted_small"
+            android:layout_toEndOf="@id/mic_muted_imageView"
+            android:layout_marginEnd="@dimen/space_10"/>
+
+        <TextView
+            android:id="@+id/status_textview"
+            style="@style/ToastStyle"
+            android:layout_toEndOf="@+id/cam_muted_imageView"
+            android:text="@string/teacher_turned_off_all_students_camera"
+            android:layout_centerVertical="true"
+            android:lines="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/end_space"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
 </LinearLayout>
