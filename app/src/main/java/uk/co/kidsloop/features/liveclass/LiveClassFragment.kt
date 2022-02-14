@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
