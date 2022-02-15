@@ -34,6 +34,7 @@ class CameraLocalMedia(
             videoEncodings[2].frameRate = 7.5
             videoEncodings[2].scale = 0.25
 
+            this.videoSimulcastDisabled = false
             this.videoEncodings = videoEncodings
         }
 

@@ -382,7 +382,6 @@ class LiveClassFragment :
         upstreamConnection?.addOnNetworkQuality { networkQuality ->
             // TODO @Paul remove these after QA get their stats
             uiThreadPoster.post {
-//                shortToast(networkQuality.toString())
                 Log.d(TAG, networkQuality.toString())
             }
 
@@ -414,30 +413,18 @@ class LiveClassFragment :
                                         STUDENT_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
                                                 StudentFeedQuality.MODERATE.videoBitrate
-                                            connection.value.audioStream.maxReceiveBitrate =
-                                                StudentFeedQuality.MODERATE.audioBitrate
                                             Log.d(
                                                 "$TAG student down-videoBitrate",
                                                 connection.value.inboundVideoBitrate.toString()
-                                            )
-                                            Log.d(
-                                                "$TAG student down-audioBitrate",
-                                                connection.value.inboundAudioBitrate.toString()
                                             )
                                             logEncodings(connection.value)
                                         }
                                         TEACHER_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
                                                 TeacherFeedQuality.MODERATE.videoBitrate
-                                            connection.value.audioStream.maxReceiveBitrate =
-                                                TeacherFeedQuality.MODERATE.audioBitrate
                                             Log.d(
                                                 "$TAG teacher down-videoBitrate",
                                                 connection.value.inboundVideoBitrate.toString()
-                                            )
-                                            Log.d(
-                                                "$TAG teacher down-audioBitrate",
-                                                connection.value.inboundAudioBitrate.toString()
                                             )
                                             logEncodings(connection.value)
                                         }
@@ -454,30 +441,18 @@ class LiveClassFragment :
                                         STUDENT_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
                                                 StudentFeedQuality.GOOD.videoBitrate
-                                            connection.value.audioStream.maxReceiveBitrate =
-                                                StudentFeedQuality.GOOD.audioBitrate
                                             Log.d(
                                                 "$TAG student down-videoBitrate",
                                                 connection.value.inboundVideoBitrate.toString()
-                                            )
-                                            Log.d(
-                                                "$TAG student down-audioBitrate",
-                                                connection.value.inboundAudioBitrate.toString()
                                             )
                                             logEncodings(connection.value)
                                         }
                                         TEACHER_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
                                                 TeacherFeedQuality.GOOD.videoBitrate
-                                            connection.value.audioStream.maxReceiveBitrate =
-                                                TeacherFeedQuality.GOOD.audioBitrate
                                             Log.d(
                                                 "$TAG teacher down-videoBitrate",
                                                 connection.value.inboundVideoBitrate.toString()
-                                            )
-                                            Log.d(
-                                                "$TAG teacher down-audioBitrate",
-                                                connection.value.inboundAudioBitrate.toString()
                                             )
                                             logEncodings(connection.value)
                                         }
