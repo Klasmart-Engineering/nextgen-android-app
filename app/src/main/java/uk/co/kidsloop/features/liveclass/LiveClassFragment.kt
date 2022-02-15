@@ -507,7 +507,7 @@ class LiveClassFragment :
             toastView.findViewById<TextView>(R.id.start_space).visibility = View.VISIBLE
             toastView.findViewById<TextView>(R.id.end_space).visibility = View.VISIBLE
         } else {
-            notificationToast?.setGravity(Gravity.START or Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, 40)
+            notificationToast?.setGravity(Gravity.START or Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, 0)
             toastView.findViewById<TextView>(R.id.start_space).visibility = View.GONE
             toastView.findViewById<TextView>(R.id.end_space).visibility = View.GONE
         }
