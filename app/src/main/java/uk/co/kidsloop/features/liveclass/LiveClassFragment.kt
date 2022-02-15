@@ -380,11 +380,6 @@ class LiveClassFragment :
         }
 
         upstreamConnection?.addOnNetworkQuality { networkQuality ->
-            // TODO @Paul remove these after QA get their stats
-            uiThreadPoster.post {
-                Log.d(TAG, networkQuality.toString())
-            }
-
             val averageNetworkQuality = when (liveClassManager.getNetworkQualityArray().size) {
                 0 -> {
                     liveClassManager.addToNetworkQualityArray(networkQuality)
