@@ -69,10 +69,11 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         val feedItem = remoteStudentFeeds[position]
-        holder.setIsRecyclable(false)
+       // holder.setIsRecyclable(false)
 
         val videoFeed = feedItem.view
         if (holder is StudentViewHolder) {
+            holder.setIsRecyclable(false)
             val videoFeedContainer = holder.binding.studentVideoFeed
             if (videoFeed.parent != null) {
                 (videoFeed.parent as RemoteMediaCustomContainer).removeRemoteMediaView()
@@ -91,6 +92,8 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
             }
             if (!localMediaItem.isCamOn) {
                 localMediaContainer.showCameraTurnedOff()
+            } else {
+                localMediaContainer.showMicTurnedOn()
             }
             localMediaContainer.addLocalMediaView(videoFeed)
         }
