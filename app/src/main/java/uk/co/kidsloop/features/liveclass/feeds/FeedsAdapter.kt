@@ -93,7 +93,7 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
             if (!localMediaItem.isCamOn) {
                 localMediaContainer.showCameraTurnedOff()
             } else {
-                localMediaContainer.showMicTurnedOn()
+                localMediaContainer.showCameraTurnedOn()
             }
             localMediaContainer.addLocalMediaView(videoFeed)
         }
