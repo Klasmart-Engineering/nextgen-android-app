@@ -501,6 +501,7 @@ class LiveClassFragment :
     }
 
     private fun showCustomToast(message: String, isMicDisabled: Boolean, isCamDisabled: Boolean) {
+        notificationToast?.cancel()
         notificationToast = Toast(requireActivity())
         if (binding.liveClassOverlay.isVisible) {
             notificationToast?.setGravity(Gravity.TOP or Gravity.FILL, 0, 0)
