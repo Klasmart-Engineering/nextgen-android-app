@@ -20,6 +20,14 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
         private const val SHOW_LOCAL_MEDIA_HAND_RAISED = "show_local_media_hand_raised"
         private const val HIDE_LOCAL_MEDIA_HAND_RAISED = "hide_local_media_hand_raised"
 
+        private const val SHOW_LOCAL_MIC_OFF = "show_local_mic_off"
+        private const val SHOW_LOCAL_MIC_ON = "show_local_mic_on"
+
+        private const val SHOW_LOCAL_MIC_DISABLED = "show_local_mic_disabled"
+
+        private const val SHOW_LOCAL_CAM_ON = "show_local_cam_on"
+        private const val SHOW_LOCAL_CAM_OFF = "show_local_cam_off"
+
         private const val MAX_STUDENT_VIDEO_FEEDS = 4
         private const val LOCAL_MEDIA_ID = "local_media_id"
     }
@@ -73,12 +81,14 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
             if (videoFeed.parent != null) {
                 (videoFeed.parent as LocalMediaCustomContainer).removeLocalMediaView()
             }
-//            if (localMediaItem.isMicMuted) {
-//                localMediaContainer.showMicMuted()
-//            }
-//            if (localMediaItem.isCamTurnedOff) {
-//                localMediaContainer.showCameraTurnedOff()
-//            }
+            if (localMediaItem.isMicOn) {
+                localMediaContainer.showMicTurnedOn()
+            } else {
+                localMediaContainer.showMicMuted()
+            }
+            if (!localMediaItem.isCamOn) {
+                localMediaContainer.showCameraTurnedOff()
+            }
             localMediaContainer.addLocalMediaView(videoFeed)
         }
     }
@@ -90,6 +100,11 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
                 HIDE_STUDENT_HAND_RAISED -> (holder as StudentViewHolder).binding.studentVideoFeed.hideRaiseHand()
                 SHOW_LOCAL_MEDIA_HAND_RAISED -> (holder as LocalMediaViewHolder).binding.localMediaFeed.showHandRaised()
                 HIDE_LOCAL_MEDIA_HAND_RAISED -> (holder as LocalMediaViewHolder).binding.localMediaFeed.hideRaiseHand()
+                SHOW_LOCAL_MIC_ON -> (holder as LocalMediaViewHolder).binding.localMediaFeed.showMicTurnedOn()
+                SHOW_LOCAL_MIC_OFF -> (holder as LocalMediaViewHolder).binding.localMediaFeed.showMicMuted()
+                SHOW_LOCAL_CAM_ON -> (holder as LocalMediaViewHolder).binding.localMediaFeed.showCameraTurnedOn()
+                SHOW_LOCAL_CAM_OFF -> (holder as LocalMediaViewHolder).binding.localMediaFeed.showCameraTurnedOff()
+                SHOW_LOCAL_MIC_DISABLED -> (holder as LocalMediaViewHolder).binding.localMediaFeed.showMicDisabledMuted()
             }
         } else {
             super.onBindViewHolder(holder, position, payloads)
@@ -103,9 +118,9 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
 
     open inner class FeedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    fun addLocalMedia(localMediaView: View?, isMicMuted: Boolean, isCamTurnedOff: Boolean) {
+    fun addLocalMedia(localMediaView: View?, isMicOn: Boolean, isCamOn: Boolean) {
         localMediaView?.let {
-            remoteStudentFeeds.add(LocalMediaFeedItem(localMediaView, LOCAL_MEDIA_ID, isMicMuted, isCamTurnedOff))
+            remoteStudentFeeds.add(LocalMediaFeedItem(localMediaView, LOCAL_MEDIA_ID, isMicOn, isCamOn))
             notifyDataSetChanged()
         }
     }
@@ -138,5 +153,21 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
         if (position > -1) {
             notifyItemChanged(position, HIDE_STUDENT_HAND_RAISED)
         }
+    }
+
+    fun toggleLocalMic(isMicOn: Boolean) {
+        notifyItemChanged(0, if (isMicOn) SHOW_LOCAL_MIC_ON else SHOW_LOCAL_MIC_OFF)
+    }
+
+    fun toggleLocalCamera(isCamOn: Boolean) {
+        notifyItemChanged(0, if (isCamOn) SHOW_LOCAL_CAM_ON else SHOW_LOCAL_CAM_OFF)
+    }
+
+    fun toggleHandRaised(isHandRaised: Boolean) {
+        notifyItemChanged(0, if (isHandRaised) SHOW_LOCAL_MEDIA_HAND_RAISED else HIDE_LOCAL_MEDIA_HAND_RAISED)
+    }
+
+    fun showLocalMicDisabled(){
+        notifyItemChanged(0, SHOW_LOCAL_MIC_DISABLED)
     }
 }

@@ -5,8 +5,8 @@ import android.view.View
 data class LocalMediaFeedItem(
     val localView: View,
     val clientId: String,
-    var isMicMuted: Boolean,
-    var isCamTurnedOff: Boolean,
+    var isMicOn: Boolean,
+    var isCamOn: Boolean,
     var isHandRaised: Boolean = false,
     var isHandLowered: Boolean = false
 ) : FeedItem(localView, clientId)
