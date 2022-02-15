@@ -72,8 +72,8 @@ class LiveClassFragment :
             aecContext = AecContext(),
             enableSimulcast = true
         )
-        //(localMedia as CameraLocalMedia).videoSimulcastDegradationPreference = VideoDegradationPreference.Resolution
-        //(localMedia as CameraLocalMedia).videoSimulcastEncodingCount = 3
+        (localMedia as CameraLocalMedia).videoSimulcastDegradationPreference = VideoDegradationPreference.Resolution
+        (localMedia as CameraLocalMedia).videoSimulcastEncodingCount = 3
 
         displayManager =
             requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -413,20 +413,10 @@ class LiveClassFragment :
                                         STUDENT_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
                                                 StudentFeedQuality.MODERATE.videoBitrate
-                                            Log.d(
-                                                "$TAG student down-videoBitrate",
-                                                connection.value.inboundVideoBitrate.toString()
-                                            )
-                                            logEncodings(connection.value)
                                         }
                                         TEACHER_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
                                                 TeacherFeedQuality.MODERATE.videoBitrate
-                                            Log.d(
-                                                "$TAG teacher down-videoBitrate",
-                                                connection.value.inboundVideoBitrate.toString()
-                                            )
-                                            logEncodings(connection.value)
                                         }
                                     }
                                 }
@@ -441,20 +431,10 @@ class LiveClassFragment :
                                         STUDENT_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
                                                 StudentFeedQuality.GOOD.videoBitrate
-                                            Log.d(
-                                                "$TAG student down-videoBitrate",
-                                                connection.value.inboundVideoBitrate.toString()
-                                            )
-                                            logEncodings(connection.value)
                                         }
                                         TEACHER_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
                                                 TeacherFeedQuality.GOOD.videoBitrate
-                                            Log.d(
-                                                "$TAG teacher down-videoBitrate",
-                                                connection.value.inboundVideoBitrate.toString()
-                                            )
-                                            logEncodings(connection.value)
                                         }
                                     }
                                 }
@@ -462,19 +442,6 @@ class LiveClassFragment :
                         }
                     }
                 }
-            }
-        }
-    }
-
-    private fun logEncodings(conn: SfuDownstreamConnection) {
-        conn.remoteConnectionInfo.videoStream.receiveEncodings?.let { array ->
-            array.forEach {
-                Log.d("$TAG receive encoding", it.bitrate.toString())
-            }
-        }
-        conn.remoteConnectionInfo.videoStream.sendEncodings?.let { array ->
-            array.forEach {
-                Log.d("$TAG send encoding", it.bitrate.toString())
             }
         }
     }
