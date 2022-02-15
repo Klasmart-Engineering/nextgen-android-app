@@ -524,25 +524,17 @@ class LiveClassFragment :
     override fun onDisplayChanged(displayId: Int) {
         if (initialDisplayOrientation == Surface.ROTATION_90) {
             if (display.rotation == Surface.ROTATION_90) {
-                //                binding.localMediaContainer.updateLocalMediaViewOrientationDefault(
-                //                    localMedia?.view
-                //                )
+                studentsFeedAdapter.updateLocalMediaViewOrientationDefault()
             }
             if (display.rotation == Surface.ROTATION_270) {
-                //                binding.localMediaContainer.updateLocalMediaViewOrientationReverse(
-                //                    localMedia?.view
-                //                )
+                studentsFeedAdapter.updateLocalMediaViewOrientationReverse()
             }
         } else {
             if (display.rotation == Surface.ROTATION_90) {
-                //                binding.localMediaContainer.updateLocalMediaViewOrientationReverse(
-                //                    localMedia?.view
-                //                )
+                studentsFeedAdapter.updateLocalMediaViewOrientationReverse()
             }
             if (display.rotation == Surface.ROTATION_270) {
-                //                binding.localMediaContainer.updateLocalMediaViewOrientationDefault(
-                //                    localMedia?.view
-                //                )
+                studentsFeedAdapter.updateLocalMediaViewOrientationDefault()
             }
         }
     }

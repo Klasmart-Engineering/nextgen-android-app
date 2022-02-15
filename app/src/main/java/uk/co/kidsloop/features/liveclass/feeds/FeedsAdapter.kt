@@ -30,6 +30,9 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
 
         private const val MAX_STUDENT_VIDEO_FEEDS = 4
         private const val LOCAL_MEDIA_ID = "local_media_id"
+
+        private const val LOCAL_MEDIA_ORIENTATION_DEFAULT = "local_media_orientation_default"
+        private const val LOCAL_MEDIA_ORIENTATION_REVERSE = "local_media_orientation_reverse"
     }
 
     private var remoteStudentFeeds = mutableListOf<FeedItem>()
@@ -105,6 +108,8 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
                 SHOW_LOCAL_CAM_ON -> (holder as LocalMediaViewHolder).binding.localMediaFeed.showCameraTurnedOn()
                 SHOW_LOCAL_CAM_OFF -> (holder as LocalMediaViewHolder).binding.localMediaFeed.showCameraTurnedOff()
                 SHOW_LOCAL_MIC_DISABLED -> (holder as LocalMediaViewHolder).binding.localMediaFeed.showMicDisabledMuted()
+                LOCAL_MEDIA_ORIENTATION_DEFAULT -> (holder as LocalMediaViewHolder).binding.localMediaFeed.updateLocalMediaViewOrientationDefault()
+                LOCAL_MEDIA_ORIENTATION_REVERSE -> (holder as LocalMediaViewHolder).binding.localMediaFeed.updateLocalMediaViewOrientationReverse()
             }
         } else {
             super.onBindViewHolder(holder, position, payloads)
@@ -167,7 +172,15 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
         notifyItemChanged(0, if (isHandRaised) SHOW_LOCAL_MEDIA_HAND_RAISED else HIDE_LOCAL_MEDIA_HAND_RAISED)
     }
 
-    fun showLocalMicDisabled(){
+    fun showLocalMicDisabled() {
         notifyItemChanged(0, SHOW_LOCAL_MIC_DISABLED)
+    }
+
+    fun updateLocalMediaViewOrientationReverse() {
+        notifyItemChanged(0, LOCAL_MEDIA_ORIENTATION_REVERSE)
+    }
+
+    fun updateLocalMediaViewOrientationDefault() {
+        notifyItemChanged(0, LOCAL_MEDIA_ORIENTATION_DEFAULT)
     }
 }

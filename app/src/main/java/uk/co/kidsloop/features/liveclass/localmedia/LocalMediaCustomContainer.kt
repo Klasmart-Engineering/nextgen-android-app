@@ -24,12 +24,12 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
         addView(localMediaView, 1)
     }
 
-    fun updateLocalMediaViewOrientationReverse(localMediaView: View?) {
-        updateLayoutParams { localMediaView?.rotation = 180F }
+    fun updateLocalMediaViewOrientationReverse() {
+        updateLayoutParams { getChildAt(1)?.rotation = 180F }
     }
 
-    fun updateLocalMediaViewOrientationDefault(localMediaView: View?) {
-        updateLayoutParams { localMediaView?.rotation = 0F }
+    fun updateLocalMediaViewOrientationDefault() {
+        updateLayoutParams { getChildAt(1)?.rotation = 0F }
     }
 
     fun removeLocalMediaView() {
