@@ -4,6 +4,8 @@ import android.content.Context
 import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
@@ -511,12 +513,19 @@ class LiveClassFragment :
             toastView.findViewById<TextView>(R.id.start_space).visibility = View.GONE
             toastView.findViewById<TextView>(R.id.end_space).visibility = View.GONE
         }
+        if (notificationToast != null)
+            notificationToast?.cancel()
         toastView.findViewById<TextView>(R.id.status_textview).text = message
         toastView.findViewById<ImageView>(R.id.mic_muted_imageView).isVisible = isMicDisabled
         toastView.findViewById<ImageView>(R.id.cam_muted_imageView).isVisible = isCamDisabled
         notificationToast?.view = toastView
         notificationToast?.duration = Toast.LENGTH_LONG
         notificationToast?.show()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            notificationToast?.cancel()
+            notificationToast?.show()
+        }, notificationToast?.duration!!.toLong())
     }
 
     override fun onDisplayAdded(displayId: Int) {}
