@@ -357,9 +357,6 @@ class LiveClassFragment :
     }
 
     private fun openSfuUpstreamConnection() {
-        // Set SimulcastMode
-        getVideoStream(localMedia)?.simulcastMode = SimulcastMode.RtpStreamId
-
         val upstreamConnection = viewModel.openSfuUpstreamConnection(
             getAudioStream(localMedia),
             getVideoStream(localMedia),

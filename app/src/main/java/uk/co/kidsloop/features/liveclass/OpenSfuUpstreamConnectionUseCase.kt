@@ -15,6 +15,10 @@ class OpenSfuUpstreamConnectionUseCase @Inject constructor(
         val channel = liveClassManager.getChannel()
         val dataStream = liveClassManager.getUpstreamDataStream()
 
+        // Set SimulcastMode
+        videoStream?.simulcastMode = SimulcastMode.RtpStreamId
+        audioStream?.simulcastMode = SimulcastMode.RtpStreamId
+
         val upstreamConnection = channel?.createSfuUpstreamConnection(audioStream, videoStream, dataStream)
         upstreamConnection?.statsEventInterval = LiveClassManager.STATS_COLLECTING_INTERVAL
         upstreamConnection?.open()
