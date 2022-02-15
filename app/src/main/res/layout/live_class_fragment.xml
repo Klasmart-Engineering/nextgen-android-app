@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="start"
-            app:constraint_referenced_ids="local_media_container,guidelineVertical" />
+            app:constraint_referenced_ids="guidelineVertical" />
 
         <ImageView
             android:id="@+id/more_btn"
@@ -45,8 +45,7 @@
             android:textOn="@string/enable_students_camera"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/local_media_container" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <ToggleButton
             android:id="@+id/toggle_students_audio"
@@ -58,8 +57,7 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintBottom_toTopOf="@id/toggle_students_video"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/local_media_container" />
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineVertical"
@@ -68,30 +66,17 @@
             android:orientation="vertical"
             app:layout_constraintGuide_end="@dimen/space_190" />
 
-        <uk.co.kidsloop.features.liveclass.localmedia.LocalMediaCustomContainer
-            android:id="@+id/local_media_container"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="@dimen/space_8"
-            app:cardCornerRadius="@dimen/space_12"
-            app:layout_constraintDimensionRatio="H,4:3"
-            app:layout_constraintEnd_toStartOf="@+id/more_btn"
-            app:layout_constraintStart_toEndOf="@+id/guidelineVertical"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/student_feeds_recyclerview"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/space_8"
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never"
-            app:layout_constrainedHeight="true"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/more_btn"
             app:layout_constraintStart_toEndOf="@+id/guidelineVertical"
-            app:layout_constraintTop_toBottomOf="@+id/local_media_container"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <androidx.cardview.widget.CardView

@@ -8,16 +8,15 @@
         android:adjustViewBounds="true"
         android:contentDescription="@null"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_local_media_turned_off_student"
-        android:visibility="visible" />
+        android:src="@drawable/ic_local_media_turned_off_student" />
 
     <ImageView
         android:id="@+id/mic_status_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
-        android:layout_marginTop="@dimen/space_4"
         android:layout_marginEnd="@dimen/space_4"
+        android:layout_marginTop="@dimen/space_4"
         android:contentDescription="@null"
         android:elevation="@dimen/space_20"
         android:src="@drawable/ic_mic_on" />
@@ -26,11 +25,11 @@
         android:id="@+id/raise_hand_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxHeight="12dp"
-        android:maxWidth="10dp"
         android:layout_gravity="center"
         android:contentDescription="@null"
         android:elevation="@dimen/space_20"
+        android:maxWidth="10dp"
+        android:maxHeight="12dp"
         android:src="@drawable/ic_raise_hand_selected"
         android:visibility="gone" />
 </merge>

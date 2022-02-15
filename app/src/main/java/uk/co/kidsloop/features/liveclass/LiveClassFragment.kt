@@ -31,6 +31,7 @@ import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
 import uk.co.kidsloop.data.enums.StudentFeedQuality
 import uk.co.kidsloop.data.enums.TeacherFeedQuality
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
+import uk.co.kidsloop.features.liveclass.feeds.FeedsAdapter
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
@@ -69,7 +70,7 @@ class LiveClassFragment :
 
     private val viewModel by viewModels<LiveClassViewModel>()
 
-    private lateinit var studentsFeedAdapter: StudentFeedsAdapter
+    private lateinit var studentsFeedAdapter: FeedsAdapter
     private var notificationToast: Toast? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,21 +104,21 @@ class LiveClassFragment :
         binding.toggleMicrophoneBtn.isActivated = true
         binding.toggleMicrophoneBtn.isChecked =
             !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
-        if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
-            binding.localMediaContainer.showCameraTurnedOff()
-        }
-        if (!requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
-            binding.localMediaContainer.showMicMuted()
-        }
+        //        if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
+        //            binding.localMediaContainer.showCameraTurnedOff()
+        //        }
+        //        if (!requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
+        //            binding.localMediaContainer.showMicMuted()
+        //        }
+        studentsFeedAdapter = FeedsAdapter()
         startLocalMedia()
 
-        studentsFeedAdapter = StudentFeedsAdapter()
         binding.studentFeedsRecyclerview.apply {
             adapter = studentsFeedAdapter
             layoutManager = object : LinearLayoutManager(context) {
 
                 override fun checkLayoutParams(lp: RecyclerView.LayoutParams?): Boolean {
-                    val height = height / 3 - resources.getDimensionPixelSize(R.dimen.space_8)
+                    val height = height / 4 - resources.getDimensionPixelSize(R.dimen.space_8)
                     val width = height * 4 / 3
                     lp?.height = height
                     lp?.width = width
@@ -183,9 +184,9 @@ class LiveClassFragment :
         binding.toggleMicrophoneBtn.setOnClickListener {
             if (binding.toggleMicrophoneBtn.isActivated) {
                 if (binding.toggleMicrophoneBtn.isChecked) {
-                    binding.localMediaContainer.showMicMuted()
+                  //  binding.localMediaContainer.showMicMuted()
                 } else {
-                    binding.localMediaContainer.showMicTurnedOn()
+                  //  binding.localMediaContainer.showMicTurnedOn()
                 }
                 viewModel.toggleLocalAudio()
             } else {
@@ -196,9 +197,9 @@ class LiveClassFragment :
         binding.toggleCameraBtn.setOnClickListener {
             if (binding.toggleCameraBtn.isActivated) {
                 if (binding.toggleCameraBtn.isChecked) {
-                    binding.localMediaContainer.showCameraTurnedOff()
+                 //   binding.localMediaContainer.showCameraTurnedOff()
                 } else {
-                    binding.localMediaContainer.showCameraTurnedOn()
+                  //  binding.localMediaContainer.showCameraTurnedOn()
                 }
                 viewModel.toggleLocalVideo()
             } else {
@@ -231,10 +232,10 @@ class LiveClassFragment :
 
             if (binding.raiseHandBtn.isSelected) {
                 viewModel.showHandRaised()
-                binding.localMediaContainer.showHandRaised()
+               // binding.localMediaContainer.showHandRaised()
             } else {
                 viewModel.showHandLowered()
-                binding.localMediaContainer.hideRaiseHand()
+               // binding.localMediaContainer.hideRaiseHand()
             }
         }
 
@@ -367,12 +368,16 @@ class LiveClassFragment :
         if (liveClassManager.getState() == LiveClassState.IDLE) {
             localMedia?.start()?.then({
                 uiThreadPoster.post {
-                    binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+                    studentsFeedAdapter.addLocalMedia(
+                        localMedia?.view,
+                        requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON),
+                        requireArguments().getBoolean(IS_CAMERA_TURNED_ON)
+                    )
                     viewModel.joinLiveClass()
                 }
             }, { exception -> })
         } else {
-            binding.localMediaContainer.addLocalMediaView(localMedia?.view)
+         //   studentsFeedAdapter.addLocalMedia(localMedia?.view)
         }
     }
 
@@ -503,7 +508,7 @@ class LiveClassFragment :
     override fun onVideoDisabled(state: LiveClassState) {
         viewModel.turnOffVideo()
         uiThreadPoster.post {
-            binding.localMediaContainer.showCameraTurnedOff()
+            //binding.localMediaContainer.showCameraTurnedOff()
             binding.toggleCameraBtn.isActivated = false
 
             if (state == LiveClassState.CAM_DISABLED_BY_TEACHER) {
@@ -537,32 +542,32 @@ class LiveClassFragment :
     override fun onDisplayChanged(displayId: Int) {
         if (initialDisplayOrientation == Surface.ROTATION_90) {
             if (display.rotation == Surface.ROTATION_90) {
-                binding.localMediaContainer.updateLocalMediaViewOrientationDefault(
-                    localMedia?.view
-                )
+//                binding.localMediaContainer.updateLocalMediaViewOrientationDefault(
+//                    localMedia?.view
+//                )
             }
             if (display.rotation == Surface.ROTATION_270) {
-                binding.localMediaContainer.updateLocalMediaViewOrientationReverse(
-                    localMedia?.view
-                )
+//                binding.localMediaContainer.updateLocalMediaViewOrientationReverse(
+//                    localMedia?.view
+//                )
             }
         } else {
             if (display.rotation == Surface.ROTATION_90) {
-                binding.localMediaContainer.updateLocalMediaViewOrientationReverse(
-                    localMedia?.view
-                )
+//                binding.localMediaContainer.updateLocalMediaViewOrientationReverse(
+//                    localMedia?.view
+//                )
             }
             if (display.rotation == Surface.ROTATION_270) {
-                binding.localMediaContainer.updateLocalMediaViewOrientationDefault(
-                    localMedia?.view
-                )
+//                binding.localMediaContainer.updateLocalMediaViewOrientationDefault(
+//                    localMedia?.view
+//                )
             }
         }
     }
 
     override fun onEnableMic() {
         uiThreadPoster.post {
-            binding.localMediaContainer.showMicMuted()
+          //  binding.localMediaContainer.showMicMuted()
             binding.toggleMicrophoneBtn.isActivated = true
             binding.toggleMicrophoneBtn.isChecked = true
         }
@@ -571,7 +576,7 @@ class LiveClassFragment :
     override fun onDisableMic(state: LiveClassState) {
         viewModel.turnOffAudio()
         uiThreadPoster.post {
-            binding.localMediaContainer.showMicDisabledMuted()
+          //  binding.localMediaContainer.showMicDisabledMuted()
             binding.toggleMicrophoneBtn.isActivated = false
             if (state == LiveClassState.MIC_DISABLED_BY_TEACHER) {
                 showCustomToast(getString(R.string.teacher_turned_off_all_students_mic), true, false)
