@@ -76,7 +76,7 @@ class LiveClassFragment :
             enableSimulcast = true
         )
         (localMedia as CameraLocalMedia).videoSimulcastDegradationPreference = VideoDegradationPreference.Resolution
-        (localMedia as CameraLocalMedia).videoSimulcastEncodingCount = 3        
+        (localMedia as CameraLocalMedia).videoSimulcastEncodingCount = 3
 
         displayManager =
             requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
