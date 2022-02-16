@@ -123,6 +123,7 @@ class LiveClassFragment :
                     return false
                 }
             }
+            setHasFixedSize(true)
             itemAnimator = null
         }
 
