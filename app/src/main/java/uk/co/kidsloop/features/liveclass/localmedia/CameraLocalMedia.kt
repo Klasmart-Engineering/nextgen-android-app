@@ -20,7 +20,7 @@ class CameraLocalMedia(
     private val videoConfig = VideoConfig(640, 480, 30.0)
 
     init {
-        if(enableSimulcast) {
+        if (enableSimulcast) {
             this.videoSimulcastEncodingCount = 3
 
             val videoEncodings = Array(3) { VideoEncodingConfig() }
