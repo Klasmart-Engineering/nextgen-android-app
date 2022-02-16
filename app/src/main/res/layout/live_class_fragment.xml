@@ -10,13 +10,6 @@
         android:background="@color/dark_bg_blue"
         android:padding="@dimen/space_15">
 
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/barrierVertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="start"
-            app:constraint_referenced_ids="guidelineVertical" />
-
         <ImageView
             android:id="@+id/more_btn"
             android:layout_width="wrap_content"
@@ -59,13 +52,6 @@
             app:layout_constraintBottom_toTopOf="@id/toggle_students_video"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineVertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="@dimen/space_190" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/student_feeds_recyclerview"
             android:layout_width="0dp"
@@ -75,9 +61,7 @@
             android:overScrollMode="never"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/more_btn"
-            app:layout_constraintStart_toEndOf="@+id/guidelineVertical"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintEnd_toStartOf="@+id/more_btn"/>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/teacher_video_feed"
@@ -86,7 +70,7 @@
             android:layout_marginEnd="@dimen/space_8"
             app:cardCornerRadius="@dimen/space_21"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/barrierVertical"
+            app:layout_constraintEnd_toStartOf="@id/student_feeds_recyclerview"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
