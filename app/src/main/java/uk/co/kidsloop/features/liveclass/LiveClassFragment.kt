@@ -74,8 +74,12 @@ class LiveClassFragment :
             requireContext(),
             disableAudio = false,
             disableVideo = false,
-            aecContext = AecContext()
+            aecContext = AecContext(),
+            enableSimulcast = true
         )
+        (localMedia as CameraLocalMedia).videoSimulcastDegradationPreference = VideoDegradationPreference.Resolution
+        (localMedia as CameraLocalMedia).videoSimulcastEncodingCount = 3
+
         displayManager =
             requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
         displayManager.registerDisplayListener(this, null)
@@ -382,12 +386,6 @@ class LiveClassFragment :
         }
 
         upstreamConnection?.addOnNetworkQuality { networkQuality ->
-            // TODO @Paul remove these after QA get their stats
-            uiThreadPoster.post {
-                //                shortToast(networkQuality.toString())
-                Log.d(TAG, networkQuality.toString())
-            }
-
             val averageNetworkQuality = when (liveClassManager.getNetworkQualityArray().size) {
                 0 -> {
                     liveClassManager.addToNetworkQualityArray(networkQuality)
@@ -415,15 +413,11 @@ class LiveClassFragment :
                                     when (rolesMap[connection.key]) {
                                         STUDENT_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
-                                                StudentFeedQuality.MODERATE.bitrate
-                                            connection.value.videoStream.maxSendBitrate =
-                                                StudentFeedQuality.MODERATE.bitrate
+                                                StudentFeedQuality.MODERATE.videoBitrate
                                         }
                                         TEACHER_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
-                                                TeacherFeedQuality.MODERATE.bitrate
-                                            connection.value.videoStream.maxSendBitrate =
-                                                TeacherFeedQuality.MODERATE.bitrate
+                                                TeacherFeedQuality.MODERATE.videoBitrate
                                         }
                                     }
                                 }
@@ -437,15 +431,11 @@ class LiveClassFragment :
                                     when (rolesMap[connection.key]) {
                                         STUDENT_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
-                                                StudentFeedQuality.GOOD.bitrate
-                                            connection.value.videoStream.maxSendBitrate =
-                                                StudentFeedQuality.GOOD.bitrate
+                                                StudentFeedQuality.GOOD.videoBitrate
                                         }
                                         TEACHER_ROLE -> {
                                             connection.value.videoStream.maxReceiveBitrate =
-                                                TeacherFeedQuality.GOOD.bitrate
-                                            connection.value.videoStream.maxSendBitrate =
-                                                TeacherFeedQuality.GOOD.bitrate
+                                                TeacherFeedQuality.GOOD.videoBitrate
                                         }
                                     }
                                 }
