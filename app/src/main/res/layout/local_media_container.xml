@@ -31,5 +31,5 @@
         android:maxWidth="10dp"
         android:maxHeight="12dp"
         android:src="@drawable/ic_raise_hand_selected"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 </merge>
