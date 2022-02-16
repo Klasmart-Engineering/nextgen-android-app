@@ -145,7 +145,7 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
         val position = remoteStudentFeeds.indexOfFirst { it.id == clientId }
         if (position > -1) {
             remoteStudentFeeds.removeAt(position)
-            notifyDataSetChanged()
+            notifyItemChanged(position)
         }
     }
 
