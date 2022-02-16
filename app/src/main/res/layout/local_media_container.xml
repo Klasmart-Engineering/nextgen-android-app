@@ -30,7 +30,6 @@
         android:maxWidth="10dp"
         android:layout_gravity="center"
         android:contentDescription="@null"
-        android:elevation="@dimen/space_20"
         android:src="@drawable/ic_raise_hand_selected"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 </merge>

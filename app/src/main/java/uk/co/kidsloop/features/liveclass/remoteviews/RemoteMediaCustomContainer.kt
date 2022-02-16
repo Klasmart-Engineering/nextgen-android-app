@@ -49,10 +49,12 @@ class RemoteMediaCustomContainer @JvmOverloads constructor(
     }
 
     fun showHandRaised() {
+        binding.raiseHandImageView.elevation = 10F
         binding.raiseHandImageView.visible()
     }
 
     fun hideRaiseHand() {
-        binding.raiseHandImageView.gone()
+        binding.raiseHandImageView.elevation = 0F
+        binding.raiseHandImageView.invisible()
     }
 }
