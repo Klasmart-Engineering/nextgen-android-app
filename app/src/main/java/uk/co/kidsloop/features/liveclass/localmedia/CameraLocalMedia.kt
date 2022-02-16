@@ -2,7 +2,11 @@ package uk.co.kidsloop.features.liveclass.localmedia
 
 import android.content.Context
 import android.view.View
-import fm.liveswitch.*
+import fm.liveswitch.LayoutScale
+import fm.liveswitch.VideoConfig
+import fm.liveswitch.VideoEncodingConfig
+import fm.liveswitch.VideoSource
+import fm.liveswitch.ViewSink
 import fm.liveswitch.android.Camera2Source
 import fm.liveswitch.android.CameraPreview
 import uk.co.kidsloop.data.enums.VideoQuality
