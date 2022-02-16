@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.utils.gone
@@ -18,7 +19,7 @@ class RemoteMediaCustomContainer @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+) : CardView(context, attrs, defStyleAttr) {
 
     private val binding = RemoteMediaContainerBinding.inflate(LayoutInflater.from(context), this)
 
