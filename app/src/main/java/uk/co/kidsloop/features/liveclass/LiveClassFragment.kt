@@ -21,9 +21,6 @@ import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.app.utils.* // ktlint-disable no-wildcard-imports
-import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
-import uk.co.kidsloop.data.enums.StudentFeedQuality
-import uk.co.kidsloop.data.enums.TeacherFeedQuality
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.features.liveclass.feeds.FeedsAdapter
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
