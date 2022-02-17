@@ -70,15 +70,21 @@ class LiveClassFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val isTeacher = when (viewModel.sharedPrefsWrapper.getRole()) {
+            TEACHER_ROLE -> true
+            STUDENT_ROLE -> false
+            else -> false
+        }
+
         localMedia = CameraLocalMedia(
             requireContext(),
             disableAudio = false,
             disableVideo = false,
             aecContext = AecContext(),
-            enableSimulcast = true
+            enableSimulcast = true,
+            isTeacher
         )
-        (localMedia as CameraLocalMedia).videoSimulcastDegradationPreference = VideoDegradationPreference.Resolution
-        (localMedia as CameraLocalMedia).videoSimulcastEncodingCount = 3
 
         displayManager =
             requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -381,67 +387,6 @@ class LiveClassFragment :
                 ConnectionState.Failed -> {
                     // Reconnect if the connection failed.
                     openSfuUpstreamConnection()
-                }
-            }
-        }
-
-        upstreamConnection?.addOnNetworkQuality { networkQuality ->
-            val averageNetworkQuality = when (liveClassManager.getNetworkQualityArray().size) {
-                0 -> {
-                    liveClassManager.addToNetworkQualityArray(networkQuality)
-                    // If there is no value inside the array, take the current reading as it is
-                    networkQuality
-                }
-                else -> {
-                    liveClassManager.addToNetworkQualityArray(networkQuality)
-                    val networkQualityArray = liveClassManager.getNetworkQualityArray()
-                    // Calculate the average of the last 2 readings
-                    networkQualityArray.subList(
-                        networkQualityArray.size - 2,
-                        networkQualityArray.size - 1
-                    ).average()
-                }
-            }
-
-            // Handle averageNetworkQuality only if it is different from the latest reading
-            if (averageNetworkQuality != networkQuality) {
-                when (averageNetworkQuality) {
-                    in LiveSwitchNetworkQuality.MODERATE.lowerLimit..LiveSwitchNetworkQuality.MODERATE.upperLimit -> {
-                        liveClassManager.getDownStreamConnections().let { connectionsMap ->
-                            liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
-                                connectionsMap.forEach { connection ->
-                                    when (rolesMap[connection.key]) {
-                                        STUDENT_ROLE -> {
-                                            connection.value.videoStream.maxReceiveBitrate =
-                                                StudentFeedQuality.MODERATE.videoBitrate
-                                        }
-                                        TEACHER_ROLE -> {
-                                            connection.value.videoStream.maxReceiveBitrate =
-                                                TeacherFeedQuality.MODERATE.videoBitrate
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    in LiveSwitchNetworkQuality.GOOD.lowerLimit..LiveSwitchNetworkQuality.GOOD.upperLimit -> {
-                        liveClassManager.getDownStreamConnections().let { connectionsMap ->
-                            liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
-                                connectionsMap.forEach { connection ->
-                                    when (rolesMap[connection.key]) {
-                                        STUDENT_ROLE -> {
-                                            connection.value.videoStream.maxReceiveBitrate =
-                                                StudentFeedQuality.GOOD.videoBitrate
-                                        }
-                                        TEACHER_ROLE -> {
-                                            connection.value.videoStream.maxReceiveBitrate =
-                                                TeacherFeedQuality.GOOD.videoBitrate
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
