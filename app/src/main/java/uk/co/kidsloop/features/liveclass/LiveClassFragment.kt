@@ -122,7 +122,6 @@ class LiveClassFragment :
                     return false
                 }
             }
-            setHasFixedSize(true)
             itemAnimator = null
         }
 
@@ -353,7 +352,7 @@ class LiveClassFragment :
         localMedia?.start()?.then({
             uiThreadPoster.post {
                 studentsFeedAdapter.addLocalMedia(
-                    localMedia?.view,
+                    localMedia!!.view,
                     requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON),
                     requireArguments().getBoolean(IS_CAMERA_TURNED_ON)
                 )

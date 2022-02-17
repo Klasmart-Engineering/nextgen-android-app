@@ -124,11 +124,9 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedViewHolder>() {
 
     open inner class FeedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    fun addLocalMedia(localMediaView: View?, isMicOn: Boolean, isCamOn: Boolean) {
-        localMediaView?.let {
-            remoteStudentFeeds.add(LocalMediaFeedItem(localMediaView, LOCAL_MEDIA_ID, isMicOn, isCamOn))
-            notifyDataSetChanged()
-        }
+    fun addLocalMedia(localMediaView: View, isMicOn: Boolean, isCamOn: Boolean) {
+        remoteStudentFeeds.add(LocalMediaFeedItem(localMediaView, LOCAL_MEDIA_ID, isMicOn, isCamOn))
+        notifyItemInserted(0)
     }
 
     fun addVideoFeed(clientId: String, remoteMediaView: View) {
