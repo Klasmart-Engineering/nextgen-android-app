@@ -2,10 +2,13 @@ package uk.co.kidsloop.features.liveclass.localmedia
 
 import android.content.Context
 import android.view.View
-import fm.liveswitch.*
+import fm.liveswitch.ViewSink
+import fm.liveswitch.LayoutScale
+import fm.liveswitch.VideoConfig
+import fm.liveswitch.VideoDegradationPreference
+import fm.liveswitch.VideoSource
 import fm.liveswitch.android.Camera2Source
 import fm.liveswitch.android.CameraPreview
-import uk.co.kidsloop.data.enums.VideoQuality
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 
 class CameraLocalMedia(
@@ -19,7 +22,7 @@ class CameraLocalMedia(
 
     private var viewSink: CameraPreview = CameraPreview(context, LayoutScale.Cover)
     private val videoConfig = when (isTeacher) {
-        true -> VideoConfig(640,480, 30.0)
+        true -> VideoConfig(640, 480, 30.0)
         false -> VideoConfig(480, 360, 30.0)
     }
 
