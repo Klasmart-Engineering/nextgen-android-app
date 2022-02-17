@@ -40,7 +40,7 @@
             android:id="@+id/status_textview"
             style="@style/ToastStyle"
             android:layout_toEndOf="@+id/cam_muted_imageView"
-            android:text="@string/teacher_turned_off_all_students_camera"
+            android:text="@string/teacher_turned_off_all_cameras"
             android:layout_centerVertical="true"
             android:lines="1"
             android:layout_marginStart="@dimen/space_10"

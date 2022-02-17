@@ -4,7 +4,6 @@ import android.content.Context
 import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
 import android.widget.TextView
@@ -179,7 +178,7 @@ class LiveClassFragment :
                 studentsFeedAdapter.toggleLocalMic(isMicOn = binding.toggleMicrophoneBtn.isChecked.not())
                 viewModel.toggleLocalAudio()
             } else {
-                showCustomToast(getString(R.string.teacher_turned_off_all_students_mic), true, false)
+                showCustomToast(getString(R.string.teacher_turned_off_all_microphones), true, false)
             }
         }
 
@@ -188,7 +187,7 @@ class LiveClassFragment :
                 studentsFeedAdapter.toggleLocalCamera(binding.toggleCameraBtn.isChecked.not())
                 viewModel.toggleLocalVideo()
             } else {
-                showCustomToast(getString(R.string.teacher_turned_off_all_students_camera), false, true)
+                showCustomToast(getString(R.string.teacher_turned_off_all_cameras), false, true)
             }
         }
 
@@ -479,7 +478,7 @@ class LiveClassFragment :
             binding.toggleCameraBtn.isActivated = false
 
             if (state == LiveClassState.CAM_DISABLED_BY_TEACHER) {
-                showCustomToast(getString(R.string.teacher_turned_off_all_students_camera), false, true)
+                showCustomToast(getString(R.string.teacher_turned_off_all_cameras), false, true)
             } else {
                 notificationToast?.cancel()
                 showCustomToast(getString(R.string.teacher_turned_off_all_students_cam_and_mic), true, true)
@@ -543,7 +542,7 @@ class LiveClassFragment :
             studentsFeedAdapter.showLocalMicDisabled()
             binding.toggleMicrophoneBtn.isActivated = false
             if (state == LiveClassState.MIC_DISABLED_BY_TEACHER) {
-                showCustomToast(getString(R.string.teacher_turned_off_all_students_mic), true, false)
+                showCustomToast(getString(R.string.teacher_turned_off_all_microphones), true, false)
             } else {
                 notificationToast?.cancel()
                 showCustomToast(getString(R.string.teacher_turned_off_all_students_cam_and_mic), true, true)
