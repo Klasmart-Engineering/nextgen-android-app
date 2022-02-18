@@ -59,14 +59,24 @@
             android:orientation="vertical"
             app:layout_constraintGuide_end="@dimen/space_170" />
 
+        <uk.co.kidsloop.features.liveclass.localmedia.LocalMediaCustomContainer
+            android:id="@+id/local_media_feed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="@dimen/space_8"
+            app:layout_constraintEnd_toStartOf="@+id/more_btn"
+            android:clipChildren="false"
+            app:cardCornerRadius="@dimen/space_12" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/student_feeds_recyclerview"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginEnd="@dimen/space_8"
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/local_media_feed"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/more_btn"/>
 
@@ -77,7 +87,7 @@
             android:layout_marginEnd="@dimen/space_8"
             app:cardCornerRadius="@dimen/space_21"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/student_feeds_recyclerview"
+            app:layout_constraintEnd_toStartOf="@+id/local_media_feed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 

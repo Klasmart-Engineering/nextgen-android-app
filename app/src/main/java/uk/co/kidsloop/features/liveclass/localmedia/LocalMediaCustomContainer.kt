@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.cardview.widget.CardView
 import androidx.core.view.updateLayoutParams
 import uk.co.kidsloop.R
@@ -65,5 +66,14 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
     fun hideRaiseHand() {
         binding.raiseHandImageView.elevation = 0F
         binding.raiseHandImageView.invisible()
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val parentHeight = MeasureSpec.getSize(heightMeasureSpec)
+        val desiredHeight = parentHeight / 4 - resources.getDimensionPixelSize(R.dimen.space_8)
+        val desiredWidth = desiredHeight * 4 / 3
+        this.setMeasuredDimension(desiredWidth, desiredHeight)
+        measureChildren(MeasureSpec.makeMeasureSpec(desiredWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(desiredHeight, MeasureSpec.EXACTLY))
     }
 }

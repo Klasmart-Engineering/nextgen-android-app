@@ -120,8 +120,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         }
 
         binding.backButton.setOnClickListener {
-            Navigation.findNavController(requireView())
-                .navigate(PreviewFragmentDirections.previewToLogin())
+            Navigation.findNavController(requireView()).navigateUp()
         }
 
         binding.microphoneBtn.setOnClickListener {
