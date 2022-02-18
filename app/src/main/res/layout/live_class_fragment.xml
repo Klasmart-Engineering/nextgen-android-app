@@ -27,7 +27,7 @@
             android:scaleType="fitEnd"
             android:src="@drawable/selector_raise_hand_btn"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <ToggleButton
             android:id="@+id/toggle_students_video"
