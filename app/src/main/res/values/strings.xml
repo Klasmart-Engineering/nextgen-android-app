@@ -32,4 +32,7 @@
     <string name="teacher_turned_off_all_students_cam_and_mic">Your teacher turned off all students\' camera and microphone</string>
     <string name="mic_on">Mic on</string>
     <string name="mic_off">Mic off</string>
+    <string name="leave_class">Leave Class?</string>
+    <string name="leave">Leave</string>
+    <string name="go_back">Go back</string>
 </resources>

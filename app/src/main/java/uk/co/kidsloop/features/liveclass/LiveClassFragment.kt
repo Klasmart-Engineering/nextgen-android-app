@@ -4,7 +4,6 @@ import android.content.Context
 import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,6 +11,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -192,16 +192,33 @@ class LiveClassFragment :
             }
         }
 
-        binding.exitClassBtn.setOnClickListener {
+        binding.confirmExitClassBtn.setOnClickListener {
             viewModel.leaveLiveClass()
+            Navigation.findNavController(requireView())
+                .navigate(LiveClassFragmentDirections.liveclassToLogin())
+        }
+
+        binding.backBtn.setOnClickListener {
+            binding.leaveLiveClassOverlay.gone()
+        }
+
+        binding.exitClassBtn.setOnClickListener {
+            binding.liveClassOverlay.gone()
+            binding.leaveLiveClassOverlay.visible()
+            binding.leaveLiveClassOverlay.postDelayed(
+                {
+                    binding.leaveLiveClassOverlay.gone()
+                    binding.liveClassOverlay.visible()
+                }, 10000L
+            )
         }
 
         binding.exitMenu.setOnClickListener {
-            binding.liveClassOverlay.visibility = View.GONE
+            binding.liveClassOverlay.gone()
         }
 
         binding.moreBtn.setOnClickListener {
-            binding.liveClassOverlay.visibility = View.VISIBLE
+            binding.liveClassOverlay.visible()
         }
 
         binding.toggleStudentsVideo.setOnClickListener { view ->
@@ -344,8 +361,6 @@ class LiveClassFragment :
         localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
-            // TODO This is added for testing purpouse and it will be removed later on
-            requireActivity().finish()
         }
     }
 
