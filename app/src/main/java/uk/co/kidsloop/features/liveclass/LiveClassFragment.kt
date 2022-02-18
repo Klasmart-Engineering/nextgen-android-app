@@ -103,6 +103,12 @@ class LiveClassFragment :
         binding.toggleMicrophoneBtn.isActivated = true
         binding.toggleMicrophoneBtn.isChecked =
             !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
+        if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
+            binding.localMediaFeed.showCameraTurnedOff()
+        }
+        if (!requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
+            binding.localMediaFeed.showMicMuted()
+        }
         studentsFeedAdapter = FeedsAdapter()
         startLocalMedia()
 
@@ -111,9 +117,9 @@ class LiveClassFragment :
             layoutManager = object : LinearLayoutManager(context) {
 
                 override fun checkLayoutParams(lp: RecyclerView.LayoutParams?): Boolean {
-                    val height = height / 3 - resources.getDimensionPixelSize(R.dimen.space_8)
+                    val height = height / 3
                     val width = height * 4 / 3
-                    lp?.height = height
+                    lp?.height = height - resources.getDimensionPixelSize(R.dimen.space_8)
                     lp?.width = width
                     return true
                 }

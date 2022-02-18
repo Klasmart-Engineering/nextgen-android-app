@@ -22,10 +22,6 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.StudentViewHolder>() {
 
     override fun getItemCount() = remoteStudentFeeds.size
 
-    override fun getItemViewType(position: Int): Int {
-        return FeedType.STUDENT_TYPE.viewType
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
         return StudentViewHolder(
             inflate(
