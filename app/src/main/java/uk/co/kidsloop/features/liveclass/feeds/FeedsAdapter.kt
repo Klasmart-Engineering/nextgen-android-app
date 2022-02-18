@@ -35,7 +35,7 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.StudentViewHolder>() {
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
         val feedItem = remoteStudentFeeds[position]
         holder.setIsRecyclable(false)
-        val videoFeed = feedItem.view
+        val videoFeed = feedItem.remoteView
         val videoFeedContainer = holder.binding.studentVideoFeed
         if (videoFeed.parent != null) {
             (videoFeed.parent as RemoteMediaCustomContainer).removeRemoteMediaView()
@@ -66,7 +66,7 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.StudentViewHolder>() {
     }
 
     fun removeVideoFeed(clientId: String) {
-        val position = remoteStudentFeeds.indexOfFirst { it.id == clientId }
+        val position = remoteStudentFeeds.indexOfFirst { it.clientId == clientId }
         if (position > -1) {
             remoteStudentFeeds.removeAt(position)
             notifyDataSetChanged()
@@ -74,14 +74,14 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.StudentViewHolder>() {
     }
 
     fun onHandRaised(clientId: String?) {
-        val position = remoteStudentFeeds.indexOfFirst { it.id == clientId }
+        val position = remoteStudentFeeds.indexOfFirst { it.clientId == clientId }
         if (position > -1) {
             notifyItemChanged(position, SHOW_STUDENT_HAND_RAISED)
         }
     }
 
     fun onHandLowered(clientId: String?) {
-        val position = remoteStudentFeeds.indexOfFirst { it.id == clientId }
+        val position = remoteStudentFeeds.indexOfFirst { it.clientId == clientId }
         if (position > -1) {
             notifyItemChanged(position, HIDE_STUDENT_HAND_RAISED)
         }

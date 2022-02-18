@@ -357,7 +357,7 @@ class LiveClassFragment :
             localMedia?.destroy()
             localMedia = null
             uiThreadPoster.post {
-                findNavController().popBackStack()
+                requireActivity().finish()
             }
         }
     }
