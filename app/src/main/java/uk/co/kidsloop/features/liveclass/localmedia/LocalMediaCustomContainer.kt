@@ -69,7 +69,7 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val parentHeight = MeasureSpec.getSize(heightMeasureSpec)
-        val desiredHeight = parentHeight / 4
+        val desiredHeight = parentHeight / 4 - resources.getDimensionPixelSize(R.dimen.space_8)
         val desiredWidth = parentHeight / 3
         this.setMeasuredDimension(desiredWidth, desiredHeight)
         measureChildren(
