@@ -491,12 +491,8 @@ class LiveClassFragment :
         notificationToast = Toast(requireActivity())
         if (binding.liveClassOverlay.isVisible) {
             notificationToast?.setGravity(Gravity.TOP or Gravity.FILL, 0, 0)
-            toastView.findViewById<TextView>(R.id.start_space).visibility = View.VISIBLE
-            toastView.findViewById<TextView>(R.id.end_space).visibility = View.VISIBLE
         } else {
-            notificationToast?.setGravity(Gravity.START or Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, 40)
-            toastView.findViewById<TextView>(R.id.start_space).visibility = View.GONE
-            toastView.findViewById<TextView>(R.id.end_space).visibility = View.GONE
+            notificationToast?.setGravity(Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, 40)
         }
         toastView.findViewById<TextView>(R.id.status_textview).text = message
         toastView.findViewById<ImageView>(R.id.mic_muted_imageView).isVisible = isMicDisabled
