@@ -28,7 +28,6 @@
         <action
             android:id="@+id/preview_to_liveclass"
             app:destination="@id/live_class_fragment"
-            app:launchSingleTop="true"
             app:popUpTo="@id/preview_fragment"
             app:popUpToInclusive="true">
             <argument
@@ -38,6 +37,12 @@
                 android:name="isMicrophoneTurnedOn"
                 app:argType="boolean" />
         </action>
+
+        <action
+            android:id="@+id/liveclass_to_login"
+            app:destination="@id/login_fragment"
+            app:popUpTo="@id/live_class_fragment"
+            app:popUpToInclusive="true"/>
 
         <fragment
             android:id="@+id/splash_fragment"

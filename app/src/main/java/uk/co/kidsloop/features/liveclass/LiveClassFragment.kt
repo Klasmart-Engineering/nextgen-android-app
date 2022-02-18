@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -207,16 +208,33 @@ class LiveClassFragment :
             }
         }
 
-        binding.exitClassBtn.setOnClickListener {
+        binding.confirmExitClassBtn.setOnClickListener {
             viewModel.leaveLiveClass()
+            Navigation.findNavController(requireView())
+                .navigate(LiveClassFragmentDirections.liveclassToLogin())
+        }
+
+        binding.backBtn.setOnClickListener {
+            binding.leaveLiveClassOverlay.gone()
+        }
+
+        binding.exitClassBtn.setOnClickListener {
+            binding.liveClassOverlay.gone()
+            binding.leaveLiveClassOverlay.visible()
+            binding.leaveLiveClassOverlay.postDelayed(
+                {
+                    binding.leaveLiveClassOverlay.gone()
+                    binding.liveClassOverlay.visible()
+                }, 10000L
+            )
         }
 
         binding.exitMenu.setOnClickListener {
-            binding.liveClassOverlay.visibility = View.GONE
+            binding.liveClassOverlay.gone()
         }
 
         binding.moreBtn.setOnClickListener {
-            binding.liveClassOverlay.visibility = View.VISIBLE
+            binding.liveClassOverlay.visible()
         }
 
         binding.toggleStudentsVideo.setOnClickListener { view ->
