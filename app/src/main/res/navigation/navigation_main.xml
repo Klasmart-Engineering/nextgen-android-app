@@ -42,7 +42,7 @@
             android:id="@+id/liveclass_to_login"
             app:destination="@id/login_fragment"
             app:popUpTo="@id/live_class_fragment"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
 
         <fragment
             android:id="@+id/splash_fragment"

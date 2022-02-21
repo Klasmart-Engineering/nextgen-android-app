@@ -11,14 +11,13 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
-import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -33,6 +32,7 @@ import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -184,7 +184,7 @@ class LiveClassFragment :
     private fun setControls() {
         binding.toggleMicrophoneBtn.setOnClickListener {
             if (binding.toggleMicrophoneBtn.isActivated) {
-                if(binding.toggleMicrophoneBtn.isChecked){
+                if (binding.toggleMicrophoneBtn.isChecked) {
                     binding.localMediaFeed.showMicMuted()
                 } else {
                     binding.localMediaFeed.showMicTurnedOn()
@@ -210,7 +210,6 @@ class LiveClassFragment :
 
         binding.confirmExitClassBtn.setOnClickListener {
             viewModel.leaveLiveClass()
-            stopLocalMedia()
             Navigation.findNavController(requireView())
                 .navigate(LiveClassFragmentDirections.liveclassToLogin())
         }
