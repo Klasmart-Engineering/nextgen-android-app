@@ -190,7 +190,7 @@ class LiveClassFragment :
                 }
                 viewModel.toggleLocalAudio()
             } else {
-                showCustomToast(getString(R.string.teacher_turned_off_all_students_mic), true, false)
+                showCustomToast(getString(R.string.teacher_turned_off_all_microphones), true, false)
             }
         }
 
@@ -203,7 +203,7 @@ class LiveClassFragment :
                 }
                 viewModel.toggleLocalVideo()
             } else {
-                showCustomToast(getString(R.string.teacher_turned_off_all_students_camera), false, true)
+                showCustomToast(getString(R.string.teacher_turned_off_all_cameras), false, true)
             }
         }
 
@@ -430,7 +430,7 @@ class LiveClassFragment :
             binding.toggleCameraBtn.isActivated = false
 
             if (state == LiveClassState.CAM_DISABLED_BY_TEACHER) {
-                showCustomToast(getString(R.string.teacher_turned_off_all_students_camera), false, true)
+                showCustomToast(getString(R.string.teacher_turned_off_all_cameras), false, true)
             } else {
                 notificationToast?.cancel()
                 showCustomToast(getString(R.string.teacher_turned_off_all_students_cam_and_mic), true, true)
@@ -442,13 +442,9 @@ class LiveClassFragment :
         notificationToast?.cancel()
         notificationToast = Toast(requireActivity())
         if (binding.liveClassOverlay.isVisible) {
-            notificationToast?.setGravity(Gravity.TOP or Gravity.FILL, 0, 0)
-            toastView.findViewById<TextView>(R.id.start_space).visibility = View.VISIBLE
-            toastView.findViewById<TextView>(R.id.end_space).visibility = View.VISIBLE
+            notificationToast?.setGravity(Gravity.TOP or Gravity.FILL_HORIZONTAL, 0, 0)
         } else {
-            notificationToast?.setGravity(Gravity.START or Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, 40)
-            toastView.findViewById<TextView>(R.id.start_space).visibility = View.GONE
-            toastView.findViewById<TextView>(R.id.end_space).visibility = View.GONE
+            notificationToast?.setGravity(Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, 0)
         }
         toastView.findViewById<TextView>(R.id.status_textview).text = message
         toastView.findViewById<ImageView>(R.id.mic_muted_imageView).isVisible = isMicDisabled
@@ -494,7 +490,7 @@ class LiveClassFragment :
             binding.localMediaFeed.showMicDisabledMuted()
             binding.toggleMicrophoneBtn.isActivated = false
             if (state == LiveClassState.MIC_DISABLED_BY_TEACHER) {
-                showCustomToast(getString(R.string.teacher_turned_off_all_students_mic), true, false)
+                showCustomToast(getString(R.string.teacher_turned_off_all_microphones), true, false)
             } else {
                 notificationToast?.cancel()
                 showCustomToast(getString(R.string.teacher_turned_off_all_students_cam_and_mic), true, true)
