@@ -9,14 +9,14 @@
         android:id="@+id/start_space"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/space_10"
         android:background="@drawable/rounded_white_bg"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:padding="@dimen/space_10">
 
         <LinearLayout
             android:id="@+id/icons_container"
@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_cam_muted_small"/>
+                android:src="@drawable/ic_cam_muted_small" />
         </LinearLayout>
 
         <TextView
@@ -48,6 +48,8 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/space_10"
             android:layout_toEndOf="@+id/icons_container"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:text="@string/teacher_turned_off_all_cameras" />
     </RelativeLayout>
 
@@ -55,5 +57,5 @@
         android:id="@+id/end_space"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 </LinearLayout>
