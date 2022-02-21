@@ -66,4 +66,15 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
         binding.raiseHandImageView.elevation = 0F
         binding.raiseHandImageView.invisible()
     }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val parentHeight = MeasureSpec.getSize(heightMeasureSpec)
+        val desiredHeight = parentHeight / 4 - resources.getDimensionPixelSize(R.dimen.space_8)
+        val desiredWidth = parentHeight / 3
+        this.setMeasuredDimension(desiredWidth, desiredHeight)
+        measureChildren(
+            MeasureSpec.makeMeasureSpec(desiredWidth, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(desiredHeight, MeasureSpec.EXACTLY)
+        )
+    }
 }
