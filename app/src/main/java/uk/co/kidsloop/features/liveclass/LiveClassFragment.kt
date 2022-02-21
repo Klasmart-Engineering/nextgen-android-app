@@ -210,6 +210,7 @@ class LiveClassFragment :
 
         binding.confirmExitClassBtn.setOnClickListener {
             viewModel.leaveLiveClass()
+            stopLocalMedia()
             Navigation.findNavController(requireView())
                 .navigate(LiveClassFragmentDirections.liveclassToLogin())
         }
@@ -221,12 +222,6 @@ class LiveClassFragment :
         binding.exitClassBtn.setOnClickListener {
             binding.liveClassOverlay.gone()
             binding.leaveLiveClassOverlay.visible()
-            binding.leaveLiveClassOverlay.postDelayed(
-                {
-                    binding.leaveLiveClassOverlay.gone()
-                    binding.liveClassOverlay.visible()
-                }, 10000L
-            )
         }
 
         binding.exitMenu.setOnClickListener {
