@@ -1,13 +1,104 @@
-# Dummy pipeline for now
+# Release pipeline, can be run manually only
+# The release tag is taken from build.gradle 
 name: Release Pipeline
 
 on:
   workflow_dispatch:
+    ## Activate the code below to insert the release tag manually
+    # inputs:
+    #   tag_value:
+    #     type: string
+    #     description: Please insert the release tag
+    #     required: true
+    ##
 
 jobs:
-  test:
-    name: Test Stage
+  validation:
+    name: Validation Stage
     runs-on: ubuntu-latest
+    ## disable the condition to run it on other branches than /main
+    if: ${{ github.ref == 'refs/heads/main' }}
     steps:
-      - name: Show environment v1
-        run: Echo "Running"
+      - name: Checkout latest code
+        uses: actions/checkout@v2
+        
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+  build:
+    name: Build Stage
+    runs-on: ubuntu-latest
+    ## disable the condition to run it on other branches than /main
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:    
+
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+      
+      - name: Cache Gradle Files
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches/
+            ~/.gradle/wrapper/
+          key: cache-gradle
+          
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+     
+      - name: Decode Keystore
+        env:
+            ENCODED_KEYSTORE: ${{ secrets.DEBUG_PROPERTIES  }}
+            SIGNING_PROPERTIES: ${{ secrets.DEBUG_KEYSTORE }}
+        run: |            
+            echo $ENCODED_KEYSTORE | base64 -di > "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
+            echo $SIGNING_PROPERTIES | base64 -di > "${GITHUB_WORKSPACE}"/keystore.properties   
+         
+      - name: Run Gradle Build
+        run: ./gradlew build check --continue  
+
+      - name: Upload Detekt Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: Detekt_reports
+          path: app/build/reports/detekt/*  
+
+      - name: Create Release APK     
+        run: ./gradlew -Pci --console=plain :app:assembleRelease
+
+      - name: Upload Release APK     
+        uses: actions/upload-artifact@v2
+        with:
+          name: release-apk
+          path: app/build/outputs/apk/release/app-release-unsigned.apk 
+          
+      - name: Stop Gradle
+        run: ./gradlew --stop    
+
+      - name: Extract the release information
+        run: |
+          echo app_version=$(cat app/build.gradle | grep versionName | awk '{print $2}' | sed 's/"//g') >> $GITHUB_ENV
+  
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        id: create_release
+        with:
+          tag_name: ${{ env.app_version }}
+          files: |
+            app/build/outputs/apk/release/app-release-unsigned.apk
+          body_path: Release.txt
+
+      - name: Publish to Slack 
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,author,ref,workflow    
+          text: 'Release is available at: ${{ steps.create_release.outputs.url }}'         
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.APK_RELEASE_SLACK_WEBHOOK }}            
