@@ -1,4 +1,5 @@
-# Dummy pipeline for now
+# Release pipeline, can be run manually only
+# The release tag is taken from build.gradle 
 name: Release Pipeline
 
 on:
