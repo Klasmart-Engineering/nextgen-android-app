@@ -27,9 +27,9 @@
     <string name="channel_id">Channel ID</string>
     <string name="turn_off_students_camera">Turn off camera</string>
     <string name="enable_students_camera">Enable camera</string>
-    <string name="teacher_turned_off_all_students_camera">Your teacher turned off all students\' camera</string>
-    <string name="teacher_turned_off_all_students_mic">Your teacher turned off all students\' microphone</string>
-    <string name="teacher_turned_off_all_students_cam_and_mic">Your teacher turned off all students\' camera and microphone</string>
+    <string name="teacher_turned_off_all_cameras">Your teacher turned off all cameras</string>
+    <string name="teacher_turned_off_all_microphones">Your teacher turned off all microphones</string>
+    <string name="teacher_turned_off_all_students_cam_and_mic">Your teacher turned off all cameras and microphones</string>
     <string name="wait_for_teacher_to_arrive">Please wait for the teacher to arrive</string>
     <string name="mic_on">Mic on</string>
     <string name="mic_off">Mic off</string>
