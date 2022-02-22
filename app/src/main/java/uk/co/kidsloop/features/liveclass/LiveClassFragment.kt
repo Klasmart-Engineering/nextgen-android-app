@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -64,13 +63,13 @@ class LiveClassFragment :
 
     private lateinit var studentsFeedAdapter: FeedsAdapter
     private var notificationToast: Toast? = null
+    private var isTeacher: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val isTeacher = when (viewModel.sharedPrefsWrapper.getRole()) {
+        isTeacher = when (viewModel.sharedPrefsWrapper.getRole()) {
             TEACHER_ROLE -> true
-            STUDENT_ROLE -> false
             else -> false
         }
 
@@ -100,18 +99,15 @@ class LiveClassFragment :
         toastView = layoutInflater.inflate(R.layout.custom_toast_layout, null)
         window = requireActivity().window
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        binding.toggleCameraBtn.isActivated = true
-        binding.toggleCameraBtn.isChecked =
-            !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
-        binding.toggleMicrophoneBtn.isActivated = true
-        binding.toggleMicrophoneBtn.isChecked =
-            !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
-        if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
-            binding.localMediaFeed.showCameraTurnedOff()
-        }
-        if (!requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
-            binding.localMediaFeed.showMicMuted()
-        }
+
+        binding.toggleCameraBtn.isActivated = false
+        binding.toggleCameraBtn.isChecked = false
+
+        binding.toggleMicrophoneBtn.isActivated = false
+        binding.toggleMicrophoneBtn.isChecked = false
+
+        binding.localMediaFeed.showCameraTurnedOff()
+        binding.localMediaFeed.showMicMuted()
         studentsFeedAdapter = FeedsAdapter()
         startLocalMedia()
 
@@ -133,9 +129,10 @@ class LiveClassFragment :
             }
         }
 
-        when (viewModel.sharedPrefsWrapper.getRole()) {
-            TEACHER_ROLE -> setUiForTeacher()
-            STUDENT_ROLE -> setUiForStudent()
+        if (isTeacher) {
+            setUiForTeacher()
+        } else {
+            setUiForStudent()
         }
 
         setControls()
@@ -183,14 +180,17 @@ class LiveClassFragment :
     private fun setControls() {
         binding.toggleMicrophoneBtn.setOnClickListener {
             if (binding.toggleMicrophoneBtn.isActivated) {
-                if(binding.toggleMicrophoneBtn.isChecked){
+                if (binding.toggleMicrophoneBtn.isChecked) {
                     binding.localMediaFeed.showMicMuted()
                 } else {
                     binding.localMediaFeed.showMicTurnedOn()
                 }
                 viewModel.toggleLocalAudio()
             } else {
-                showCustomToast(getString(R.string.teacher_turned_off_all_students_mic), true, false)
+                val msgId =
+                    if (liveClassManager.getState() == LiveClassState.JOINED_AND_WAITING_FOR_TEACHER) R.string.wait_for_teacher_to_arrive else
+                        R.string.teacher_turned_off_all_students_mic
+                showCustomToast(getString(msgId), true, false)
             }
         }
 
@@ -203,7 +203,10 @@ class LiveClassFragment :
                 }
                 viewModel.toggleLocalVideo()
             } else {
-                showCustomToast(getString(R.string.teacher_turned_off_all_students_camera), false, true)
+                val msgId =
+                    if (liveClassManager.getState() == LiveClassState.JOINED_AND_WAITING_FOR_TEACHER) R.string.wait_for_teacher_to_arrive else
+                        R.string.teacher_turned_off_all_students_camera
+                showCustomToast(getString(msgId), false, true)
             }
         }
 
@@ -248,10 +251,7 @@ class LiveClassFragment :
         }
     }
 
-    private fun openSfuDownstreamConnection(
-        remoteConnectionInfo: ConnectionInfo,
-        channel: Channel
-    ): SfuDownstreamConnection {
+    private fun openSfuDownstreamConnection(remoteConnectionInfo: ConnectionInfo) {
         // Create remote media.
         val remoteMedia = SFURemoteMedia(
             requireContext(),
@@ -260,41 +260,36 @@ class LiveClassFragment :
             aecContext = AecContext()
         )
 
-        // Create audio and video streams from remote media.
-        val audioStream: AudioStream? =
-            if (remoteConnectionInfo.hasAudio) AudioStream(remoteMedia) else null
-        val videoStream: VideoStream? =
-            if (remoteConnectionInfo.hasVideo) VideoStream(remoteMedia) else null
-
-        // Create a SFU downstream connection with remote audio and video and data streams.
-        val connection: SfuDownstreamConnection =
-            channel.createSfuDownstreamConnection(
-                remoteConnectionInfo,
-                audioStream,
-                videoStream,
-                liveClassManager.getNewDownstreamDataStream()
-            )
-
-        (remoteConnectionInfo.clientId ?: emptyString()).let { clientId ->
-            liveClassManager.saveDownStreamConnection(clientId, connection)
-            when (remoteConnectionInfo.clientRoles[0]) {
-                STUDENT_ROLE -> liveClassManager.saveDownStreamConnectionRole(
-                    clientId,
-                    STUDENT_ROLE
-                )
-                TEACHER_ROLE -> liveClassManager.saveDownStreamConnectionRole(
-                    clientId,
-                    TEACHER_ROLE
-                )
-            }
-        }
+        val connection = viewModel.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia)
 
         // Adding remote view to UI.
         when (remoteConnectionInfo.clientRoles[0]) {
             TEACHER_ROLE -> {
                 uiThreadPoster.post {
-                    binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId ?: emptyString()
+                    binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
                     binding.teacherVideoFeed.addView(remoteMedia.view, 1)
+
+                    val shouldTurnOnCam = requireArguments().getBoolean(IS_CAMERA_TURNED_ON)
+                    val shouldUnMuteMic = requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)
+
+                    binding.toggleCameraBtn.isActivated = true
+                    if (shouldTurnOnCam) {
+                        binding.toggleCameraBtn.isChecked = false
+                        binding.localMediaFeed.showCameraTurnedOn()
+                        viewModel.toggleLocalVideo()
+                    } else {
+                        binding.toggleCameraBtn.isChecked = true
+                    }
+
+                    binding.toggleMicrophoneBtn.isActivated = true
+
+                    if (shouldUnMuteMic) {
+                        binding.toggleMicrophoneBtn.isChecked = false
+                        binding.localMediaFeed.showMicTurnedOn()
+                        viewModel.toggleLocalAudio()
+                    } else {
+                        binding.toggleMicrophoneBtn.isChecked = true
+                    }
                 }
             }
 
@@ -303,7 +298,7 @@ class LiveClassFragment :
             }
         }
 
-        connection.addOnStateChange { conn: ManagedConnection ->
+        connection?.addOnStateChange { conn: ManagedConnection ->
             if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
                 val clientId = remoteConnectionInfo.clientId ?: emptyString()
 
@@ -318,14 +313,11 @@ class LiveClassFragment :
                 }
                 remoteMedia.destroy()
                 liveClassManager.removeDownStreamConnection(clientId)
-                liveClassManager.removeDownStreamConnectionRole(clientId)
             } else if (conn.state == ConnectionState.Failed) {
                 // Reconnect if the connection failed.
-                openSfuDownstreamConnection(remoteConnectionInfo, channel)
+                openSfuDownstreamConnection(remoteConnectionInfo)
             }
         }
-        connection.open()
-        return connection
     }
 
     private fun getAudioStream(localMedia: LocalMedia<View>?): AudioStream? {
@@ -347,11 +339,11 @@ class LiveClassFragment :
         // Check for existing remote upstream connections and open a downstream connection for
         // each of them.
         for (connectionInfo in channel.remoteUpstreamConnectionInfos) {
-            openSfuDownstreamConnection(connectionInfo, channel)
+            openSfuDownstreamConnection(connectionInfo)
         }
 
         channel.addOnRemoteUpstreamConnectionOpen { connectionInfo ->
-            openSfuDownstreamConnection(connectionInfo, channel)
+            openSfuDownstreamConnection(connectionInfo)
         }
     }
 
@@ -378,8 +370,8 @@ class LiveClassFragment :
         val upstreamConnection = viewModel.openSfuUpstreamConnection(
             getAudioStream(localMedia),
             getVideoStream(localMedia),
-            requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true),
-            requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
+            false,
+            false
         )
 
         upstreamConnection?.addOnStateChange { connection ->

@@ -91,13 +91,13 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/local_video_student_overlay"
+                android:id="@+id/teacher_video_feed_overlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:contentDescription="@null"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_local_media_turned_off_teacher"
+                android:src="@drawable/ic_waiting_for_teacher"
                 android:visibility="visible" />
         </androidx.cardview.widget.CardView>
 

@@ -25,8 +25,7 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
     private var upstreamDataChannel: DataChannel? = null
     private var upstreamDataStream: DataStream? = null
 
-    private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection>()
-    private val connectionsRoleMap = mutableMapOf<String, String>()
+    private val downstreamConnectionsMap = mutableMapOf<String, SfuDownstreamConnection?>()
 
     private var token: String? = null
     private var remoteChannel: Channel? = null
@@ -82,7 +81,7 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         return DataStream(dataChannel)
     }
 
-    fun saveDownStreamConnection(clientId: String, connection: SfuDownstreamConnection) {
+    fun saveDownStreamConnection(clientId: String, connection: SfuDownstreamConnection?) {
         downstreamConnectionsMap[clientId] = connection
     }
 
@@ -90,20 +89,8 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         downstreamConnectionsMap.remove(clientId)
     }
 
-    fun getDownStreamConnections(): Map<String, SfuDownstreamConnection> {
+    fun getDownStreamConnections(): Map<String, SfuDownstreamConnection?> {
         return downstreamConnectionsMap.toMap()
-    }
-
-    fun saveDownStreamConnectionRole(clientId: String, role: String) {
-        connectionsRoleMap[clientId] = role
-    }
-
-    fun removeDownStreamConnectionRole(clientId: String) {
-        connectionsRoleMap.remove(clientId)
-    }
-
-    fun getDownStreamConnectionsRoles(): Map<String, String> {
-        return connectionsRoleMap.toMap()
     }
 
     fun setUpstreamConnection(upstreamConnection: SfuUpstreamConnection) {

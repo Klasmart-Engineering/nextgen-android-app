@@ -3,7 +3,8 @@ package uk.co.kidsloop.features.liveclass.state
 enum class LiveClassState {
     IDLE,
     REGISTERED,
-    JOINED,
+    JOINED_AND_WAITING_FOR_TEACHER,
+    LIVE_CLASS_STARTED,
     CAM_DISABLED_BY_TEACHER,
     CAM_ENABLED_BY_TEACHER,
     MIC_DISABLED_BY_TEACHER,
