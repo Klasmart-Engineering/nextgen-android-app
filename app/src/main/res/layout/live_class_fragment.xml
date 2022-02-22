@@ -88,17 +88,30 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/local_media_feed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:cardBackgroundColor="#0F234D">
 
             <ImageView
                 android:id="@+id/teacher_video_feed_overlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:contentDescription="@null"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_waiting_for_teacher"
-                android:visibility="visible" />
+                android:src="@drawable/ic_blackboard"
+                android:layout_marginBottom="@dimen/space_65"
+                android:layout_gravity="bottom|center_horizontal"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/waiting_state_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/yellow"
+                android:fontFamily="@font/rooney_sans_bold"
+                android:textSize="28sp"
+                android:layout_gravity="top|center_horizontal"
+                android:layout_marginTop="@dimen/space_38"
+                android:text="@string/wait_for_teacher_to_arrive"/>
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

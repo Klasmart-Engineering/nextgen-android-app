@@ -281,8 +281,11 @@ class LiveClassFragment :
         when (remoteConnectionInfo.clientRoles[0]) {
             TEACHER_ROLE -> {
                 uiThreadPoster.post {
+                    binding.raiseHandBtn.isActivated = true
                     binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
                     binding.teacherVideoFeed.addView(remoteMedia.view, 1)
+                    binding.teacherVideoFeedOverlay.isVisible = false
+                    binding.waitingStateTextview.isVisible = false
 
                     val shouldTurnOnCam = requireArguments().getBoolean(IS_CAMERA_TURNED_ON)
                     val shouldUnMuteMic = requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)
@@ -390,27 +393,11 @@ class LiveClassFragment :
         )
 
         upstreamConnection?.addOnStateChange { connection ->
-            when (connection.state) {
-                ConnectionState.Initializing -> {
-                    onConnectionInitializing()
-                }
-                ConnectionState.Connected -> {
-                    onConnectedSuccessfully()
-                }
-                ConnectionState.Failed -> {
-                    // Reconnect if the connection failed.
-                    openSfuUpstreamConnection()
-                }
+            if (connection.state == ConnectionState.Failed) {
+                // Reconnect if the connection failed.
+                openSfuUpstreamConnection()
             }
         }
-    }
-
-    private fun onConnectionInitializing() {
-        binding.raiseHandBtn.isActivated = false
-    }
-
-    private fun onConnectedSuccessfully() {
-        binding.raiseHandBtn.isActivated = true
     }
 
     override fun onRaiseHand(clientId: String?) {
