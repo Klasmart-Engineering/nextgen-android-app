@@ -100,14 +100,29 @@ class LiveClassFragment :
         window = requireActivity().window
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        binding.toggleCameraBtn.isActivated = false
-        binding.toggleCameraBtn.isChecked = false
+        if (isTeacher) {
+            binding.toggleCameraBtn.isActivated = true
+            binding.toggleCameraBtn.isChecked =
+                !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
+            binding.toggleMicrophoneBtn.isActivated = true
+            binding.toggleMicrophoneBtn.isChecked =
+                !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
+            if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
+                binding.localMediaFeed.showCameraTurnedOff()
+            }
+            if (!requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
+                binding.localMediaFeed.showMicMuted()
+            }
+        } else {
+            binding.toggleCameraBtn.isActivated = false
+            binding.toggleCameraBtn.isChecked = false
 
-        binding.toggleMicrophoneBtn.isActivated = false
-        binding.toggleMicrophoneBtn.isChecked = false
+            binding.toggleMicrophoneBtn.isActivated = false
+            binding.toggleMicrophoneBtn.isChecked = false
 
-        binding.localMediaFeed.showCameraTurnedOff()
-        binding.localMediaFeed.showMicMuted()
+            binding.localMediaFeed.showCameraTurnedOff()
+            binding.localMediaFeed.showMicMuted()
+        }
         studentsFeedAdapter = FeedsAdapter()
         startLocalMedia()
 
