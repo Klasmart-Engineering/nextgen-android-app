@@ -193,8 +193,8 @@ class LiveClassFragment :
 
         binding.localMediaFeed.showCameraTurnedOff()
         binding.localMediaFeed.showMicDisabledMuted()
-        binding.waitingStateTextview.visibility = View.VISIBLE
-        binding.blackboardImageView.visibility = View.VISIBLE
+        binding.waitingStateTextview.visible()
+        binding.blackboardImageView.visible()
     }
 
     private fun setControls() {
@@ -286,7 +286,7 @@ class LiveClassFragment :
         when (remoteConnectionInfo.clientRoles[0]) {
             TEACHER_ROLE -> {
                 uiThreadPoster.post {
-                    binding.raiseHandBtn.isEnabled = true
+                    binding.raiseHandBtn.enable()
                     binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
                     binding.teacherVideoFeed.addView(remoteMedia.view, 1)
                     binding.teacherVideoFeedOverlay.isVisible = false
