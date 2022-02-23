@@ -86,7 +86,7 @@ jobs:
           echo app_version=$(cat app/build.gradle | grep versionName | awk '{print $2}' | sed 's/"//g') >> $GITHUB_ENV
 
       - name: Run MobSF Analysis
-        uses: fundacaocerti/mobsf-action@v1.6
+        uses: fundacaocerti/mobsf-action@v1.7
         env:
           INPUT_FILE_NAME: app/build/outputs/apk/release/app-release-unsigned.apk
           SCAN_TYPE: apk
