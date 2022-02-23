@@ -12,7 +12,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -219,8 +218,13 @@ class LiveClassFragment :
         }
 
         binding.exitClassBtn.setOnClickListener {
-            binding.liveClassOverlay.gone()
-            binding.leaveLiveClassOverlay.visible()
+            val dialogLeaveClass = LeaveClassDialog()
+            dialogLeaveClass.dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+            dialogLeaveClass.show(childFragmentManager, "leaveClassDialog")
+
+//            binding.liveClassOverlay.gone()
+//            binding.leaveLiveClassOverlay.visible()
         }
 
         binding.exitMenu.setOnClickListener {
