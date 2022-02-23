@@ -158,6 +158,7 @@ class LiveClassFragment :
     }
 
     private fun setUiForTeacher() {
+        showLoading()
         binding.raiseHandBtn.gone()
         binding.waitingStateTextview.visibility = View.GONE
         binding.blackboardImageView.visibility = View.GONE
@@ -284,7 +285,6 @@ class LiveClassFragment :
         // Adding remote view to UI.
         when (remoteConnectionInfo.clientRoles[0]) {
             TEACHER_ROLE -> {
-                Log.d("Connected state", "teacher is on")
                 uiThreadPoster.post {
                     binding.raiseHandBtn.isEnabled = true
                     binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
@@ -353,11 +353,9 @@ class LiveClassFragment :
     }
 
     private fun showLoading() {
-        binding.loadingScreen.visibility = View.VISIBLE
     }
 
     private fun hideLoading() {
-        binding.loadingScreen.visibility = View.GONE
     }
 
     private fun onClientRegistered(channel: Channel) {
