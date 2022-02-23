@@ -84,21 +84,34 @@ jobs:
       - name: Extract the release information
         run: |
           echo app_version=$(cat app/build.gradle | grep versionName | awk '{print $2}' | sed 's/"//g') >> $GITHUB_ENV
-  
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        id: create_release
-        with:
-          tag_name: ${{ env.app_version }}
-          files: |
-            app/build/outputs/apk/release/app-release-unsigned.apk
-          body_path: Release.txt
 
-      - name: Publish to Slack 
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,author,ref,workflow    
-          text: 'Release is available at: ${{ steps.create_release.outputs.url }}'         
+      - name: Run MobSF Analysis
+        uses: fundacaocerti/mobsf-action@v1.6
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.APK_RELEASE_SLACK_WEBHOOK }}            
+          INPUT_FILE_NAME: app/build/outputs/apk/release/app-release-unsigned.apk
+          SCAN_TYPE: apk
+          OUTPUT_FILE_NAME: mobsf-report
+
+      - name: Upload MobSF Analysis PDF Result
+        uses: actions/upload-artifact@v2
+        with:
+          name: mobsf-report.pdf
+          path: mobsf-report.pdf
+          
+      # - name: Create Release
+      #   uses: softprops/action-gh-release@v1
+      #   id: create_release
+      #   with:
+      #     tag_name: ${{ env.app_version }}
+      #     files: |
+      #       app/build/outputs/apk/release/app-release-unsigned.apk
+      #     body_path: Release.txt
+
+      # - name: Publish to Slack 
+      #   uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: ${{ job.status }}
+      #     fields: repo,message,author,ref,workflow    
+      #     text: 'Release is available at: ${{ steps.create_release.outputs.url }}'         
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.APK_RELEASE_SLACK_WEBHOOK }}            
