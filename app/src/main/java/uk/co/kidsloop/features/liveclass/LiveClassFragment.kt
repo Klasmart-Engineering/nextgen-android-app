@@ -4,6 +4,7 @@ import android.content.Context
 import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
 import android.widget.TextView
@@ -100,29 +101,6 @@ class LiveClassFragment :
         window = requireActivity().window
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        if (isTeacher) {
-            binding.toggleCameraBtn.isActivated = true
-            binding.toggleCameraBtn.isChecked =
-                !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
-            binding.toggleMicrophoneBtn.isActivated = true
-            binding.toggleMicrophoneBtn.isChecked =
-                !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
-            if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
-                binding.localMediaFeed.showCameraTurnedOff()
-            }
-            if (!requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
-                binding.localMediaFeed.showMicMuted()
-            }
-        } else {
-            binding.toggleCameraBtn.isActivated = false
-            binding.toggleCameraBtn.isChecked = false
-
-            binding.toggleMicrophoneBtn.isActivated = false
-            binding.toggleMicrophoneBtn.isChecked = false
-
-            binding.localMediaFeed.showCameraTurnedOff()
-            binding.localMediaFeed.showMicMuted()
-        }
         studentsFeedAdapter = FeedsAdapter()
         startLocalMedia()
 
@@ -185,11 +163,33 @@ class LiveClassFragment :
         binding.raiseHandBtn.gone()
         binding.toggleStudentsVideo.visible()
         binding.toggleStudentsAudio.visible()
+
+        binding.toggleCameraBtn.isActivated = true
+        binding.toggleCameraBtn.isChecked =
+            !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
+        binding.toggleMicrophoneBtn.isActivated = true
+        binding.toggleMicrophoneBtn.isChecked =
+            !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
+        if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
+            binding.localMediaFeed.showCameraTurnedOff()
+        }
+        if (!requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
+            binding.localMediaFeed.showMicMuted()
+        }
     }
 
     private fun setUiForStudent() {
         binding.raiseHandBtn.visible()
         binding.raiseHandBtn.isActivated = false
+
+        binding.toggleCameraBtn.isActivated = false
+        binding.toggleCameraBtn.isChecked = false
+
+        binding.toggleMicrophoneBtn.isActivated = false
+        binding.toggleMicrophoneBtn.isChecked = false
+
+        binding.localMediaFeed.showCameraTurnedOff()
+        binding.localMediaFeed.showMicMuted()
     }
 
     private fun setControls() {
@@ -280,11 +280,13 @@ class LiveClassFragment :
         // Adding remote view to UI.
         when (remoteConnectionInfo.clientRoles[0]) {
             TEACHER_ROLE -> {
+                Log.d("Connected state", "teacher is on")
                 uiThreadPoster.post {
                     binding.raiseHandBtn.isActivated = true
                     binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
                     binding.teacherVideoFeed.addView(remoteMedia.view, 1)
                     binding.teacherVideoFeedOverlay.isVisible = false
+                    binding.blackboardImageView.isVisible = false
                     binding.waitingStateTextview.isVisible = false
 
                     val shouldTurnOnCam = requireArguments().getBoolean(IS_CAMERA_TURNED_ON)
@@ -396,6 +398,8 @@ class LiveClassFragment :
             if (connection.state == ConnectionState.Failed) {
                 // Reconnect if the connection failed.
                 openSfuUpstreamConnection()
+            } else if(connection.state == ConnectionState.Connected){
+                binding.loadingScreen.visibility = View.GONE
             }
         }
     }
