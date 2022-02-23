@@ -398,7 +398,7 @@ class LiveClassFragment :
             if (connection.state == ConnectionState.Failed) {
                 // Reconnect if the connection failed.
                 openSfuUpstreamConnection()
-            } else if(connection.state == ConnectionState.Connected){
+            } else if (connection.state == ConnectionState.Connected) {
                 binding.loadingScreen.visibility = View.GONE
             }
         }

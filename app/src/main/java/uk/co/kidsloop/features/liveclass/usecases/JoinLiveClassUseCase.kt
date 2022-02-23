@@ -5,11 +5,11 @@ import fm.liveswitch.ChannelClaim
 import fm.liveswitch.Client
 import fm.liveswitch.Future
 import fm.liveswitch.Token
+import javax.inject.Inject
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.features.liveclass.LiveClassManager
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config
-import javax.inject.Inject
 
 class JoinLiveClassUseCase @Inject constructor(
     private val liveClassManager: LiveClassManager,
