@@ -9,8 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="dark_purple">#322B5A</color>
     <color name="dark_bg_blue">#27397A</color>
-    <color name="live_class_overlay">#99000000</color>
+    <color name="overlay">#99000000</color>
     <color name="transparent">#00000000</color>
     <color name="light_blue">#3984F7</color>
     <color name="light_cyan">#DFF8FF</color>
+    <color name="yellow">#F9CE26</color>
+    <color name="dark_blue">#0F234D</color>
 </resources>
