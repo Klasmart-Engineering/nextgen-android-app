@@ -38,7 +38,6 @@ class LiveClassViewModel @Inject constructor(
     val classroomStateLiveData: LiveData<LiveClassUiState> get() = _classroomStateLiveData
 
     sealed class LiveClassUiState {
-        object Loading : LiveClassUiState()
         data class RegistrationSuccessful(val channel: Channel) : LiveClassUiState()
         data class FailedToJoiningLiveClass(val message: String?) : LiveClassUiState()
         object UnregisterSuccessful : LiveClassUiState()
@@ -46,7 +45,6 @@ class LiveClassViewModel @Inject constructor(
     }
 
     fun joinLiveClass() {
-        _classroomStateLiveData.value = LiveClassUiState.Loading
         joinLiveClassUseCase.joinAsync().then { channels ->
             _classroomStateLiveData.postValue(LiveClassUiState.RegistrationSuccessful(channels[0]))
         }.fail(

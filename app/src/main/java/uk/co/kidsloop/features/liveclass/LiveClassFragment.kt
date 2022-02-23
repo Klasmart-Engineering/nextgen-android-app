@@ -40,7 +40,6 @@ class LiveClassFragment :
     DisplayManager.DisplayListener {
 
     companion object {
-
         val TAG = LiveClassFragment::class.qualifiedName
         const val IS_CAMERA_TURNED_ON = "isCameraTurnedOn"
         const val IS_MICROPHONE_TURNED_ON = "isMicrophoneTurnedOn"
@@ -135,11 +134,10 @@ class LiveClassFragment :
             Observer
             {
                 when (it) {
-                    is LiveClassViewModel.LiveClassUiState.Loading -> showLoading()
                     is LiveClassViewModel.LiveClassUiState.RegistrationSuccessful -> onClientRegistered(
                         it.channel
                     )
-                    is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> handleFailures()
+                    is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> hideLoading()
                     is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
                     is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
                 }
@@ -161,6 +159,9 @@ class LiveClassFragment :
 
     private fun setUiForTeacher() {
         binding.raiseHandBtn.gone()
+        binding.waitingStateTextview.visibility = View.GONE
+        binding.blackboardImageView.visibility = View.GONE
+
         binding.toggleStudentsVideo.visible()
         binding.toggleStudentsAudio.visible()
 
@@ -179,8 +180,9 @@ class LiveClassFragment :
     }
 
     private fun setUiForStudent() {
+        showLoading()
         binding.raiseHandBtn.visible()
-        binding.raiseHandBtn.isActivated = false
+        binding.raiseHandBtn.isEnabled = false
 
         binding.toggleCameraBtn.isActivated = false
         binding.toggleCameraBtn.isChecked = false
@@ -189,7 +191,9 @@ class LiveClassFragment :
         binding.toggleMicrophoneBtn.isChecked = false
 
         binding.localMediaFeed.showCameraTurnedOff()
-        binding.localMediaFeed.showMicMuted()
+        binding.localMediaFeed.showMicDisabledMuted()
+        binding.waitingStateTextview.visibility = View.VISIBLE
+        binding.blackboardImageView.visibility = View.VISIBLE
     }
 
     private fun setControls() {
@@ -230,11 +234,11 @@ class LiveClassFragment :
         }
 
         binding.exitMenu.setOnClickListener {
-            binding.liveClassOverlay.visibility = View.GONE
+            binding.liveClassOverlay.isVisible = false
         }
 
         binding.moreBtn.setOnClickListener {
-            binding.liveClassOverlay.visibility = View.VISIBLE
+            binding.liveClassOverlay.isVisible = true
         }
 
         binding.toggleStudentsVideo.setOnClickListener { view ->
@@ -282,7 +286,7 @@ class LiveClassFragment :
             TEACHER_ROLE -> {
                 Log.d("Connected state", "teacher is on")
                 uiThreadPoster.post {
-                    binding.raiseHandBtn.isActivated = true
+                    binding.raiseHandBtn.isEnabled = true
                     binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
                     binding.teacherVideoFeed.addView(remoteMedia.view, 1)
                     binding.teacherVideoFeedOverlay.isVisible = false
@@ -349,9 +353,11 @@ class LiveClassFragment :
     }
 
     private fun showLoading() {
+        binding.loadingScreen.visibility = View.VISIBLE
     }
 
-    private fun handleFailures() {
+    private fun hideLoading() {
+        binding.loadingScreen.visibility = View.GONE
     }
 
     private fun onClientRegistered(channel: Channel) {
@@ -390,8 +396,8 @@ class LiveClassFragment :
         val upstreamConnection = viewModel.openSfuUpstreamConnection(
             getAudioStream(localMedia),
             getVideoStream(localMedia),
-            false,
-            false
+            isTeacher,
+            isTeacher
         )
 
         upstreamConnection?.addOnStateChange { connection ->
@@ -399,7 +405,7 @@ class LiveClassFragment :
                 // Reconnect if the connection failed.
                 openSfuUpstreamConnection()
             } else if (connection.state == ConnectionState.Connected) {
-                binding.loadingScreen.visibility = View.GONE
+                hideLoading()
             }
         }
     }
