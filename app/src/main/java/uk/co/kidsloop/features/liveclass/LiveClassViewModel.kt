@@ -7,18 +7,26 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fm.liveswitch.AudioStream
 import fm.liveswitch.Channel
+import fm.liveswitch.ConnectionInfo
 import fm.liveswitch.IAction1
+import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
+import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
+import uk.co.kidsloop.features.liveclass.usecases.JoinLiveClassUseCase
+import uk.co.kidsloop.features.liveclass.usecases.OpenSfuDownstreamConnection
+import uk.co.kidsloop.features.liveclass.usecases.OpenSfuUpstreamConnectionUseCase
+import uk.co.kidsloop.features.liveclass.usecases.SendDataChannelEventUseCase
 
 @HiltViewModel
 class LiveClassViewModel @Inject constructor(
     private val joinLiveClassUseCase: JoinLiveClassUseCase,
     private val openSfuUpstreamConnectionUseCase: OpenSfuUpstreamConnectionUseCase,
+    private val openSfuDownstreamConnection: OpenSfuDownstreamConnection,
     private val sendDataChannelEventUseCase: SendDataChannelEventUseCase,
     private val liveClassManager: LiveClassManager
 ) : ViewModel() {
@@ -147,6 +155,13 @@ class LiveClassViewModel @Inject constructor(
                 _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
             }
         )
+    }
+
+    fun openSfuDownstreamConnection(
+        remoteConnectionInfo: ConnectionInfo,
+        remoteMedia: SFURemoteMedia
+    ): SfuDownstreamConnection? {
+        return openSfuDownstreamConnection.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia)
     }
 
     override fun onCleared() {
