@@ -13,7 +13,9 @@ import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
@@ -75,18 +77,39 @@ class LiveClassViewModel @Inject constructor(
     }
 
     fun toggleLocalAudio() {
-        liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
-            val config = upstreamConnection.config
-            config.localAudioMuted = !config.localAudioMuted
-            upstreamConnection.update(config)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
+                    val config = upstreamConnection.config
+                    config.localAudioMuted = !config.localAudioMuted
+                    upstreamConnection.update(config)
+                }
+            }
         }
     }
 
     fun toggleLocalVideo() {
-        liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
-            val config = upstreamConnection.config
-            config.localVideoMuted = !config.localVideoMuted
-            upstreamConnection.update(config)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
+                    val config = upstreamConnection.config
+                    config.localVideoMuted = !config.localVideoMuted
+                    upstreamConnection.update(config)
+                }
+            }
+        }
+    }
+
+    fun updateUpstreamConnection(isVideoOn: Boolean, isAudioOn: Boolean) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
+                    val config = upstreamConnection.config
+                    config.localVideoMuted = !isVideoOn
+                    config.localAudioMuted = !isAudioOn
+                    upstreamConnection.update(config)
+                }
+            }
         }
     }
 
