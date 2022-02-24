@@ -13,6 +13,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -228,11 +229,6 @@ class LiveClassFragment :
             dialogsManager.showLeaveDialog()
             setFragmentResultListener(LeaveClassDialog.TAG.toString()) { _, _ ->
                 viewModel.leaveLiveClass()
-                Navigation.findNavController(requireView()).navigate(LiveClassFragmentDirections.liveclassToLogin())
-                val fm = requireActivity().supportFragmentManager
-                for (i in 0 until fm.backStackEntryCount) {
-                    fm.popBackStack()
-                }
             }
         }
 
@@ -376,6 +372,14 @@ class LiveClassFragment :
         localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
+
+            uiThreadPoster.post{
+                val fm = requireActivity().supportFragmentManager
+                for (i in 0 until fm.backStackEntryCount) {
+                    fm.popBackStack()
+                }
+                Navigation.findNavController(requireView()).navigate(LiveClassFragmentDirections.liveclassToLogin())
+            }
         }
     }
 
