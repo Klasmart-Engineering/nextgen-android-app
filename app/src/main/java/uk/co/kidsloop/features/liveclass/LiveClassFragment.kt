@@ -1,9 +1,16 @@
 package uk.co.kidsloop.features.liveclass
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.display.DisplayManager
+import android.media.AudioFormat
+import android.media.AudioRecord
+import android.media.MediaRecorder
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,11 +23,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
-import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.app.utils.* // ktlint-disable no-wildcard-imports
+import uk.co.kidsloop.app.utils.permissions.isPermissionGranted
+import uk.co.kidsloop.data.enums.KidsloopPermissions
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.features.liveclass.feeds.FeedsAdapter
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
@@ -28,9 +36,12 @@ import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
+import uk.co.kidsloop.features.preview.PreviewFragment
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
+import java.io.IOException
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -57,6 +68,11 @@ class LiveClassFragment :
     private lateinit var display: Display
     private var initialDisplayOrientation: Int = 1
     private lateinit var toastView: View
+
+    private var audioRecord: AudioRecord? = null
+    private var isRecordingAudio = false
+    private var currentAmplitude = 0.0
+    private var recordingThread: Thread? = null
 
     private val viewModel by viewModels<LiveClassViewModel>()
 
@@ -127,6 +143,7 @@ class LiveClassFragment :
         }
 
         setControls()
+        startRecording()
 
         viewModel.classroomStateLiveData.observe(
             viewLifecycleOwner,
@@ -328,6 +345,69 @@ class LiveClassFragment :
             } else if (conn.state == ConnectionState.Failed) {
                 // Reconnect if the connection failed.
                 openSfuDownstreamConnection(remoteConnectionInfo)
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startRecording() {
+        if (audioRecord == null) {
+            if (isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type).not())
+                return
+
+            audioRecord = AudioRecord(
+                MediaRecorder.AudioSource.MIC,
+                44100,
+                AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.ENCODING_PCM_8BIT,
+                (AudioRecord.getMinBufferSize(44100, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_8BIT) / 2)
+            )
+
+            if (audioRecord!!.state != AudioRecord.STATE_INITIALIZED) { // check for proper initialization
+                Log.e(PreviewFragment.TAG, "error initializing AudioRecord")
+                shortToast("Couldn't initialize AudioRecord, check configuration")
+                return
+            }
+            audioRecord!!.startRecording()
+            isRecordingAudio = true
+            recordingThread = Thread { playAnimationOnMicActivity() }
+            recordingThread!!.start()
+        } else {
+            recordingThread = Thread { playAnimationOnMicActivity() }
+            recordingThread!!.start()
+        }
+    }
+
+    private fun playAnimationOnMicActivity() {
+        val data =
+            ByteArray(
+                AudioRecord.getMinBufferSize(
+                    44100,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_8BIT
+                ) / 2
+            )
+        var amplitude = 0.0
+        while (true) {
+            val read = audioRecord!!.read(data, 0, data.size)
+            try {
+                var sum = 0.0
+                for (i in 0 until read) {
+                    sum += (data[i] * data[i]).toDouble() + 50
+                    amplitude = sum / read
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        Log.d(TAG, amplitude.toString())
+                    }, 100)
+                }
+                Handler(Looper.getMainLooper()).postDelayed({
+                    Log.d(TAG, amplitude.toString())
+                }, 100)
+            } catch (e: IOException) {
+                Log.d(
+                    PreviewFragment.TAG,
+                    "Exception while recording with AudioRecord, $e"
+                )
+                e.printStackTrace()
             }
         }
     }

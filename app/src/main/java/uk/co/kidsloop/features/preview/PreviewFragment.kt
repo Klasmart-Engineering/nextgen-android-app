@@ -31,6 +31,7 @@ import uk.co.kidsloop.app.utils.permissions.isPermissionGranted
 import uk.co.kidsloop.app.utils.permissions.showSettingsDialog
 import uk.co.kidsloop.data.enums.KidsloopPermissions
 import uk.co.kidsloop.databinding.PreviewFragmentBinding
+import uk.co.kidsloop.features.liveclass.LiveClassFragment
 import java.io.IOException
 
 @AndroidEntryPoint
@@ -315,6 +316,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 if (currentAmplitude <= amplitude - 100 || currentAmplitude >= amplitude + 100) {
                     currentAmplitude = amplitude
                     Handler(Looper.getMainLooper()).postDelayed({
+                        Log.d(TAG, amplitude.toString())
                         if (isRecordingAudio) {
                             animateView(binding.microphoneBtn)
                         }
