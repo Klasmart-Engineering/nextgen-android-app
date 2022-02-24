@@ -21,9 +21,6 @@ import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.app.utils.* // ktlint-disable no-wildcard-imports
-import uk.co.kidsloop.data.enums.LiveSwitchNetworkQuality
-import uk.co.kidsloop.data.enums.StudentFeedQuality
-import uk.co.kidsloop.data.enums.TeacherFeedQuality
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
 import uk.co.kidsloop.features.liveclass.feeds.FeedsAdapter
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
@@ -70,15 +67,21 @@ class LiveClassFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val isTeacher = when (viewModel.sharedPrefsWrapper.getRole()) {
+            TEACHER_ROLE -> true
+            STUDENT_ROLE -> false
+            else -> false
+        }
+
         localMedia = CameraLocalMedia(
             requireContext(),
             disableAudio = false,
             disableVideo = false,
             aecContext = AecContext(),
-            enableSimulcast = true
+            enableSimulcast = true,
+            isTeacher
         )
-        (localMedia as CameraLocalMedia).videoSimulcastDegradationPreference = VideoDegradationPreference.Resolution
-        (localMedia as CameraLocalMedia).videoSimulcastEncodingCount = 3
 
         displayManager =
             requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -122,8 +125,6 @@ class LiveClassFragment :
                     return false
                 }
             }
-            setHasFixedSize(true)
-            itemAnimator = null
         }
 
         when (viewModel.sharedPrefsWrapper.getRole()) {
@@ -176,7 +177,11 @@ class LiveClassFragment :
     private fun setControls() {
         binding.toggleMicrophoneBtn.setOnClickListener {
             if (binding.toggleMicrophoneBtn.isActivated) {
-                studentsFeedAdapter.toggleLocalMic(isMicOn = binding.toggleMicrophoneBtn.isChecked.not())
+                if (binding.toggleMicrophoneBtn.isChecked) {
+                    binding.localMediaFeed.showMicMuted()
+                } else {
+                    binding.localMediaFeed.showMicTurnedOn()
+                }
                 viewModel.toggleLocalAudio()
             } else {
                 showCustomToast(getString(R.string.teacher_turned_off_all_students_mic), true, false)
@@ -185,7 +190,11 @@ class LiveClassFragment :
 
         binding.toggleCameraBtn.setOnClickListener {
             if (binding.toggleCameraBtn.isActivated) {
-                studentsFeedAdapter.toggleLocalCamera(binding.toggleCameraBtn.isChecked.not())
+                if (binding.toggleCameraBtn.isChecked) {
+                    binding.localMediaFeed.showCameraTurnedOff()
+                } else {
+                    binding.localMediaFeed.showCameraTurnedOn()
+                }
                 viewModel.toggleLocalVideo()
             } else {
                 showCustomToast(getString(R.string.teacher_turned_off_all_students_camera), false, true)
@@ -203,14 +212,13 @@ class LiveClassFragment :
         }
 
         binding.exitClassBtn.setOnClickListener {
-            binding.liveClassOverlay.gone()
-            binding.leaveLiveClassOverlay.visible()
-            binding.leaveLiveClassOverlay.postDelayed(
-                {
-                    binding.leaveLiveClassOverlay.gone()
-                    binding.liveClassOverlay.visible()
-                }, 10000L
-            )
+            val dialogLeaveClass = LeaveClassDialog()
+            dialogLeaveClass.dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+            dialogLeaveClass.show(childFragmentManager, "leaveClassDialog")
+
+//            binding.liveClassOverlay.gone()
+//            binding.leaveLiveClassOverlay.visible()
         }
 
         binding.exitMenu.setOnClickListener {
@@ -234,10 +242,10 @@ class LiveClassFragment :
 
             if (binding.raiseHandBtn.isSelected) {
                 viewModel.showHandRaised()
-                studentsFeedAdapter.toggleHandRaised(isHandRaised = true)
+                binding.localMediaFeed.showHandRaised()
             } else {
                 viewModel.showHandLowered()
-                studentsFeedAdapter.toggleHandRaised(isHandRaised = false)
+                binding.localMediaFeed.hideRaiseHand()
             }
         }
 
@@ -361,17 +369,16 @@ class LiveClassFragment :
         localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
+            uiThreadPoster.post {
+                requireActivity().finish()
+            }
         }
     }
 
     private fun startLocalMedia() {
         localMedia?.start()?.then({
             uiThreadPoster.post {
-                studentsFeedAdapter.addLocalMedia(
-                    localMedia?.view,
-                    requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON),
-                    requireArguments().getBoolean(IS_CAMERA_TURNED_ON)
-                )
+                binding.localMediaFeed.addLocalMediaView(localMedia?.view)
                 viewModel.joinLiveClass()
             }
         }, { exception -> })
@@ -396,67 +403,6 @@ class LiveClassFragment :
                 ConnectionState.Failed -> {
                     // Reconnect if the connection failed.
                     openSfuUpstreamConnection()
-                }
-            }
-        }
-
-        upstreamConnection?.addOnNetworkQuality { networkQuality ->
-            val averageNetworkQuality = when (liveClassManager.getNetworkQualityArray().size) {
-                0 -> {
-                    liveClassManager.addToNetworkQualityArray(networkQuality)
-                    // If there is no value inside the array, take the current reading as it is
-                    networkQuality
-                }
-                else -> {
-                    liveClassManager.addToNetworkQualityArray(networkQuality)
-                    val networkQualityArray = liveClassManager.getNetworkQualityArray()
-                    // Calculate the average of the last 2 readings
-                    networkQualityArray.subList(
-                        networkQualityArray.size - 2,
-                        networkQualityArray.size - 1
-                    ).average()
-                }
-            }
-
-            // Handle averageNetworkQuality only if it is different from the latest reading
-            if (averageNetworkQuality != networkQuality) {
-                when (averageNetworkQuality) {
-                    in LiveSwitchNetworkQuality.MODERATE.lowerLimit..LiveSwitchNetworkQuality.MODERATE.upperLimit -> {
-                        liveClassManager.getDownStreamConnections().let { connectionsMap ->
-                            liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
-                                connectionsMap.forEach { connection ->
-                                    when (rolesMap[connection.key]) {
-                                        STUDENT_ROLE -> {
-                                            connection.value.videoStream.maxReceiveBitrate =
-                                                StudentFeedQuality.MODERATE.videoBitrate
-                                        }
-                                        TEACHER_ROLE -> {
-                                            connection.value.videoStream.maxReceiveBitrate =
-                                                TeacherFeedQuality.MODERATE.videoBitrate
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    in LiveSwitchNetworkQuality.GOOD.lowerLimit..LiveSwitchNetworkQuality.GOOD.upperLimit -> {
-                        liveClassManager.getDownStreamConnections().let { connectionsMap ->
-                            liveClassManager.getDownStreamConnectionsRoles().let { rolesMap ->
-                                connectionsMap.forEach { connection ->
-                                    when (rolesMap[connection.key]) {
-                                        STUDENT_ROLE -> {
-                                            connection.value.videoStream.maxReceiveBitrate =
-                                                StudentFeedQuality.GOOD.videoBitrate
-                                        }
-                                        TEACHER_ROLE -> {
-                                            connection.value.videoStream.maxReceiveBitrate =
-                                                TeacherFeedQuality.GOOD.videoBitrate
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -490,7 +436,7 @@ class LiveClassFragment :
     override fun onVideoDisabled(state: LiveClassState) {
         viewModel.turnOffVideo()
         uiThreadPoster.post {
-            studentsFeedAdapter.toggleLocalCamera(false)
+            binding.localMediaFeed.showCameraTurnedOff()
             binding.toggleCameraBtn.isActivated = false
 
             if (state == LiveClassState.CAM_DISABLED_BY_TEACHER) {
@@ -529,24 +475,24 @@ class LiveClassFragment :
     override fun onDisplayChanged(displayId: Int) {
         if (initialDisplayOrientation == Surface.ROTATION_90) {
             if (display.rotation == Surface.ROTATION_90) {
-                studentsFeedAdapter.updateLocalMediaViewOrientationDefault()
+                binding.localMediaFeed.updateLocalMediaViewOrientationDefault()
             }
             if (display.rotation == Surface.ROTATION_270) {
-                studentsFeedAdapter.updateLocalMediaViewOrientationReverse()
+                binding.localMediaFeed.updateLocalMediaViewOrientationReverse()
             }
         } else {
             if (display.rotation == Surface.ROTATION_90) {
-                studentsFeedAdapter.updateLocalMediaViewOrientationReverse()
+                binding.localMediaFeed.updateLocalMediaViewOrientationReverse()
             }
             if (display.rotation == Surface.ROTATION_270) {
-                studentsFeedAdapter.updateLocalMediaViewOrientationDefault()
+                binding.localMediaFeed.updateLocalMediaViewOrientationDefault()
             }
         }
     }
 
     override fun onEnableMic() {
         uiThreadPoster.post {
-            studentsFeedAdapter.toggleLocalMic(false)
+            binding.localMediaFeed.showMicMuted()
             binding.toggleMicrophoneBtn.isActivated = true
             binding.toggleMicrophoneBtn.isChecked = true
         }
@@ -555,7 +501,7 @@ class LiveClassFragment :
     override fun onDisableMic(state: LiveClassState) {
         viewModel.turnOffAudio()
         uiThreadPoster.post {
-            studentsFeedAdapter.showLocalMicDisabled()
+            binding.localMediaFeed.showMicDisabledMuted()
             binding.toggleMicrophoneBtn.isActivated = false
             if (state == LiveClassState.MIC_DISABLED_BY_TEACHER) {
                 showCustomToast(getString(R.string.teacher_turned_off_all_students_mic), true, false)
