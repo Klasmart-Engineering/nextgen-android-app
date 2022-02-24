@@ -12,7 +12,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -373,12 +372,13 @@ class LiveClassFragment :
             localMedia?.destroy()
             localMedia = null
 
-            uiThreadPoster.post{
-                val fm = requireActivity().supportFragmentManager
+            uiThreadPoster.post {
+                val navController = findNavController()
+                val fm = parentFragment
                 for (i in 0 until fm.backStackEntryCount) {
                     fm.popBackStack()
                 }
-                Navigation.findNavController(requireView()).navigate(LiveClassFragmentDirections.liveclassToLogin())
+                navController.navigate(LiveClassFragmentDirections.liveclassToLogin())
             }
         }
     }
