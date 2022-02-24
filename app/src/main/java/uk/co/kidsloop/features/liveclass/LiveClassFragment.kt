@@ -4,7 +4,6 @@ import android.content.Context
 import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
 import android.widget.TextView
@@ -167,17 +166,7 @@ class LiveClassFragment :
         binding.toggleStudentsAudio.visible()
 
         binding.toggleCameraBtn.isActivated = true
-        binding.toggleCameraBtn.isChecked =
-            !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         binding.toggleMicrophoneBtn.isActivated = true
-        binding.toggleMicrophoneBtn.isChecked =
-            !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
-        if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
-            binding.localMediaFeed.showCameraTurnedOff()
-        }
-        if (!requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
-            binding.localMediaFeed.showMicMuted()
-        }
     }
 
     private fun setUiForStudent() {
@@ -300,20 +289,19 @@ class LiveClassFragment :
                     if (shouldTurnOnCam) {
                         binding.toggleCameraBtn.isChecked = false
                         binding.localMediaFeed.showCameraTurnedOn()
-                        viewModel.toggleLocalVideo()
                     } else {
                         binding.toggleCameraBtn.isChecked = true
                     }
 
                     binding.toggleMicrophoneBtn.isActivated = true
-
                     if (shouldUnMuteMic) {
                         binding.toggleMicrophoneBtn.isChecked = false
                         binding.localMediaFeed.showMicTurnedOn()
-                        viewModel.toggleLocalAudio()
                     } else {
+                        binding.localMediaFeed.showMicMuted()
                         binding.toggleMicrophoneBtn.isChecked = true
                     }
+                    viewModel.updateUpstreamConnection(shouldTurnOnCam, shouldUnMuteMic)
                 }
             }
 
