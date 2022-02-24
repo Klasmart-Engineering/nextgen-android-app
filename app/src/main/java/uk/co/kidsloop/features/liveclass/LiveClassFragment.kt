@@ -374,7 +374,7 @@ class LiveClassFragment :
 
             uiThreadPoster.post {
                 val navController = findNavController()
-                val fm = parentFragment
+                val fm = parentFragmentManager
                 for (i in 0 until fm.backStackEntryCount) {
                     fm.popBackStack()
                 }
