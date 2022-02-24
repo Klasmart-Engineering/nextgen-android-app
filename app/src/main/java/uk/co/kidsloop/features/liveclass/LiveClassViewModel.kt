@@ -7,18 +7,28 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fm.liveswitch.AudioStream
 import fm.liveswitch.Channel
+import fm.liveswitch.ConnectionInfo
 import fm.liveswitch.IAction1
+import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
+import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
+import uk.co.kidsloop.features.liveclass.usecases.JoinLiveClassUseCase
+import uk.co.kidsloop.features.liveclass.usecases.OpenSfuDownstreamConnection
+import uk.co.kidsloop.features.liveclass.usecases.OpenSfuUpstreamConnectionUseCase
+import uk.co.kidsloop.features.liveclass.usecases.SendDataChannelEventUseCase
 
 @HiltViewModel
 class LiveClassViewModel @Inject constructor(
     private val joinLiveClassUseCase: JoinLiveClassUseCase,
     private val openSfuUpstreamConnectionUseCase: OpenSfuUpstreamConnectionUseCase,
+    private val openSfuDownstreamConnection: OpenSfuDownstreamConnection,
     private val sendDataChannelEventUseCase: SendDataChannelEventUseCase,
     private val liveClassManager: LiveClassManager
 ) : ViewModel() {
@@ -30,7 +40,6 @@ class LiveClassViewModel @Inject constructor(
     val classroomStateLiveData: LiveData<LiveClassUiState> get() = _classroomStateLiveData
 
     sealed class LiveClassUiState {
-        object Loading : LiveClassUiState()
         data class RegistrationSuccessful(val channel: Channel) : LiveClassUiState()
         data class FailedToJoiningLiveClass(val message: String?) : LiveClassUiState()
         object UnregisterSuccessful : LiveClassUiState()
@@ -38,7 +47,6 @@ class LiveClassViewModel @Inject constructor(
     }
 
     fun joinLiveClass() {
-        _classroomStateLiveData.value = LiveClassUiState.Loading
         joinLiveClassUseCase.joinAsync().then { channels ->
             _classroomStateLiveData.postValue(LiveClassUiState.RegistrationSuccessful(channels[0]))
         }.fail(
@@ -69,18 +77,39 @@ class LiveClassViewModel @Inject constructor(
     }
 
     fun toggleLocalAudio() {
-        liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
-            val config = upstreamConnection.config
-            config.localAudioMuted = !config.localAudioMuted
-            upstreamConnection.update(config)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
+                    val config = upstreamConnection.config
+                    config.localAudioMuted = !config.localAudioMuted
+                    upstreamConnection.update(config)
+                }
+            }
         }
     }
 
     fun toggleLocalVideo() {
-        liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
-            val config = upstreamConnection.config
-            config.localVideoMuted = !config.localVideoMuted
-            upstreamConnection.update(config)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
+                    val config = upstreamConnection.config
+                    config.localVideoMuted = !config.localVideoMuted
+                    upstreamConnection.update(config)
+                }
+            }
+        }
+    }
+
+    fun updateUpstreamConnection(isVideoOn: Boolean, isAudioOn: Boolean) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
+                    val config = upstreamConnection.config
+                    config.localVideoMuted = !isVideoOn
+                    config.localAudioMuted = !isAudioOn
+                    upstreamConnection.update(config)
+                }
+            }
         }
     }
 
@@ -147,6 +176,13 @@ class LiveClassViewModel @Inject constructor(
                 _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
             }
         )
+    }
+
+    fun openSfuDownstreamConnection(
+        remoteConnectionInfo: ConnectionInfo,
+        remoteMedia: SFURemoteMedia
+    ): SfuDownstreamConnection? {
+        return openSfuDownstreamConnection.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia)
     }
 
     override fun onCleared() {

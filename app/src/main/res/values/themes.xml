@@ -29,6 +29,13 @@
         <item name="lineHeight">42dp</item>
     </style>
 
+    <style name="KidsloopProgressBar">
+        <item name="android:padding">2dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:indeterminateTint">#00857D</item>
+    </style>
+
     <style name="JoinButton">
         <item name="fontFamily">@font/rooney_sans_hv</item>
         <item name="android:textSize">26sp</item>
