@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
@@ -40,7 +41,6 @@ class LiveClassFragment :
     DisplayManager.DisplayListener {
 
     companion object {
-
         val TAG = LiveClassFragment::class.qualifiedName
         const val IS_CAMERA_TURNED_ON = "isCameraTurnedOn"
         const val IS_MICROPHONE_TURNED_ON = "isMicrophoneTurnedOn"
@@ -51,6 +51,9 @@ class LiveClassFragment :
 
     @Inject
     lateinit var uiThreadPoster: UiThreadPoster
+
+    @Inject
+    lateinit var dialogsManager: DialogsManager
 
     private val binding by viewBinding(LiveClassFragmentBinding::bind)
     private lateinit var window: Window
@@ -201,24 +204,16 @@ class LiveClassFragment :
             }
         }
 
-        binding.confirmExitClassBtn.setOnClickListener {
-            viewModel.leaveLiveClass()
-            Navigation.findNavController(requireView())
-                .navigate(LiveClassFragmentDirections.liveclassToLogin())
-        }
-
-        binding.backBtn.setOnClickListener {
-            binding.leaveLiveClassOverlay.gone()
-        }
-
         binding.exitClassBtn.setOnClickListener {
-            val dialogLeaveClass = LeaveClassDialog()
-            dialogLeaveClass.dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-            dialogLeaveClass.show(childFragmentManager, "leaveClassDialog")
-
-//            binding.liveClassOverlay.gone()
-//            binding.leaveLiveClassOverlay.visible()
+            dialogsManager.showLeaveDialog()
+            setFragmentResultListener(LeaveClassDialog.TAG.toString()) { _, _ ->
+                viewModel.leaveLiveClass()
+                Navigation.findNavController(requireView()).navigate(LiveClassFragmentDirections.liveclassToLogin())
+                val fm = requireActivity().supportFragmentManager
+                for (i in 0 until fm.backStackEntryCount) {
+                    fm.popBackStack()
+                }
+            }
         }
 
         binding.exitMenu.setOnClickListener {
@@ -369,9 +364,6 @@ class LiveClassFragment :
         localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
-            uiThreadPoster.post {
-                requireActivity().finish()
-            }
         }
     }
 
