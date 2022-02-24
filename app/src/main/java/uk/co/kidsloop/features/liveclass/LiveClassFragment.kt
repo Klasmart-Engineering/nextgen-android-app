@@ -166,17 +166,7 @@ class LiveClassFragment :
         binding.toggleStudentsAudio.visible()
 
         binding.toggleCameraBtn.isActivated = true
-        binding.toggleCameraBtn.isChecked =
-            !requireArguments().getBoolean(IS_CAMERA_TURNED_ON, true)
         binding.toggleMicrophoneBtn.isActivated = true
-        binding.toggleMicrophoneBtn.isChecked =
-            !requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON, true)
-        if (!requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
-            binding.localMediaFeed.showCameraTurnedOff()
-        }
-        if (!requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
-            binding.localMediaFeed.showMicMuted()
-        }
     }
 
     private fun setUiForStudent() {
