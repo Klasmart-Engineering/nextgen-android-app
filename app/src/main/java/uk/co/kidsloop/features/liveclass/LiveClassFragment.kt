@@ -11,12 +11,12 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
-import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -31,6 +31,7 @@ import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -49,6 +50,9 @@ class LiveClassFragment :
 
     @Inject
     lateinit var uiThreadPoster: UiThreadPoster
+
+    @Inject
+    lateinit var dialogsManager: DialogsManager
 
     private val binding by viewBinding(LiveClassFragmentBinding::bind)
     private lateinit var window: Window
@@ -137,8 +141,14 @@ class LiveClassFragment :
                         it.channel
                     )
                     is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> hideLoading()
-                    is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
-                    is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+                    is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> {
+                        stopLocalMedia()
+                        leaveLiveClass()
+                    }
+                    is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> {
+                        stopLocalMedia()
+                        leaveLiveClass()
+                    }
                 }
             }
         )
@@ -220,7 +230,13 @@ class LiveClassFragment :
         }
 
         binding.exitClassBtn.setOnClickListener {
-            viewModel.leaveLiveClass()
+            dialogsManager.showDialog(LeaveClassDialog.TAG)
+            requireActivity().supportFragmentManager.setFragmentResultListener(
+                LeaveClassDialog.TAG.toString(),
+                viewLifecycleOwner
+            ) { _, _ ->
+                viewModel.leaveLiveClass()
+            }
         }
 
         binding.exitMenu.setOnClickListener {
@@ -359,13 +375,18 @@ class LiveClassFragment :
         }
     }
 
+    private fun leaveLiveClass() {
+        uiThreadPoster.post {
+            val navController = findNavController()
+            navController.navigate(LiveClassFragmentDirections.liveclassToLogin())
+            parentFragmentManager.popBackStack()
+        }
+    }
+
     private fun stopLocalMedia() {
         localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
-            uiThreadPoster.post {
-                requireActivity().finish()
-            }
         }
     }
 

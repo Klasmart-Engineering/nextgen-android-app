@@ -4,32 +4,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@+id/splash_graph">
+
     <navigation
         android:id="@+id/splash_graph"
         app:startDestination="@id/splash_fragment">
 
         <action
-            android:id="@+id/login_to_preview"
-            app:destination="@+id/preview_fragment"
-            app:popUpToInclusive="true" />
-
-        <action
-            android:id="@+id/live_to_splash"
-            app:destination="@+id/splash_fragment"
-            app:popUpTo="@id/splash_fragment"
-            app:popUpToInclusive="true" />
-
-        <action
             android:id="@+id/splash_to_login"
-            app:destination="@id/login_fragment"
-            app:popUpTo="@id/splash_fragment"
+            app:destination="@id/login_graph"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/splash_graph"
             app:popUpToInclusive="true" />
+
+        <fragment
+            android:id="@+id/splash_fragment"
+            android:name="uk.co.kidsloop.features.splash.SplashFragment" />
+
+    </navigation>
+
+    <navigation
+        android:id="@+id/login_graph"
+        app:startDestination="@id/login_fragment">
+
+        <action
+            android:id="@+id/login_to_preview"
+            app:destination="@id/preview_graph"
+            app:popUpTo="@id/splash_graph"
+            app:popUpToInclusive="true" />
+
+        <fragment
+            android:id="@+id/login_fragment"
+            android:name="uk.co.kidsloop.features.login.LoginFragment"
+            tools:layout="@layout/fragment_login" />
+
+    </navigation>
+
+    <navigation
+        android:id="@+id/preview_graph"
+        app:startDestination="@id/preview_fragment">
 
         <action
             android:id="@+id/preview_to_liveclass"
-            app:destination="@id/live_class_fragment"
+            app:destination="@id/live_class_graph"
             app:launchSingleTop="true"
-            app:popUpTo="@id/preview_fragment"
+            app:popUpTo="@id/preview_graph"
             app:popUpToInclusive="true">
             <argument
                 android:name="isCameraTurnedOn"
@@ -39,23 +57,36 @@
                 app:argType="boolean" />
         </action>
 
-        <fragment
-            android:id="@+id/splash_fragment"
-            android:name="uk.co.kidsloop.features.splash.SplashFragment" />
-
-        <fragment
-            android:id="@+id/login_fragment"
-            android:name="uk.co.kidsloop.features.login.LoginFragment"
-            tools:layout="@layout/fragment_login" />
+        <action
+            android:id="@+id/preview_to_login"
+            app:destination="@id/login_graph"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/preview_graph"
+            app:popUpToInclusive="true" />
 
         <fragment
             android:id="@+id/preview_fragment"
             android:name="uk.co.kidsloop.features.preview.PreviewFragment"
             tools:layout="@layout/preview_fragment" />
 
+    </navigation>
+
+    <navigation
+        android:id="@+id/live_class_graph"
+        app:startDestination="@id/live_class_fragment">
+
+        <action
+            android:id="@+id/liveclass_to_login"
+            app:destination="@id/login_graph"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/live_class_graph"
+            app:popUpToInclusive="true" />
+
         <fragment
             android:id="@+id/live_class_fragment"
             android:name="uk.co.kidsloop.features.liveclass.LiveClassFragment"
             tools:layout="@layout/live_class_fragment" />
+
     </navigation>
+
 </navigation>
