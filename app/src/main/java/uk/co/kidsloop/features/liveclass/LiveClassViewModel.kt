@@ -19,10 +19,12 @@ import kotlinx.coroutines.withContext
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
+import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.features.liveclass.usecases.JoinLiveClassUseCase
 import uk.co.kidsloop.features.liveclass.usecases.OpenSfuDownstreamConnection
 import uk.co.kidsloop.features.liveclass.usecases.OpenSfuUpstreamConnectionUseCase
 import uk.co.kidsloop.features.liveclass.usecases.SendDataChannelEventUseCase
+import uk.co.kidsloop.liveswitch.Config
 
 @HiltViewModel
 class LiveClassViewModel @Inject constructor(
@@ -42,6 +44,8 @@ class LiveClassViewModel @Inject constructor(
     sealed class LiveClassUiState {
         data class RegistrationSuccessful(val channel: Channel) : LiveClassUiState()
         data class FailedToJoiningLiveClass(val message: String?) : LiveClassUiState()
+        object LiveClassStarted : LiveClassUiState()
+        object LiveClassRestarted : LiveClassUiState()
         object UnregisterSuccessful : LiveClassUiState()
         object UnregisterFailed : LiveClassUiState()
     }
@@ -180,9 +184,23 @@ class LiveClassViewModel @Inject constructor(
 
     fun openSfuDownstreamConnection(
         remoteConnectionInfo: ConnectionInfo,
-        remoteMedia: SFURemoteMedia
+        remoteMedia: SFURemoteMedia,
+        shouldTurnOnCam: Boolean,
+        shouldUnMuteMic: Boolean
     ): SfuDownstreamConnection? {
-        return openSfuDownstreamConnection.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia)
+        val downStreamConnection =
+            openSfuDownstreamConnection.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia)
+        if (remoteConnectionInfo.clientRoles[0] == Config.TEACHER_ROLE) {
+            if (liveClassManager.getState() == LiveClassState.TEACHER_DISCONNECTED) {
+                liveClassManager.setState(LiveClassState.LIVE_CLASS_RESTARTED)
+                _classroomStateLiveData.postValue(LiveClassUiState.LiveClassRestarted)
+            } else {
+                liveClassManager.setState(LiveClassState.LIVE_CLASS_STARTED)
+                _classroomStateLiveData.postValue(LiveClassUiState.LiveClassStarted)
+                updateUpstreamConnection(shouldTurnOnCam, shouldUnMuteMic)
+            }
+        }
+        return downStreamConnection
     }
 
     override fun onCleared() {
