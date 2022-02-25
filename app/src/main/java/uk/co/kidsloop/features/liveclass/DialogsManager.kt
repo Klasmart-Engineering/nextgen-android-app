@@ -2,34 +2,35 @@ package uk.co.kidsloop.features.liveclass
 
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import uk.co.kidsloop.app.di.ChildFragmentManger
+import uk.co.kidsloop.app.di.ParentFragmentManager
 import javax.inject.Inject
 
-class DialogsManager @Inject constructor(private val fragmentManager: FragmentManager) {
-    companion object {
-        val LEAVE_CLASS_DIALOG_FRAGMENT_TAG = LeaveClassDialog::class.qualifiedName
-    }
+class DialogsManager @Inject constructor(
+    @ParentFragmentManager private val parentFragmentManager: FragmentManager,
+    @ChildFragmentManger private val childFragmentManager: FragmentManager
+) {
 
-    fun showLeaveDialog() {
-        val dialogFragment = LeaveClassDialog()
-        showDialog(dialogFragment)
-    }
-
-    fun dismissDialog() {
-        getCurrentlyShownDialog()?.dismiss()
-    }
-
-    private fun showDialog(dialog: DialogFragment) {
-        fragmentManager.beginTransaction().add(dialog, LEAVE_CLASS_DIALOG_FRAGMENT_TAG).commitAllowingStateLoss()
-    }
-
-    private fun getCurrentlyShownDialog(): DialogFragment? {
-        val fragmentDialogWithTag = fragmentManager.findFragmentByTag(LEAVE_CLASS_DIALOG_FRAGMENT_TAG)
-        return if (fragmentDialogWithTag != null &&
-            DialogFragment::class.java.isAssignableFrom(fragmentDialogWithTag.javaClass)
-        ) {
-            fragmentDialogWithTag as DialogFragment
-        } else {
-            null
+    fun showDialog(tag: String?) {
+        when (tag) {
+            LeaveClassDialog.TAG -> {
+                showDialog(LeaveClassDialog(), childFragmentManager, LeaveClassDialog.TAG)
+            }
         }
+    }
+
+    fun dismissDialog(tag: String) {
+        val fragmentInParentFM = parentFragmentManager.findFragmentByTag(tag)
+        val fragmentInChildFM = childFragmentManager.findFragmentByTag(tag)
+
+        if (fragmentInParentFM != null) {
+            parentFragmentManager.popBackStack(parentFragmentManager.fragments.indexOf(fragmentInParentFM), 0)
+        } else if (fragmentInChildFM != null) {
+            childFragmentManager.popBackStack(childFragmentManager.fragments.indexOf(fragmentInChildFM), 0)
+        }
+    }
+
+    private fun showDialog(dialog: DialogFragment, fragmentManager: FragmentManager, tag: String?) {
+        fragmentManager.beginTransaction().add(dialog, tag).commitAllowingStateLoss()
     }
 }

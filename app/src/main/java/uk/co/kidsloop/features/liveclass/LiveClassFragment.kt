@@ -9,7 +9,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -231,8 +230,11 @@ class LiveClassFragment :
         }
 
         binding.exitClassBtn.setOnClickListener {
-            dialogsManager.showLeaveDialog()
-            setFragmentResultListener(LeaveClassDialog.TAG.toString()) { _, _ ->
+            dialogsManager.showDialog(LeaveClassDialog.TAG)
+            requireActivity().supportFragmentManager.setFragmentResultListener(
+                LeaveClassDialog.TAG.toString(),
+                viewLifecycleOwner
+            ) { _, _ ->
                 viewModel.leaveLiveClass()
             }
         }
@@ -376,11 +378,8 @@ class LiveClassFragment :
     private fun leaveLiveClass() {
         uiThreadPoster.post {
             val navController = findNavController()
-            navController.navigate(LiveClassFragmentDirections.liveclassToLogin()).also { dialogsManager.dismissDialog() }
-            val fm = parentFragmentManager
-            for (i in 0 until fm.backStackEntryCount) {
-                fm.popBackStack()
-            }
+            navController.navigate(LiveClassFragmentDirections.liveclassToLogin())
+            parentFragmentManager.popBackStack()
         }
     }
 

@@ -40,7 +40,7 @@ class LeaveClassDialog : DialogFragment() {
     private fun setControls() {
         binding.confirmExitClassBtn.setOnClickListener {
             timer.cancel()
-            setFragmentResult(TAG.toString(), Bundle.EMPTY)
+            requireActivity().supportFragmentManager.setFragmentResult(TAG.toString(), Bundle.EMPTY)
         }
 
         binding.backBtn.setOnClickListener {
