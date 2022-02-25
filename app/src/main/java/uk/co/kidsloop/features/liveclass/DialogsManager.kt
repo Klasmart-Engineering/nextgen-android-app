@@ -14,7 +14,22 @@ class DialogsManager @Inject constructor(private val fragmentManager: FragmentMa
         showDialog(dialogFragment)
     }
 
+    fun dismissDialog() {
+        getCurrentlyShownDialog()?.dismiss()
+    }
+
     private fun showDialog(dialog: DialogFragment) {
         fragmentManager.beginTransaction().add(dialog, LEAVE_CLASS_DIALOG_FRAGMENT_TAG).commitAllowingStateLoss()
+    }
+
+    private fun getCurrentlyShownDialog(): DialogFragment? {
+        val fragmentDialogWithTag = fragmentManager.findFragmentByTag(LEAVE_CLASS_DIALOG_FRAGMENT_TAG)
+        return if (fragmentDialogWithTag != null &&
+            DialogFragment::class.java.isAssignableFrom(fragmentDialogWithTag.javaClass)
+        ) {
+            fragmentDialogWithTag as DialogFragment
+        } else {
+            null
+        }
     }
 }

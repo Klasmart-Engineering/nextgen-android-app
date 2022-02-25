@@ -142,8 +142,14 @@ class LiveClassFragment :
                         it.channel
                     )
                     is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> hideLoading()
-                    is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
-                    is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+                    is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> {
+                        stopLocalMedia()
+                        leaveLiveClass()
+                    }
+                    is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> {
+                        stopLocalMedia()
+                        leaveLiveClass()
+                    }
                 }
             }
         )
@@ -367,19 +373,21 @@ class LiveClassFragment :
         }
     }
 
+    private fun leaveLiveClass() {
+        uiThreadPoster.post {
+            val navController = findNavController()
+            navController.navigate(LiveClassFragmentDirections.liveclassToLogin()).also { dialogsManager.dismissDialog() }
+            val fm = parentFragmentManager
+            for (i in 0 until fm.backStackEntryCount) {
+                fm.popBackStack()
+            }
+        }
+    }
+
     private fun stopLocalMedia() {
         localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
-
-            uiThreadPoster.post {
-                val navController = findNavController()
-                val fm = parentFragmentManager
-                for (i in 0 until fm.backStackEntryCount) {
-                    fm.popBackStack()
-                }
-                navController.navigate(LiveClassFragmentDirections.liveclassToLogin())
-            }
         }
     }
 

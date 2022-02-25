@@ -17,6 +17,7 @@ class LeaveClassDialog : DialogFragment() {
     }
 
     private val binding by viewBinding(LeaveClassDialogFragmentBinding::bind)
+    private lateinit var timer: Timer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +39,8 @@ class LeaveClassDialog : DialogFragment() {
 
     private fun setControls() {
         binding.confirmExitClassBtn.setOnClickListener {
-            setFragmentResult(TAG.toString(), Bundle())
+            timer.cancel()
+            setFragmentResult(TAG.toString(), Bundle.EMPTY)
         }
 
         binding.backBtn.setOnClickListener {
@@ -47,7 +49,7 @@ class LeaveClassDialog : DialogFragment() {
     }
 
     private fun setTimerForDialogToDismiss() {
-        Timer().apply {
+        timer = Timer().apply {
             schedule(
                 object : TimerTask() {
                     override fun run() {
