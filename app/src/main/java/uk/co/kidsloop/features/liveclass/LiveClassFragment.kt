@@ -39,6 +39,7 @@ class LiveClassFragment :
     DisplayManager.DisplayListener {
 
     companion object {
+
         val TAG = LiveClassFragment::class.qualifiedName
         const val IS_CAMERA_TURNED_ON = "isCameraTurnedOn"
         const val IS_MICROPHONE_TURNED_ON = "isMicrophoneTurnedOn"
@@ -123,7 +124,7 @@ class LiveClassFragment :
         if (isTeacher) {
             setUiForTeacher()
         } else {
-            setUiForStudent()
+            setupWaitingStateForStudent()
         }
 
         setControls()
@@ -139,6 +140,8 @@ class LiveClassFragment :
                     is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> hideLoading()
                     is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
                     is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
+                    is LiveClassViewModel.LiveClassUiState.LiveClassStarted -> onLiveClassStarted()
+                    is LiveClassViewModel.LiveClassUiState.LiveClassRestarted -> onLiveClassRestarted()
                 }
             }
         )
@@ -169,7 +172,7 @@ class LiveClassFragment :
         binding.toggleMicrophoneBtn.isActivated = true
     }
 
-    private fun setUiForStudent() {
+    private fun setupWaitingStateForStudent() {
         showLoading()
         binding.raiseHandBtn.visible()
         binding.raiseHandBtn.isEnabled = false
@@ -196,10 +199,12 @@ class LiveClassFragment :
                 }
                 viewModel.toggleLocalAudio()
             } else {
-                val msgId =
-                    if (liveClassManager.getState() == LiveClassState.JOINED_AND_WAITING_FOR_TEACHER) R.string.wait_for_teacher_to_arrive else
-                        R.string.teacher_turned_off_all_microphones
-                showCustomToast(getString(msgId), true, false)
+                val messageId = when (liveClassManager.getState()) {
+                    LiveClassState.JOINED_AND_WAITING_FOR_TEACHER -> R.string.wait_for_teacher_to_arrive
+                    LiveClassState.TEACHER_DISCONNECTED -> R.string.teacher_has_left_the_classroom
+                    else -> R.string.teacher_turned_off_all_microphones
+                }
+                showCustomToast(getString(messageId), true, false)
             }
         }
 
@@ -212,10 +217,12 @@ class LiveClassFragment :
                 }
                 viewModel.toggleLocalVideo()
             } else {
-                val msgId =
-                    if (liveClassManager.getState() == LiveClassState.JOINED_AND_WAITING_FOR_TEACHER) R.string.wait_for_teacher_to_arrive else
-                        R.string.teacher_turned_off_all_cameras
-                showCustomToast(getString(msgId), false, true)
+                val messageId = when (liveClassManager.getState()) {
+                    LiveClassState.JOINED_AND_WAITING_FOR_TEACHER -> R.string.wait_for_teacher_to_arrive
+                    LiveClassState.TEACHER_DISCONNECTED -> R.string.teacher_has_left_the_classroom
+                    else -> R.string.teacher_turned_off_all_cameras
+                }
+                showCustomToast(getString(messageId), false, true)
             }
         }
 
@@ -269,7 +276,11 @@ class LiveClassFragment :
             aecContext = AecContext()
         )
 
-        val connection = viewModel.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia)
+        val shouldTurnOnCam = requireArguments().getBoolean(IS_CAMERA_TURNED_ON)
+        val shouldUnMuteMic = requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)
+
+        val connection =
+            viewModel.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia, shouldTurnOnCam, shouldUnMuteMic)
 
         // Adding remote view to UI.
         when (remoteConnectionInfo.clientRoles[0]) {
@@ -278,33 +289,8 @@ class LiveClassFragment :
                     binding.raiseHandBtn.enable()
                     binding.teacherVideoFeed.tag = remoteConnectionInfo.clientId
                     binding.teacherVideoFeed.addView(remoteMedia.view, 1)
-                    binding.teacherVideoFeedOverlay.isVisible = false
-                    binding.blackboardImageView.isVisible = false
-                    binding.waitingStateTextview.isVisible = false
-
-                    val shouldTurnOnCam = requireArguments().getBoolean(IS_CAMERA_TURNED_ON)
-                    val shouldUnMuteMic = requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)
-
-                    binding.toggleCameraBtn.isActivated = true
-                    if (shouldTurnOnCam) {
-                        binding.toggleCameraBtn.isChecked = false
-                        binding.localMediaFeed.showCameraTurnedOn()
-                    } else {
-                        binding.toggleCameraBtn.isChecked = true
-                    }
-
-                    binding.toggleMicrophoneBtn.isActivated = true
-                    if (shouldUnMuteMic) {
-                        binding.toggleMicrophoneBtn.isChecked = false
-                        binding.localMediaFeed.showMicTurnedOn()
-                    } else {
-                        binding.localMediaFeed.showMicMuted()
-                        binding.toggleMicrophoneBtn.isChecked = true
-                    }
-                    viewModel.updateUpstreamConnection(shouldTurnOnCam, shouldUnMuteMic)
                 }
             }
-
             STUDENT_ROLE -> uiThreadPoster.post {
                 studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
             }
@@ -312,12 +298,17 @@ class LiveClassFragment :
 
         connection?.addOnStateChange { conn: ManagedConnection ->
             if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
-                val clientId = remoteConnectionInfo.clientId ?: emptyString()
-
+                val isTeacherDisconnected = remoteConnectionInfo.clientRoles[0] == TEACHER_ROLE
+                if (isTeacherDisconnected) {
+                    liveClassManager.setState(LiveClassState.TEACHER_DISCONNECTED)
+                    viewModel.updateUpstreamConnection(false, false)
+                }
+                val clientId = remoteConnectionInfo.clientId
                 uiThreadPoster.post {
                     if (view != null) {
                         if (binding.teacherVideoFeed.tag == clientId) {
                             binding.teacherVideoFeed.removeViewAt(1)
+                            setupWaitingStateForStudent()
                         } else {
                             studentsFeedAdapter.removeVideoFeed(clientId)
                         }
@@ -485,6 +476,46 @@ class LiveClassFragment :
                 notificationToast?.cancel()
                 showCustomToast(getString(R.string.teacher_turned_off_all_students_cam_and_mic), true, true)
             }
+        }
+    }
+
+    private fun onLiveClassStarted() {
+        uiThreadPoster.post {
+            binding.teacherVideoFeedOverlay.isVisible = false
+            binding.blackboardImageView.isVisible = false
+            binding.waitingStateTextview.isVisible = false
+            binding.toggleCameraBtn.isActivated = true
+
+            if (requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
+                binding.toggleCameraBtn.isChecked = false
+                binding.localMediaFeed.showCameraTurnedOn()
+            } else {
+                binding.toggleCameraBtn.isChecked = true
+            }
+
+            binding.toggleMicrophoneBtn.isActivated = true
+            if (requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
+                binding.toggleMicrophoneBtn.isChecked = false
+                binding.localMediaFeed.showMicTurnedOn()
+            } else {
+                binding.localMediaFeed.showMicMuted()
+                binding.toggleMicrophoneBtn.isChecked = true
+            }
+        }
+    }
+
+    private fun onLiveClassRestarted() {
+        uiThreadPoster.post {
+            binding.teacherVideoFeedOverlay.isVisible = false
+            binding.blackboardImageView.isVisible = false
+            binding.waitingStateTextview.isVisible = false
+
+            binding.toggleCameraBtn.isActivated = true
+            binding.toggleCameraBtn.isChecked = true
+
+            binding.toggleMicrophoneBtn.isActivated = true
+            binding.toggleMicrophoneBtn.isChecked = true
+            binding.localMediaFeed.showMicMuted()
         }
     }
 }
