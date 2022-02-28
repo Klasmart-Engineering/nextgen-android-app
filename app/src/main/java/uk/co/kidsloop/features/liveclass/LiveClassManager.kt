@@ -64,10 +64,6 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         return client
     }
 
-    fun getUpstreamDataStream(): DataStream? {
-        return upstreamDataStream
-    }
-
     // For the Downstreams, it needs to be an unique DataChannel and Data Stream for every connection,
     // so we will instantiate each one when we will open the DownstreamConnection.
     fun getNewDownstreamDataStream(): DataStream {
@@ -108,7 +104,7 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         upstreamDataStream = dataStream
     }
 
-    fun setUpstreamDataChannel(dataChannel:DataChannel) {
+    fun setUpstreamDataChannel(dataChannel: DataChannel) {
         upstreamDataChannel = dataChannel
     }
 
