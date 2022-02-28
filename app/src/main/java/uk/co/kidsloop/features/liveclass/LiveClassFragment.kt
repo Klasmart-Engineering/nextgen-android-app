@@ -351,8 +351,10 @@ class LiveClassFragment :
     }
 
     private fun hideLoading() {
-        binding.loadingIndication.gone()
-        binding.liveClassGroup.visible()
+        if (!isTeacher) {
+            binding.loadingIndication.gone()
+            binding.liveClassGroup.visible()
+        }
     }
 
     private fun onClientRegistered(channel: Channel) {
