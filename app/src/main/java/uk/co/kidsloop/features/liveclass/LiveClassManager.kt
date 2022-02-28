@@ -34,11 +34,7 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
     var dataChannelActionsHandler: DataChannelActionsHandler? = null
     private var liveClassState: LiveClassState = LiveClassState.IDLE
 
-    private val dataChannelAdapter: JsonAdapter<KidsLoopDataChannel>
-
-    init {
-        dataChannelAdapter = moshi.adapter(KidsLoopDataChannel::class.java)
-    }
+    private val dataChannelAdapter: JsonAdapter<KidsLoopDataChannel> = moshi.adapter(KidsLoopDataChannel::class.java)
 
     fun setToken(token: String) {
         this.token = token
