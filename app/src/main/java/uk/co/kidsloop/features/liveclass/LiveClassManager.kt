@@ -37,7 +37,6 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
     private val dataChannelAdapter: JsonAdapter<KidsLoopDataChannel>
 
     init {
-        setUpstreamDataChannel()
         dataChannelAdapter = moshi.adapter(KidsLoopDataChannel::class.java)
     }
 
@@ -105,10 +104,12 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         return upstreamConnection?.clientId
     }
 
-    private fun setUpstreamDataChannel() {
-        // TODO @Paul see what you do with this label
-        upstreamDataChannel = DataChannel("testDataChannel")
-        upstreamDataStream = DataStream(upstreamDataChannel)
+    fun setUpstreamDataStream(dataStream: DataStream) {
+        upstreamDataStream = dataStream
+    }
+
+    fun setUpstreamDataChannel(dataChannel:DataChannel) {
+        upstreamDataChannel = dataChannel
     }
 
     fun sendDataString(data: String) {
