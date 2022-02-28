@@ -34,12 +34,7 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
     var dataChannelActionsHandler: DataChannelActionsHandler? = null
     private var liveClassState: LiveClassState = LiveClassState.IDLE
 
-    private val dataChannelAdapter: JsonAdapter<KidsLoopDataChannel>
-
-    init {
-        setUpstreamDataChannel()
-        dataChannelAdapter = moshi.adapter(KidsLoopDataChannel::class.java)
-    }
+    private val dataChannelAdapter: JsonAdapter<KidsLoopDataChannel> = moshi.adapter(KidsLoopDataChannel::class.java)
 
     fun setToken(token: String) {
         this.token = token
@@ -63,10 +58,6 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
 
     fun getClient(): Client? {
         return client
-    }
-
-    fun getUpstreamDataStream(): DataStream? {
-        return upstreamDataStream
     }
 
     // For the Downstreams, it needs to be an unique DataChannel and Data Stream for every connection,
@@ -105,10 +96,12 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         return upstreamConnection?.clientId
     }
 
-    private fun setUpstreamDataChannel() {
-        // TODO @Paul see what you do with this label
-        upstreamDataChannel = DataChannel("testDataChannel")
-        upstreamDataStream = DataStream(upstreamDataChannel)
+    fun setUpstreamDataStream(dataStream: DataStream) {
+        upstreamDataStream = dataStream
+    }
+
+    fun setUpstreamDataChannel(dataChannel: DataChannel) {
+        upstreamDataChannel = dataChannel
     }
 
     fun sendDataString(data: String) {
