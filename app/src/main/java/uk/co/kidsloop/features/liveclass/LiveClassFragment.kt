@@ -40,7 +40,6 @@ class LiveClassFragment :
     DisplayManager.DisplayListener {
 
     companion object {
-
         val TAG = LiveClassFragment::class.qualifiedName
         const val IS_CAMERA_TURNED_ON = "isCameraTurnedOn"
         const val IS_MICROPHONE_TURNED_ON = "isMicrophoneTurnedOn"
@@ -171,6 +170,7 @@ class LiveClassFragment :
     }
 
     private fun setUiForTeacher() {
+        binding.liveClassGroup.visible()
         binding.raiseHandBtn.gone()
         binding.waitingStateTextview.visibility = View.GONE
         binding.blackboardImageView.visibility = View.GONE
