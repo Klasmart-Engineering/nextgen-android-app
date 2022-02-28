@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
+import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -31,7 +32,6 @@ import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -170,7 +170,6 @@ class LiveClassFragment :
     }
 
     private fun setUiForTeacher() {
-        showLoading()
         binding.raiseHandBtn.gone()
         binding.waitingStateTextview.visibility = View.GONE
         binding.blackboardImageView.visibility = View.GONE
@@ -184,7 +183,6 @@ class LiveClassFragment :
 
     private fun setupWaitingStateForStudent() {
         showLoading()
-        binding.raiseHandBtn.visible()
         binding.raiseHandBtn.isEnabled = false
 
         binding.toggleCameraBtn.isActivated = false
@@ -348,9 +346,13 @@ class LiveClassFragment :
     }
 
     private fun showLoading() {
+        binding.loadingIndication.visible()
+        binding.liveClassGroup.gone()
     }
 
     private fun hideLoading() {
+        binding.loadingIndication.gone()
+        binding.liveClassGroup.visible()
     }
 
     private fun onClientRegistered(channel: Channel) {
@@ -402,8 +404,10 @@ class LiveClassFragment :
             if (connection.state == ConnectionState.Failed) {
                 // Reconnect if the connection failed.
                 openSfuUpstreamConnection()
-            } else if (connection.state == ConnectionState.Connected) {
-                hideLoading()
+            } else if (connection.state == ConnectionState.Connecting) {
+                uiThreadPoster.post {
+                    hideLoading()
+                }
             }
         }
     }
