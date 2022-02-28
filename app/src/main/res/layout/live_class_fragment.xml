@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,16 +17,6 @@
             android:src="@drawable/ic_more_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/raise_hand_btn"
-            android:layout_width="@dimen/space_50"
-            android:layout_height="@dimen/space_70"
-            android:contentDescription="@null"
-            android:scaleType="fitEnd"
-            android:src="@drawable/selector_raise_hand_btn"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
 
         <ToggleButton
             android:id="@+id/toggle_students_video"
@@ -50,16 +39,61 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintBottom_toTopOf="@id/toggle_students_video"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <uk.co.kidsloop.features.liveclass.localmedia.LocalMediaCustomContainer
-            android:id="@+id/local_media_feed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/raise_hand_btn"
+            android:layout_width="@dimen/space_50"
+            android:layout_height="@dimen/space_70"
+            android:contentDescription="@null"
+            android:scaleType="fitEnd"
+            android:src="@drawable/selector_raise_hand_btn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/teacher_video_feed"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginEnd="@dimen/space_8"
-            app:layout_constraintEnd_toStartOf="@+id/more_btn"
-            app:cardCornerRadius="@dimen/space_12" />
+            app:cardBackgroundColor="@color/dark_blue"
+            app:cardCornerRadius="@dimen/space_21"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/local_media_feed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/teacher_video_feed_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_local_media_turned_off_teacher" />
+
+            <ImageView
+                android:id="@+id/blackboard_imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="@dimen/space_65"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:src="@drawable/ic_blackboard_vector" />
+
+            <TextView
+                android:id="@+id/waiting_state_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:layout_marginTop="@dimen/space_38"
+                android:fontFamily="@font/rooney_sans_bold"
+                android:visibility="gone"
+                android:text="@string/wait_for_teacher_to_arrive"
+                android:textColor="@color/yellow"
+                android:textSize="28sp" />
+        </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/student_feeds_recyclerview"
@@ -68,86 +102,26 @@
             android:layout_marginEnd="@dimen/space_8"
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never"
-            app:layout_constraintTop_toBottomOf="@+id/local_media_feed"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/more_btn"/>
+            app:layout_constraintEnd_toStartOf="@+id/more_btn"
+            app:layout_constraintTop_toBottomOf="@+id/local_media_feed" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/teacher_video_feed"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+        <uk.co.kidsloop.features.liveclass.localmedia.LocalMediaCustomContainer
+            android:id="@+id/local_media_feed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/space_8"
-            app:cardCornerRadius="@dimen/space_21"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/local_media_feed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:cardBackgroundColor="@color/dark_blue">
-
-            <ImageView
-                android:id="@+id/teacher_video_feed_overlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_local_media_turned_off_teacher"
-                android:contentDescription="@null"/>
-
-            <ImageView
-                android:id="@+id/blackboard_imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_blackboard_vector"
-                android:layout_marginBottom="@dimen/space_65"
-                android:layout_gravity="bottom|center_horizontal"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:id="@+id/waiting_state_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/yellow"
-                android:fontFamily="@font/rooney_sans_bold"
-                android:textSize="28sp"
-                android:layout_gravity="top|center_horizontal"
-                android:layout_marginTop="@dimen/space_38"
-                android:text="@string/wait_for_teacher_to_arrive"/>
-        </androidx.cardview.widget.CardView>
+            app:cardCornerRadius="@dimen/space_12"
+            app:layout_constraintEnd_toStartOf="@+id/more_btn"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <FrameLayout
-        android:id="@+id/loading_screen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/dark_blue">
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            style="@style/KidsloopProgressBar"
-            android:layout_gravity="center"/>
-    </FrameLayout>
 
     <RelativeLayout
         android:id="@+id/live_class_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/overlay"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="gone">
-
-        <ToggleButton
-            android:id="@+id/toggle_camera_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="@dimen/space_16"
-            android:layout_marginEnd="@dimen/space_16"
-            android:layout_marginBottom="@dimen/space_32"
-            android:background="@null"
-            android:button="@drawable/selector_live_class_cam_btn"
-            android:textOff=""
-            android:textOn="" />
+        android:visibility="invisible"
+        android:background="@color/overlay">
 
         <ImageView
             android:id="@+id/exit_class_btn"
@@ -158,6 +132,17 @@
             android:layout_toEndOf="@+id/toggle_camera_btn"
             android:contentDescription="@null"
             android:src="@drawable/ic_exit_btn" />
+
+        <ImageView
+            android:id="@+id/exit_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="@dimen/space_44"
+            android:layout_marginEnd="@dimen/space_58"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_close_btn" />
 
         <ToggleButton
             android:id="@+id/toggle_microphone_btn"
@@ -171,16 +156,18 @@
             android:textOff=""
             android:textOn="" />
 
-        <ImageView
-            android:id="@+id/exit_menu"
+        <ToggleButton
+            android:id="@+id/toggle_camera_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="@dimen/space_58"
-            android:layout_marginBottom="@dimen/space_44"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_close_btn" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/space_32"
+            android:layout_marginEnd="@dimen/space_16"
+            android:layout_marginStart="@dimen/space_16"
+            android:background="@null"
+            android:button="@drawable/selector_live_class_cam_btn"
+            android:textOff=""
+            android:textOn="" />
     </RelativeLayout>
-
-</FrameLayout>
+</RelativeLayout>

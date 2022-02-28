@@ -31,6 +31,10 @@
     <string name="teacher_turned_off_all_microphones">Your teacher turned off all microphones</string>
     <string name="teacher_turned_off_all_students_cam_and_mic">Your teacher turned off all cameras and microphones</string>
     <string name="wait_for_teacher_to_arrive">Please wait for the teacher to arrive</string>
+    <string name="teacher_has_left_the_classroom">The teacher has left the classroom. Please wait for the teacher to arrive.</string>
     <string name="mic_on">Mic on</string>
     <string name="mic_off">Mic off</string>
+    <string name="leave_class">Leave Class?</string>
+    <string name="leave">Leave</string>
+    <string name="go_back">Go back</string>
 </resources>
