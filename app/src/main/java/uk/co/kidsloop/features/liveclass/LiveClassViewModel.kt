@@ -105,16 +105,16 @@ class LiveClassViewModel @Inject constructor(
     }
 
     fun updateUpstreamConnection(isVideoOn: Boolean, isAudioOn: Boolean) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
-                    val config = upstreamConnection.config
-                    config.localVideoMuted = !isVideoOn
-                    config.localAudioMuted = !isAudioOn
-                    upstreamConnection.update(config)
-                }
-            }
-        }
+//        viewModelScope.launch {
+//            withContext(Dispatchers.IO) {
+//                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
+//                    val config = upstreamConnection.config
+//                    config.localVideoMuted = !isVideoOn
+//                    config.localAudioMuted = !isAudioOn
+//                    upstreamConnection.update(config)
+//                }
+//            }
+//        }
     }
 
     fun turnOffVideoForStudents() {
