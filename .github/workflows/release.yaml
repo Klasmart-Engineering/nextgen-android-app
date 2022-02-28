@@ -114,8 +114,8 @@ jobs:
       - name: Upload MobSF Analysis PDF Result
         uses: actions/upload-artifact@v2
         with:
-          name: mobsf-report.pdf
-          path: mobsf-report.pdf
+          name: mobsf-report.json
+          path: mobsf-report.json
           
       # - name: Create Release
       #   uses: softprops/action-gh-release@v1
