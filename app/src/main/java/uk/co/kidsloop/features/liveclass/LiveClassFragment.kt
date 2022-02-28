@@ -171,6 +171,7 @@ class LiveClassFragment :
     }
 
     private fun setUiForTeacher() {
+        binding.liveClassGroup.visible()
         binding.raiseHandBtn.gone()
         binding.waitingStateTextview.visibility = View.GONE
         binding.blackboardImageView.visibility = View.GONE
