@@ -128,6 +128,7 @@ class LiveClassFragment :
         if (isTeacher) {
             setUiForTeacher()
         } else {
+            showLoading()
             setupWaitingStateForStudent()
         }
 
@@ -182,7 +183,6 @@ class LiveClassFragment :
     }
 
     private fun setupWaitingStateForStudent() {
-        showLoading()
         binding.raiseHandBtn.isEnabled = false
 
         binding.toggleCameraBtn.isActivated = false
