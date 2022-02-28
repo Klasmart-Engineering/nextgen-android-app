@@ -114,6 +114,24 @@
             app:cardCornerRadius="@dimen/space_12"
             app:layout_constraintEnd_toStartOf="@+id/more_btn"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/loading_indication"
+            style="@style/KidsloopProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/live_class_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:constraint_referenced_ids="local_media_feed, student_feeds_recyclerview, teacher_video_feed, more_btn, raise_hand_btn"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <RelativeLayout

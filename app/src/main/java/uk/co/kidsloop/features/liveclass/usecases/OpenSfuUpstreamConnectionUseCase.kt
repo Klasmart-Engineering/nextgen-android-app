@@ -1,8 +1,8 @@
 package uk.co.kidsloop.features.liveclass.usecases
 
 import fm.liveswitch.*
-import uk.co.kidsloop.features.liveclass.LiveClassManager
 import javax.inject.Inject
+import uk.co.kidsloop.features.liveclass.LiveClassManager
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 
 class OpenSfuUpstreamConnectionUseCase @Inject constructor(
