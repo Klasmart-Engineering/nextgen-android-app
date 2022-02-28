@@ -96,7 +96,7 @@ jobs:
           REPO_NAME: ${{ github.event.repository.name }}
 
       - name: Run MobSF Analysis
-        uses: fundacaocerti/mobsf-action@v1.7
+        uses: fundacaocerti/mobsf-action@v1.7.1
         env:
           INPUT_FILE_NAME: app/build/outputs/apk/release/app-release-unsigned.apk
           SCAN_TYPE: apk
