@@ -141,14 +141,8 @@ class LiveClassFragment :
                         it.channel
                     )
                     is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> hideLoading()
-                    is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> {
-                        stopLocalMedia()
-                        leaveLiveClass()
-                    }
-                    is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> {
-                        stopLocalMedia()
-                        leaveLiveClass()
-                    }
+                    is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
+                    is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
                 }
             }
         )
@@ -387,6 +381,7 @@ class LiveClassFragment :
         localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
+            leaveLiveClass()
         }
     }
 
