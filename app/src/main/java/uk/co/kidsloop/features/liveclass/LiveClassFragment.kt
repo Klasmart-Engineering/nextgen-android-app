@@ -184,6 +184,8 @@ class LiveClassFragment :
     }
 
     private fun setupWaitingStateForStudent() {
+        localMedia?.videoMuted = true
+        localMedia?.audioMuted = true
         binding.raiseHandBtn.isEnabled = false
 
         binding.toggleCameraBtn.isActivated = false
@@ -203,10 +205,11 @@ class LiveClassFragment :
             if (binding.toggleMicrophoneBtn.isActivated) {
                 if (binding.toggleMicrophoneBtn.isChecked) {
                     binding.localMediaFeed.showMicMuted()
+                    localMedia?.audioMuted = true
                 } else {
                     binding.localMediaFeed.showMicTurnedOn()
+                    localMedia?.audioMuted = false
                 }
-                viewModel.toggleLocalAudio()
             } else {
                 val messageId = when (liveClassManager.getState()) {
                     LiveClassState.JOINED_AND_WAITING_FOR_TEACHER -> R.string.wait_for_teacher_to_arrive
@@ -221,10 +224,11 @@ class LiveClassFragment :
             if (binding.toggleCameraBtn.isActivated) {
                 if (binding.toggleCameraBtn.isChecked) {
                     binding.localMediaFeed.showCameraTurnedOff()
+                    localMedia?.videoMuted = true
                 } else {
                     binding.localMediaFeed.showCameraTurnedOn()
+                    localMedia?.videoMuted = false
                 }
-                viewModel.toggleLocalVideo()
             } else {
                 val messageId = when (liveClassManager.getState()) {
                     LiveClassState.JOINED_AND_WAITING_FOR_TEACHER -> R.string.wait_for_teacher_to_arrive
@@ -291,11 +295,8 @@ class LiveClassFragment :
             aecContext = AecContext()
         )
 
-        val shouldTurnOnCam = requireArguments().getBoolean(IS_CAMERA_TURNED_ON)
-        val shouldUnMuteMic = requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)
-
         val connection =
-            viewModel.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia, shouldTurnOnCam, shouldUnMuteMic)
+            viewModel.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia)
 
         // Adding remote view to UI.
         when (remoteConnectionInfo.clientRoles[0]) {
@@ -316,7 +317,8 @@ class LiveClassFragment :
                 val isTeacherDisconnected = remoteConnectionInfo.clientRoles[0] == TEACHER_ROLE
                 if (isTeacherDisconnected) {
                     liveClassManager.setState(LiveClassState.TEACHER_DISCONNECTED)
-                    viewModel.updateUpstreamConnection(false, false)
+                    localMedia?.videoMuted = true
+                    localMedia?.audioMuted = true
                 }
                 val clientId = remoteConnectionInfo.clientId
                 uiThreadPoster.post {
@@ -398,9 +400,7 @@ class LiveClassFragment :
     private fun openSfuUpstreamConnection() {
         val upstreamConnection = viewModel.openSfuUpstreamConnection(
             getAudioStream(localMedia),
-            getVideoStream(localMedia),
-            isTeacher,
-            isTeacher
+            getVideoStream(localMedia)
         )
 
         upstreamConnection?.addOnStateChange { connection ->
@@ -515,6 +515,7 @@ class LiveClassFragment :
             binding.toggleCameraBtn.isActivated = true
 
             if (requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
+                localMedia?.videoMuted = false
                 binding.toggleCameraBtn.isChecked = false
                 binding.localMediaFeed.showCameraTurnedOn()
             } else {
@@ -523,6 +524,7 @@ class LiveClassFragment :
 
             binding.toggleMicrophoneBtn.isActivated = true
             if (requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
+                localMedia?.audioMuted = false
                 binding.toggleMicrophoneBtn.isChecked = false
                 binding.localMediaFeed.showMicTurnedOn()
             } else {

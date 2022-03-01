@@ -66,17 +66,10 @@ class LiveClassViewModel @Inject constructor(
 
     fun openSfuUpstreamConnection(
         audioStream: AudioStream?,
-        videoStream: VideoStream?,
-        isAudioTurnedOn: Boolean,
-        isVideoTurnedOn: Boolean,
+        videoStream: VideoStream?
     ): SfuUpstreamConnection? {
         val upstreamConnection =
             openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream)
-        val config = upstreamConnection?.config
-        config?.localVideoMuted = !isVideoTurnedOn
-        config?.localAudioMuted = !isAudioTurnedOn
-        upstreamConnection?.update(config)
-
         return upstreamConnection
     }
 
@@ -98,19 +91,6 @@ class LiveClassViewModel @Inject constructor(
                 liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
                     val config = upstreamConnection.config
                     config.localVideoMuted = !config.localVideoMuted
-                    upstreamConnection.update(config)
-                }
-            }
-        }
-    }
-
-    fun updateUpstreamConnection(isVideoOn: Boolean, isAudioOn: Boolean) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
-                    val config = upstreamConnection.config
-                    config.localVideoMuted = !isVideoOn
-                    config.localAudioMuted = !isAudioOn
                     upstreamConnection.update(config)
                 }
             }
@@ -184,9 +164,7 @@ class LiveClassViewModel @Inject constructor(
 
     fun openSfuDownstreamConnection(
         remoteConnectionInfo: ConnectionInfo,
-        remoteMedia: SFURemoteMedia,
-        shouldTurnOnCam: Boolean,
-        shouldUnMuteMic: Boolean
+        remoteMedia: SFURemoteMedia
     ): SfuDownstreamConnection? {
         val downStreamConnection =
             openSfuDownstreamConnection.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia)
@@ -197,7 +175,6 @@ class LiveClassViewModel @Inject constructor(
             } else {
                 liveClassManager.setState(LiveClassState.LIVE_CLASS_STARTED)
                 _classroomStateLiveData.postValue(LiveClassUiState.LiveClassStarted)
-                updateUpstreamConnection(shouldTurnOnCam, shouldUnMuteMic)
             }
         }
         return downStreamConnection
