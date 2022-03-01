@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -68,7 +69,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_local_media_turned_off_teacher" />
+                android:src="@drawable/ic_local_media_turned_off_teacher"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/blackboard_imageView"
@@ -79,8 +81,8 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@null"
                 android:scaleType="centerCrop"
-                android:visibility="gone"
-                android:src="@drawable/ic_blackboard_vector" />
+                android:src="@drawable/ic_blackboard_vector"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/waiting_state_textview"
@@ -89,10 +91,10 @@
                 android:layout_gravity="top|center_horizontal"
                 android:layout_marginTop="@dimen/space_38"
                 android:fontFamily="@font/rooney_sans_bold"
-                android:visibility="gone"
                 android:text="@string/wait_for_teacher_to_arrive"
                 android:textColor="@color/yellow"
-                android:textSize="28sp" />
+                android:textSize="28sp"
+                android:visibility="gone" />
         </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -121,25 +123,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/live_class_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible"
-            app:constraint_referenced_ids="local_media_feed, student_feeds_recyclerview, teacher_video_feed, more_btn, raise_hand_btn"/>
+            app:constraint_referenced_ids="local_media_feed, student_feeds_recyclerview, teacher_video_feed, more_btn, raise_hand_btn" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <RelativeLayout
         android:id="@+id/live_class_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:background="@color/overlay">
+        android:background="@color/overlay"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="invisible">
 
         <ImageView
             android:id="@+id/exit_class_btn"
@@ -155,10 +159,10 @@
             android:id="@+id/exit_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="@dimen/space_44"
+            android:layout_alignParentBottom="true"
             android:layout_marginEnd="@dimen/space_58"
+            android:layout_marginBottom="@dimen/space_44"
             android:contentDescription="@null"
             android:src="@drawable/ic_close_btn" />
 
@@ -180,9 +184,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/space_32"
-            android:layout_marginEnd="@dimen/space_16"
             android:layout_marginStart="@dimen/space_16"
+            android:layout_marginEnd="@dimen/space_16"
+            android:layout_marginBottom="@dimen/space_32"
             android:background="@null"
             android:button="@drawable/selector_live_class_cam_btn"
             android:textOff=""

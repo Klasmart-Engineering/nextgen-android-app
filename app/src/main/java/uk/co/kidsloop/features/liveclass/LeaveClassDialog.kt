@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.setFragmentResult
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.databinding.LeaveClassDialogFragmentBinding
@@ -33,8 +32,18 @@ class LeaveClassDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setTimerForDialogToDismiss()
         setControls()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setTimerForDialogToDismiss()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        dismissAllowingStateLoss()
+        timer.cancel()
     }
 
     private fun setControls() {
@@ -53,7 +62,8 @@ class LeaveClassDialog : DialogFragment() {
             schedule(
                 object : TimerTask() {
                     override fun run() {
-                        dismiss()
+                        if (dialog?.isShowing == true)
+                            dismiss()
                         cancel()
                     }
                 },

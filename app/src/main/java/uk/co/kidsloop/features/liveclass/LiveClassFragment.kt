@@ -8,6 +8,7 @@ import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -17,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
-import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -32,6 +32,7 @@ import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -143,14 +144,8 @@ class LiveClassFragment :
                         it.channel
                     )
                     is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> hideLoading()
-                    is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> {
-                        stopLocalMedia()
-                        leaveLiveClass()
-                    }
-                    is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> {
-                        stopLocalMedia()
-                        leaveLiveClass()
-                    }
+                    is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
+                    is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
                     is LiveClassViewModel.LiveClassUiState.LiveClassStarted -> onLiveClassStarted()
                     is LiveClassViewModel.LiveClassUiState.LiveClassRestarted -> onLiveClassRestarted()
                 }
@@ -158,6 +153,15 @@ class LiveClassFragment :
         )
 
         liveClassManager.dataChannelActionsHandler = this
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    viewModel.leaveLiveClass()
+                }
+            }
+        )
     }
 
     override fun onDestroyView() {
@@ -171,6 +175,7 @@ class LiveClassFragment :
     }
 
     private fun setUiForTeacher() {
+        binding.teacherVideoFeedOverlay.visible()
         binding.liveClassGroup.visible()
         binding.raiseHandBtn.gone()
         binding.waitingStateTextview.visibility = View.GONE
@@ -349,8 +354,9 @@ class LiveClassFragment :
     }
 
     private fun showLoading() {
-        binding.loadingIndication.visible()
+        binding.liveClassOverlay.gone()
         binding.liveClassGroup.gone()
+        binding.loadingIndication.visible()
     }
 
     private fun hideLoading() {
@@ -375,9 +381,7 @@ class LiveClassFragment :
 
     private fun leaveLiveClass() {
         uiThreadPoster.post {
-            val navController = findNavController()
-            navController.navigate(LiveClassFragmentDirections.liveclassToLogin())
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
     }
 
@@ -385,6 +389,7 @@ class LiveClassFragment :
         localMedia?.stop()?.then { _ ->
             localMedia?.destroy()
             localMedia = null
+            leaveLiveClass()
         }
     }
 
