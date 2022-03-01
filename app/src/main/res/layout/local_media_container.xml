@@ -5,10 +5,9 @@
         android:id="@+id/local_video_student_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:adjustViewBounds="true"
         android:contentDescription="@null"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_local_media_turned_off_student" />
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_thumb_noradius" />
 
     <ImageView
         android:id="@+id/mic_status_image_view"
