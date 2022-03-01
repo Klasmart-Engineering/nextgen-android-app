@@ -97,19 +97,6 @@ class LiveClassViewModel @Inject constructor(
         }
     }
 
-    fun updateUpstreamConnection(isVideoOn: Boolean, isAudioOn: Boolean) {
-//        viewModelScope.launch {
-//            withContext(Dispatchers.IO) {
-//                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
-//                    val config = upstreamConnection.config
-//                    config.localVideoMuted = !isVideoOn
-//                    config.localAudioMuted = !isAudioOn
-//                    upstreamConnection.update(config)
-//                }
-//            }
-//        }
-    }
-
     fun turnOffVideoForStudents() {
         viewModelScope.launch {
             sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.DISABLE_VIDEO)
@@ -177,9 +164,7 @@ class LiveClassViewModel @Inject constructor(
 
     fun openSfuDownstreamConnection(
         remoteConnectionInfo: ConnectionInfo,
-        remoteMedia: SFURemoteMedia,
-        shouldTurnOnCam: Boolean,
-        shouldUnMuteMic: Boolean
+        remoteMedia: SFURemoteMedia
     ): SfuDownstreamConnection? {
         val downStreamConnection =
             openSfuDownstreamConnection.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia)
@@ -190,7 +175,6 @@ class LiveClassViewModel @Inject constructor(
             } else {
                 liveClassManager.setState(LiveClassState.LIVE_CLASS_STARTED)
                 _classroomStateLiveData.postValue(LiveClassUiState.LiveClassStarted)
-                updateUpstreamConnection(shouldTurnOnCam, shouldUnMuteMic)
             }
         }
         return downStreamConnection
