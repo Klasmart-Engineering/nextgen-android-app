@@ -8,6 +8,7 @@ import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -148,6 +149,21 @@ class LiveClassFragment :
         )
 
         liveClassManager.dataChannelActionsHandler = this
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    dialogsManager.showDialog(LeaveClassDialog.TAG)
+                    requireActivity().supportFragmentManager.setFragmentResultListener(
+                        LeaveClassDialog.TAG.toString(),
+                        viewLifecycleOwner
+                    ) { _, _ ->
+                        viewModel.leaveLiveClass()
+                    }
+                }
+            }
+        )
     }
 
     override fun onDestroyView() {
@@ -371,9 +387,7 @@ class LiveClassFragment :
 
     private fun leaveLiveClass() {
         uiThreadPoster.post {
-            val navController = findNavController()
-            navController.navigate(LiveClassFragmentDirections.liveclassToLogin())
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
     }
 
