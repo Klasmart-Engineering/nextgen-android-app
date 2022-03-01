@@ -1,6 +1,5 @@
 package uk.co.kidsloop.features.liveclass
 
-import android.util.Log
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
@@ -156,7 +155,6 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
     }
 
     fun setState(newState: LiveClassState) {
-        Log.d("LiveClassManager state", newState.name)
         if (newState == LiveClassState.CAM_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.MIC_DISABLED_BY_TEACHER) {
             this.liveClassState = LiveClassState.MIC_AND_CAMERA_DISABLED
         } else if (newState == LiveClassState.MIC_DISABLED_BY_TEACHER && this.liveClassState == LiveClassState.CAM_DISABLED_BY_TEACHER) {
