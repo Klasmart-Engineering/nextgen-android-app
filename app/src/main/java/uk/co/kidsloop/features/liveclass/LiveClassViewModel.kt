@@ -19,10 +19,12 @@ import kotlinx.coroutines.withContext
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
+import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.features.liveclass.usecases.JoinLiveClassUseCase
 import uk.co.kidsloop.features.liveclass.usecases.OpenSfuDownstreamConnection
 import uk.co.kidsloop.features.liveclass.usecases.OpenSfuUpstreamConnectionUseCase
 import uk.co.kidsloop.features.liveclass.usecases.SendDataChannelEventUseCase
+import uk.co.kidsloop.liveswitch.Config
 
 @HiltViewModel
 class LiveClassViewModel @Inject constructor(
@@ -42,6 +44,8 @@ class LiveClassViewModel @Inject constructor(
     sealed class LiveClassUiState {
         data class RegistrationSuccessful(val channel: Channel) : LiveClassUiState()
         data class FailedToJoiningLiveClass(val message: String?) : LiveClassUiState()
+        object LiveClassStarted : LiveClassUiState()
+        object LiveClassRestarted : LiveClassUiState()
         object UnregisterSuccessful : LiveClassUiState()
         object UnregisterFailed : LiveClassUiState()
     }
@@ -62,17 +66,10 @@ class LiveClassViewModel @Inject constructor(
 
     fun openSfuUpstreamConnection(
         audioStream: AudioStream?,
-        videoStream: VideoStream?,
-        isAudioTurnedOn: Boolean,
-        isVideoTurnedOn: Boolean,
+        videoStream: VideoStream?
     ): SfuUpstreamConnection? {
         val upstreamConnection =
             openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream)
-        val config = upstreamConnection?.config
-        config?.localVideoMuted = !isVideoTurnedOn
-        config?.localAudioMuted = !isAudioTurnedOn
-        upstreamConnection?.update(config)
-
         return upstreamConnection
     }
 
@@ -94,19 +91,6 @@ class LiveClassViewModel @Inject constructor(
                 liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
                     val config = upstreamConnection.config
                     config.localVideoMuted = !config.localVideoMuted
-                    upstreamConnection.update(config)
-                }
-            }
-        }
-    }
-
-    fun updateUpstreamConnection(isVideoOn: Boolean, isAudioOn: Boolean) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
-                    val config = upstreamConnection.config
-                    config.localVideoMuted = !isVideoOn
-                    config.localAudioMuted = !isAudioOn
                     upstreamConnection.update(config)
                 }
             }
@@ -182,7 +166,18 @@ class LiveClassViewModel @Inject constructor(
         remoteConnectionInfo: ConnectionInfo,
         remoteMedia: SFURemoteMedia
     ): SfuDownstreamConnection? {
-        return openSfuDownstreamConnection.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia)
+        val downStreamConnection =
+            openSfuDownstreamConnection.openSfuDownstreamConnection(remoteConnectionInfo, remoteMedia)
+        if (remoteConnectionInfo.clientRoles[0] == Config.TEACHER_ROLE) {
+            if (liveClassManager.getState() == LiveClassState.TEACHER_DISCONNECTED) {
+                liveClassManager.setState(LiveClassState.LIVE_CLASS_RESTARTED)
+                _classroomStateLiveData.postValue(LiveClassUiState.LiveClassRestarted)
+            } else {
+                liveClassManager.setState(LiveClassState.LIVE_CLASS_STARTED)
+                _classroomStateLiveData.postValue(LiveClassUiState.LiveClassStarted)
+            }
+        }
+        return downStreamConnection
     }
 
     override fun onCleared() {
