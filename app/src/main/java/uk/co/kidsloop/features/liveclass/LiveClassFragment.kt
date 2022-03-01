@@ -113,10 +113,10 @@ class LiveClassFragment :
             layoutManager = object : LinearLayoutManager(context) {
 
                 override fun checkLayoutParams(lp: RecyclerView.LayoutParams?): Boolean {
-                    val height = height / 3
-                    val width = height * 4 / 3
-                    lp?.height = height - resources.getDimensionPixelSize(R.dimen.space_8)
-                    lp?.width = width
+                    val newHeight = height / 3
+                    val newWidth = newHeight * 4 / 3
+                    lp?.height = newHeight - resources.getDimensionPixelSize(R.dimen.space_8)
+                    lp?.width = newWidth - resources.getDimensionPixelSize(R.dimen.space_4)
                     return true
                 }
 
