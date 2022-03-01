@@ -175,6 +175,7 @@ class LiveClassFragment :
     }
 
     private fun setUiForTeacher() {
+        binding.teacherVideoFeedOverlay.visible()
         binding.liveClassGroup.visible()
         binding.raiseHandBtn.gone()
         binding.waitingStateTextview.visibility = View.GONE
