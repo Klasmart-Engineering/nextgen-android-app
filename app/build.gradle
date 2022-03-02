@@ -42,7 +42,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "NEXT-SPRINT-5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
