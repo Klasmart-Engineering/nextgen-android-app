@@ -33,9 +33,6 @@ class OpenSfuDownstreamConnection @Inject constructor(private val liveClassManag
             )
 
         liveClassManager.saveDownStreamConnection(remoteConnectionInfo.clientId, connection)
-        if (remoteConnectionInfo.clientRoles[0] == Config.TEACHER_ROLE) {
-            liveClassManager.setState(LiveClassState.LIVE_CLASS_STARTED)
-        }
         connection?.open()
         return connection
     }

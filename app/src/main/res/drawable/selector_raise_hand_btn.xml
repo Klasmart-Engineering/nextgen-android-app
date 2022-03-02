@@ -3,7 +3,7 @@
 
     <!--Disable-->
     <item android:drawable="@drawable/ic_raise_hand_disabled"
-        android:state_activated="false" />
+        android:state_enabled="false" />
 
     <!--Default-->
     <item android:drawable="@drawable/ic_raise_hand_unselected"
