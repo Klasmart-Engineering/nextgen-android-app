@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/leave_live_class_overlay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,7 +29,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@null"
-            android:src="@drawable/ic_confirm_exit_btn" />
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_confirm_exit_btn"
+            app:tint="@android:color/transparent"
+            android:tintMode="src_in"
+            android:background="@drawable/confirm_exit_button_with_ripple" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -78,7 +85,13 @@
             android:id="@+id/back_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_leave_back_btn"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_leave_back_btn"
+            android:background="@drawable/leave_back_btn_with_ripple"
+            app:tint="@android:color/transparent"
+            android:tintMode="src_in"
             android:contentDescription="@null" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

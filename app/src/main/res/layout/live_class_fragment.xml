@@ -14,10 +14,16 @@
             android:id="@+id/more_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_more_btn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@null"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/more_btn_with_ripple"
+            app:tint="@android:color/transparent"
+            android:tintMode="src_in"
+            android:src="@drawable/ic_more_btn" />
 
         <ToggleButton
             android:id="@+id/toggle_students_video"
@@ -153,6 +159,12 @@
             android:layout_marginBottom="@dimen/space_32"
             android:layout_toEndOf="@+id/toggle_camera_btn"
             android:contentDescription="@null"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/exit_btn_with_ripple"
+            app:tint="@android:color/transparent"
+            android:tintMode="src_in"
             android:src="@drawable/ic_exit_btn" />
 
         <ImageView
@@ -164,6 +176,12 @@
             android:layout_marginEnd="@dimen/space_58"
             android:layout_marginBottom="@dimen/space_44"
             android:contentDescription="@null"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            app:tint="@android:color/transparent"
+            android:tintMode="src_in"
+            android:background="@drawable/close_btn_with_ripple"
             android:src="@drawable/ic_close_btn" />
 
         <ToggleButton
