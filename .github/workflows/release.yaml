@@ -124,6 +124,7 @@ jobs:
           tag_name: ${{ env.app_version }}
           files: |
             app/build/outputs/apk/release/app-release-unsigned.apk
+            mobsf-report.pdf
           body_path: Release.txt
 
       - name: Publish to Slack 
