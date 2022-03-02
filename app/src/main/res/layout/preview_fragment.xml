@@ -137,19 +137,20 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <ToggleButton
+    <Button
         android:id="@+id/join_btn"
         style="@style/JoinButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/space_30"
         android:background="@drawable/rounded_button"
+        android:clickable="true"
+        android:focusable="true"
         android:minHeight="@dimen/space_53"
         android:paddingHorizontal="@dimen/space_15"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textOff="@string/join_live_class"
-        android:textOn="@string/join_live_class"
+        android:text="@string/join_live_class"
         app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/camera_preview_container" />
