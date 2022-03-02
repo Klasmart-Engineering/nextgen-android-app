@@ -1,0 +1,7 @@
+# These are the Release Notese for NEXT-SPRINT-5
+
+## Waiting room
+
+## Teacher disconnected
+
+## Leave class

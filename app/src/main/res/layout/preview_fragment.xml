@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_cyan">
+
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="41dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/ic_back_button"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/setup_label"
+        style="@style/TitleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="13dp"
+        android:text="@string/set_your_mic_and_video"
+        app:layout_constraintBottom_toBottomOf="@id/back_button"
+        app:layout_constraintStart_toEndOf="@id/back_button"
+        app:layout_constraintTop_toTopOf="@id/back_button" />
+
+    <FrameLayout
+        android:id="@+id/camera_preview_container"
+        android:layout_width="383dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/space_25"
+        android:layout_marginBottom="@dimen/space_30"
+        android:background="@drawable/rounded_corners"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/class_name_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/back_button">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/camera_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/no_camera_textview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/rounded_corners"
+        android:gravity="center"
+        android:text="@string/camera_is_turned_off"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
+        app:layout_constraintEnd_toEndOf="@id/camera_preview_container"
+        app:layout_constraintStart_toStartOf="@id/camera_preview_container"
+        app:layout_constraintTop_toTopOf="@+id/camera_preview_container" />
+
+    <TextView
+        android:id="@+id/class_name_label"
+        style="@style/TitleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/my_live_class"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/camera_preview_container"
+        app:layout_constraintTop_toTopOf="@id/camera_preview_container" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/permissions_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/black"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
+        app:layout_constraintEnd_toEndOf="@id/camera_preview_container"
+        app:layout_constraintStart_toStartOf="@id/camera_preview_container"
+        app:layout_constraintTop_toTopOf="@id/camera_preview_container">
+
+        <TextView
+            android:id="@+id/permissions_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:gravity="center"
+            android:text="@string/camera_is_turned_off"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/allow_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/allow_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/allow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/permissions_textview"
+            tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/buttons_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_5"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
+        app:layout_constraintEnd_toEndOf="@id/camera_preview_container"
+        app:layout_constraintStart_toStartOf="@id/camera_preview_container">
+
+        <ToggleButton
+            android:id="@+id/microphone_btn"
+            android:layout_width="@dimen/space_64"
+            android:layout_height="@dimen/space_64"
+            android:layout_marginEnd="@dimen/space_20"
+            android:background="@drawable/mic_amplitude_animation"
+            android:textOff=""
+            android:textOn="" />
+
+        <ToggleButton
+            android:id="@+id/camera_btn"
+            android:layout_width="@dimen/space_64"
+            android:layout_height="@dimen/space_64"
+            android:background="@drawable/ic_camera_selector"
+            android:textOff=""
+            android:textOn="" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <Button
+        android:id="@+id/join_btn"
+        style="@style/JoinButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_30"
+        android:background="@drawable/rounded_button"
+        android:clickable="true"
+        android:focusable="true"
+        android:minHeight="@dimen/space_53"
+        android:paddingHorizontal="@dimen/space_15"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:text="@string/join_live_class"
+        app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/camera_preview_container" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

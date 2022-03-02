@@ -1,1 +1,0 @@
-# This is the Android app ReadMe file
