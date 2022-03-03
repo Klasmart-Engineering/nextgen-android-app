@@ -5,6 +5,7 @@
         android:id="@+id/local_video_student_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:elevation="10dp"
         android:contentDescription="@null"
         android:scaleType="fitXY"
         android:src="@drawable/ic_thumb_noradius" />
