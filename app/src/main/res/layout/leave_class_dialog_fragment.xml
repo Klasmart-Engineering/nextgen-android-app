@@ -32,10 +32,8 @@
             android:adjustViewBounds="true"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_confirm_exit_btn"
-            app:tint="@android:color/transparent"
-            android:tintMode="src_in"
-            android:background="@drawable/confirm_exit_button_with_ripple" />
+            android:background="@drawable/bg_round_amaranth_ripple"
+            android:src="@drawable/ic_confirm_exit_btn" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -89,9 +87,7 @@
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_leave_back_btn"
-            android:background="@drawable/leave_back_btn_with_ripple"
-            app:tint="@android:color/transparent"
-            android:tintMode="src_in"
+            android:background="@drawable/bg_round_white_ripple"
             android:contentDescription="@null" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
