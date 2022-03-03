@@ -76,7 +76,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: release-apk
-          path: app/build/outputs/apk/release/app-release-unsigned.apk 
+          path: app/build/outputs/apk/release/app-release.apk 
           
       - name: Stop Gradle
         run: ./gradlew --stop    
@@ -98,7 +98,7 @@ jobs:
       - name: Run MobSF Analysis
         uses: fundacaocerti/mobsf-action@v1.7.1
         env:
-          INPUT_FILE_NAME: app/build/outputs/apk/release/app-release-unsigned.apk
+          INPUT_FILE_NAME: app/build/outputs/apk/release/app-release.apk
           SCAN_TYPE: apk
           OUTPUT_FILE_NAME: mobsf-report
 
@@ -123,7 +123,7 @@ jobs:
       #   with:
       #     tag_name: ${{ env.app_version }}
       #     files: |
-      #       app/build/outputs/apk/release/app-release-unsigned.apk
+      #       app/build/outputs/apk/release/app-release.apk
       #       mobsf-report.pdf
       #     body_path: Release.txt
 
