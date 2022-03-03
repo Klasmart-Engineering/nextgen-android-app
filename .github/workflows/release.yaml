@@ -76,7 +76,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: release-apk
-          path: app/build/outputs/apk/release/app-release-unsigned.apk 
+          path: app/build/outputs/apk/release/app-release.apk 
           
       - name: Stop Gradle
         run: ./gradlew --stop    
@@ -98,7 +98,7 @@ jobs:
       - name: Run MobSF Analysis
         uses: fundacaocerti/mobsf-action@v1.7.1
         env:
-          INPUT_FILE_NAME: app/build/outputs/apk/release/app-release-unsigned.apk
+          INPUT_FILE_NAME: app/build/outputs/apk/release/app-release.apk
           SCAN_TYPE: apk
           OUTPUT_FILE_NAME: mobsf-report
 
@@ -114,8 +114,8 @@ jobs:
       - name: Upload MobSF Analysis PDF Result
         uses: actions/upload-artifact@v2
         with:
-          name: mobsf-report.json
-          path: mobsf-report.json
+          name: mobsf-report.pdf
+          path: mobsf-report.pdf
           
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -123,15 +123,15 @@ jobs:
         with:
           tag_name: ${{ env.app_version }}
           files: |
-            app/build/outputs/apk/release/app-release-unsigned.apk
+            app/build/outputs/apk/release/app-release.apk
             mobsf-report.pdf
           body_path: Release.txt
 
-#       - name: Publish to Slack 
-#         uses: 8398a7/action-slack@v3
-#         with:
-#           status: ${{ job.status }}
-#           fields: repo,message,author,ref,workflow    
-#           text: 'Release ${{ env.app_version }} is available at: ${{ steps.create_release.outputs.url }}.'         
-#         env:
-#           SLACK_WEBHOOK_URL: ${{ secrets.APK_RELEASE_SLACK_WEBHOOK }}         
+      - name: Publish to Slack 
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,author,ref,workflow    
+          text: 'Release ${{ env.app_version }} is available at: ${{ steps.create_release.outputs.url }}.'         
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.APK_RELEASE_SLACK_WEBHOOK }}         
