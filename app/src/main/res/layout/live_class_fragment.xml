@@ -175,7 +175,7 @@
             android:adjustViewBounds="true"
             android:clickable="true"
             android:focusable="true"
-            android:background="@drawable/close_btn_with_ripple" />
+            android:background="@drawable/ic_close_btn_with_ripple" />
 
         <ToggleButton
             android:id="@+id/toggle_microphone_btn"
