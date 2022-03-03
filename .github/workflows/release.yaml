@@ -127,11 +127,11 @@ jobs:
             mobsf-report.pdf
           body_path: Release.txt
 
-      # - name: Publish to Slack 
-      #   uses: 8398a7/action-slack@v3
-      #   with:
-      #     status: ${{ job.status }}
-      #     fields: repo,message,author,ref,workflow    
-      #     text: 'Release ${{ env.app_version }} is available at: ${{ steps.create_release.outputs.url }}.'         
-      #   env:
-      #     SLACK_WEBHOOK_URL: ${{ secrets.APK_RELEASE_SLACK_WEBHOOK }}         
+      - name: Publish to Slack 
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,author,ref,workflow    
+          text: 'Release ${{ env.app_version }} is available at: ${{ steps.create_release.outputs.url }}.'         
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.APK_RELEASE_SLACK_WEBHOOK }}         
