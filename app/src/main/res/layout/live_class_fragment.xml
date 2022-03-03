@@ -116,6 +116,7 @@
             android:id="@+id/local_media_feed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
             android:layout_marginEnd="@dimen/space_8"
             app:cardCornerRadius="@dimen/space_12"
             app:layout_constraintEnd_toStartOf="@+id/more_btn"
