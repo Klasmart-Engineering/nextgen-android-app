@@ -4,6 +4,7 @@ import android.content.Context
 import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
 import android.widget.TextView
@@ -396,6 +397,11 @@ class LiveClassFragment :
     private fun startLocalMedia() {
         localMedia?.start()?.then({
             uiThreadPoster.post {
+                binding.localMediaFeed.showCameraTurnedOff()
+                Log.d(
+                    TAG,
+                    "kkk add local media"
+                )
                 binding.localMediaFeed.addLocalMediaView(localMedia?.view)
                 viewModel.joinLiveClass()
             }
@@ -522,6 +528,10 @@ class LiveClassFragment :
             if (requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
                 localMedia?.videoMuted = false
                 binding.toggleCameraBtn.isChecked = false
+                Log.d(
+                    TAG,
+                    "kkk show camera turn on"
+                )
                 binding.localMediaFeed.showCameraTurnedOn()
             } else {
                 binding.toggleCameraBtn.isChecked = true
