@@ -69,15 +69,14 @@ class LiveClassFragment :
 
     private lateinit var studentsFeedAdapter: FeedsAdapter
     private var notificationToast: Toast? = null
-    private var isTeacher: Boolean? = null
+    private var isMainTeacher: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        isTeacher = when (viewModel.sharedPrefsWrapper.getRole()) {
+        isMainTeacher = when (viewModel.sharedPrefsWrapper.getRole()) {
             TEACHER_ROLE -> true
-            ASSISTANT_TEACHER_ROLE -> false
-            else -> null
+            else -> false
         }
 
         localMedia = CameraLocalMedia(
@@ -86,7 +85,7 @@ class LiveClassFragment :
             disableVideo = false,
             aecContext = AecContext(),
             enableSimulcast = true,
-            isTeacher
+            isMainTeacher
         )
 
         displayManager =
@@ -128,7 +127,7 @@ class LiveClassFragment :
             }
         }
 
-        if (isTeacher == true) {
+        if (isMainTeacher) {
             setUiForTeacher()
         } else {
             showLoading()
@@ -365,7 +364,7 @@ class LiveClassFragment :
     }
 
     private fun hideLoading() {
-        if (isTeacher == false || isTeacher == null) {
+        if (!isMainTeacher) {
             binding.loadingIndication.gone()
             binding.liveClassGroup.visible()
         }

@@ -17,14 +17,13 @@ class CameraLocalMedia(
     disableVideo: Boolean,
     aecContext: AecContext,
     enableSimulcast: Boolean,
-    isTeacher: Boolean?
+    isMainTeacher: Boolean
 ) : LocalMedia<View>(context, disableAudio, disableVideo, aecContext) {
 
     private var viewSink: CameraPreview = CameraPreview(context, LayoutScale.Cover)
-    private val videoConfig = when (isTeacher) {
+    private val videoConfig = when (isMainTeacher) {
         true -> VideoConfig(640, 480, 30.0)
         false -> VideoConfig(480, 360, 30.0)
-        null -> VideoConfig(480, 360, 30.0)
     }
 
     init {
