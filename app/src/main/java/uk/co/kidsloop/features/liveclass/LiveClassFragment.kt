@@ -1,6 +1,7 @@
 package uk.co.kidsloop.features.liveclass
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
@@ -73,6 +74,7 @@ class LiveClassFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
 
         isMainTeacher = when (viewModel.sharedPrefsWrapper.getRole()) {
             TEACHER_ROLE -> true

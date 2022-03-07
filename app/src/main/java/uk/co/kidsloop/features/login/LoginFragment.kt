@@ -1,5 +1,6 @@
 package uk.co.kidsloop.features.login
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -28,6 +29,11 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
     lateinit var sharedPrefsWrapper: SharedPrefsWrapper
 
     private val binding by viewBinding(FragmentLoginBinding::bind)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
