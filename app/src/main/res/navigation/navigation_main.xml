@@ -85,5 +85,8 @@
         android:id="@+id/region_fragment"
         android:name="uk.co.kidsloop.features.regionAndLanguage.RegionFragment"
         tools:layout="@layout/fragment_region">
+        <action android:id="@+id/region_to_login"
+            app:destination="@+id/login_fragment"
+            app:popUpTo="@id/login_fragment"/>
     </fragment>
 </navigation>
