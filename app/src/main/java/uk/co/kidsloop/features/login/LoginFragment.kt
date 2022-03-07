@@ -15,10 +15,11 @@ import uk.co.kidsloop.app.utils.enable
 import uk.co.kidsloop.app.utils.unclickable
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.databinding.FragmentLoginBinding
+import uk.co.kidsloop.liveswitch.Config.ASSISTANT_TEACHER_ROLE
+import uk.co.kidsloop.liveswitch.Config.CHANNEL_ID
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import javax.inject.Inject
-import uk.co.kidsloop.liveswitch.Config.CHANNEL_ID
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment(R.layout.fragment_login) {
@@ -37,6 +38,8 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
             binding.loginAsStudentBtn.clickable()
             binding.loginAsTeacherBtn.enable()
             binding.loginAsTeacherBtn.clickable()
+            binding.loginAsAssistantTeacherBtn.enable()
+            binding.loginAsAssistantTeacherBtn.clickable()
         }
 
         binding.channelID.addTextChangedListener(object : TextWatcher {
@@ -48,16 +51,19 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
                     binding.loginAsStudentBtn.unclickable()
                     binding.loginAsTeacherBtn.disable()
                     binding.loginAsTeacherBtn.unclickable()
+                    binding.loginAsAssistantTeacherBtn.disable()
+                    binding.loginAsAssistantTeacherBtn.unclickable()
                 } else {
                     binding.loginAsStudentBtn.enable()
                     binding.loginAsStudentBtn.clickable()
                     binding.loginAsTeacherBtn.enable()
                     binding.loginAsTeacherBtn.clickable()
+                    binding.loginAsAssistantTeacherBtn.enable()
+                    binding.loginAsAssistantTeacherBtn.clickable()
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {}
-
         })
         binding.channelID.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
@@ -73,6 +79,12 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
 
         binding.loginAsTeacherBtn.setOnClickListener {
             sharedPrefsWrapper.saveRole(TEACHER_ROLE)
+            Navigation.findNavController(requireView())
+                .navigate(LoginFragmentDirections.loginToPreview())
+        }
+
+        binding.loginAsAssistantTeacherBtn.setOnClickListener {
+            sharedPrefsWrapper.saveRole(ASSISTANT_TEACHER_ROLE)
             Navigation.findNavController(requireView())
                 .navigate(LoginFragmentDirections.loginToPreview())
         }

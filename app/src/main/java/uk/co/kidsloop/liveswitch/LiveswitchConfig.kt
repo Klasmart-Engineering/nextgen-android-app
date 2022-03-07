@@ -14,4 +14,5 @@ object Config {
 
     const val STUDENT_ROLE = "student"
     const val TEACHER_ROLE = "teacher"
+    const val ASSISTANT_TEACHER_ROLE = "assistant"
 }

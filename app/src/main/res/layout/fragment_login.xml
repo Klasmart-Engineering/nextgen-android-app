@@ -37,9 +37,20 @@
         android:clickable="false"
         android:enabled="false"
         android:text="@string/login_as_teacher"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/login_as_assistant_teacher_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_as_student_btn" />
 
+    <Button
+        android:id="@+id/login_as_assistant_teacher_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:enabled="false"
+        android:text="@string/login_as_assistant_teacher"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_as_teacher_btn" />
 </androidx.constraintlayout.widget.ConstraintLayout>
