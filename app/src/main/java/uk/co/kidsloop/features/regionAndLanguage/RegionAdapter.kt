@@ -3,6 +3,7 @@ package uk.co.kidsloop.features.regionAndLanguage
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
@@ -10,11 +11,14 @@ import uk.co.kidsloop.R
 
 class RegionAdapter(private val dataSet: Array<String>) :
     RecyclerView.Adapter<RegionAdapter.ViewHolder>() {
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView = view.findViewById(R.id.language_textView)
+        val textView: TextView = view.findViewById(R.id.item_name_textView)
+        val checkmark: ImageView = view.findViewById(R.id.checkmark)
 
         init {
             itemView.setOnClickListener {
+                checkmark.visibility = View.VISIBLE
                 Navigation.findNavController(itemView)
                     .navigate(RegionFragmentDirections.regionToLogin())
             }

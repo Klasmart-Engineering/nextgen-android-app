@@ -11,7 +11,7 @@ import uk.co.kidsloop.R
 class LanguageAdapter(private val dataSet: Array<String>) :
     RecyclerView.Adapter<LanguageAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView.findViewById(R.id.language_textView)
+        val textView: TextView = itemView.findViewById(R.id.item_name_textView)
 
         init {
             itemView.setOnClickListener {
