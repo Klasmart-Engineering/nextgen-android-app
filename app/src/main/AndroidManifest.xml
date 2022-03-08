@@ -18,6 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KidsloopAndroid.NoActionBar">
         <activity
+            android:screenOrientation="userLandscape">
             android:name=".app.KidsloopActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

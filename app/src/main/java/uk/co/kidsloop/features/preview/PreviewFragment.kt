@@ -1,7 +1,6 @@
 package uk.co.kidsloop.features.preview
 
 import android.annotation.SuppressLint
-import android.content.pm.ActivityInfo
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -46,11 +45,6 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     private var audioRecord: AudioRecord? = null
     private var isRecordingAudio = false
     private var currentAmplitude = 0.0
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
