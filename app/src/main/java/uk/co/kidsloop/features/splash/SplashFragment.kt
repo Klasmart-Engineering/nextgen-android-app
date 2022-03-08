@@ -10,7 +10,6 @@ import com.microsoft.identity.client.exception.MsalException
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.KidsloopApplication
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.features.authentication.AuthenticationManager
 
