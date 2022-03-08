@@ -2,13 +2,16 @@ package uk.co.kidsloop.data.enums
 
 import android.content.SharedPreferences
 import uk.co.kidsloop.liveswitch.Config
-import javax.inject.Singleton
 
 class SharedPrefsWrapper(private val sharedPref: SharedPreferences) {
 
     companion object {
         const val LIVE_CLASS_ROLE = "live_class_role"
         const val CHANNEL_ID = "channel_id"
+        const val ACCESS_TOKEN = "access_token"
+        const val SCOPE = "scope"
+        const val EXPIRES_ON = "expires_on"
+        const val TENANT_ID = "tenant_id"
     }
 
     fun saveRole(role: String) {

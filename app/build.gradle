@@ -85,6 +85,7 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/jersey-module-version'
     }
 }
 
@@ -124,7 +125,6 @@ dependencies {
     // https://github.com/square/okhttp
     implementation "com.squareup.okhttp3:logging-interceptor:$ok_http_version"
 
-
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
@@ -143,4 +143,15 @@ dependencies {
 
     //Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    //Microsoft dependencies
+    if (findProject(':msal') != null) {
+        // For developer team only.
+        localImplementation project(':msal')
+        externalImplementation 'com.microsoft.identity.client:msal:1.0.+'
+    }
+    else {
+        // Downloads and Builds MSAL from maven central.
+        implementation 'com.microsoft.identity.client:msal:1.0.+'
+    }
 }
