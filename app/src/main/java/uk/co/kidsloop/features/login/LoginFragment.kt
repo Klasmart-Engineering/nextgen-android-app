@@ -76,5 +76,10 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
             Navigation.findNavController(requireView())
                 .navigate(LoginFragmentDirections.loginToPreview())
         }
+
+        binding.goToChartBtn.setOnClickListener {
+            Navigation.findNavController(requireView())
+                .navigate(LoginFragmentDirections.loginToCharts())
+        }
     }
 }

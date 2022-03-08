@@ -143,4 +143,8 @@ dependencies {
 
     //Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // AnyChart
+    // https://github.com/AnyChart/AnyChart-Android
+    implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
 }
