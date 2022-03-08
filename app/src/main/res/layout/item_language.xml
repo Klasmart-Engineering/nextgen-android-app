@@ -8,7 +8,7 @@
         android:id="@+id/language_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/space_10"
+        android:layout_margin="@dimen/space_15"
         android:text="Language"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,9 +18,9 @@
         android:id="@+id/checkmark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/space_10"
+        android:layout_margin="@dimen/space_15"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="?android:attr/textCheckMark" />
+        app:srcCompat="@drawable/ic_check" />
 </androidx.constraintlayout.widget.ConstraintLayout>
