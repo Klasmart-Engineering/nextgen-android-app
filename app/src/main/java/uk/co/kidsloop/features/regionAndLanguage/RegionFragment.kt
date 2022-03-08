@@ -3,6 +3,7 @@ package uk.co.kidsloop.features.regionAndLanguage
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
@@ -22,5 +23,8 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
         binding.regionRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.regionRecyclerView.adapter = context?.let { Datasource(it).getRegionsList() }
             ?.let { RegionAdapter(it.toTypedArray()) }
+        binding.backButton.setOnClickListener {
+            Navigation.findNavController(requireView()).navigateUp()
+        }
     }
 }
