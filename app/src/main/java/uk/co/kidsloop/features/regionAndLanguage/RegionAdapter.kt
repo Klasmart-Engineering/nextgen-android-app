@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.R
 
-class LanguageAdapter(private val dataSet: Array<String>) :
-    RecyclerView.Adapter<LanguageAdapter.ViewHolder>() {
+class RegionAdapter(private val dataSet: Array<String>) :
+    RecyclerView.Adapter<RegionAdapter.ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textView: TextView = view.findViewById(R.id.language_textView)
     }

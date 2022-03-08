@@ -1,6 +1,6 @@
 package uk.co.kidsloop.features.regionAndLanguage
 
-fun flowerList(): List<String> {
+fun languagesList(): List<String> {
     return listOf(
         "English",
         "Spanish",
