@@ -27,6 +27,6 @@
         android:layout_marginHorizontal="@dimen/space_15"
         android:layout_marginTop="@dimen/space_18"
         android:paddingHorizontal="@dimen/space_15"
-        android:background="@color/white"/>
+        android:background="@drawable/bg_list_rounded"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
