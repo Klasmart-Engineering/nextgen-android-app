@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -19,6 +20,9 @@ class LanguageFragment : BaseFragment(R.layout.fragment_language) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.languageRecyclerView.layoutManager = LinearLayoutManager(context)
+        binding.languageRecyclerView.adapter = context?.let { Datasource(it).getLanguageList() }
+            ?.let { LanguageAdapter(it.toTypedArray()) }
         binding.titleTextview.setOnClickListener {
             Navigation.findNavController(requireView())
                 .navigate(LanguageFragmentDirections.languageToRegion())
