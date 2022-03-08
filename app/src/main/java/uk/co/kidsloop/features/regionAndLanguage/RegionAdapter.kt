@@ -20,8 +20,8 @@ class RegionAdapter(private val dataSet: Array<String>) :
             itemView.setOnClickListener {
                 checkmark.visibility = View.VISIBLE
                 textView.setTextColor(R.color.kidsloop_blue)
-                Navigation.findNavController(itemView)
-                    .navigate(RegionFragmentDirections.regionToLogin())
+//                Navigation.findNavController(itemView)
+//                    .navigate(RegionFragmentDirections.regionToLogin())
             }
         }
     }

@@ -1,4 +1,4 @@
-package uk.co.kidsloop.features.regionAndLanguage
+package uk.co.kidsloop.features.regionAndLanguage.data
 
 fun languagesList(): List<String> {
     return listOf(

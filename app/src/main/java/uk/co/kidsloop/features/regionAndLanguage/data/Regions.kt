@@ -1,4 +1,4 @@
-package uk.co.kidsloop.features.regionAndLanguage
+package uk.co.kidsloop.features.regionAndLanguage.data
 
 fun regionsList(): List<String> {
     return listOf(
