@@ -12,7 +12,6 @@ import fm.liveswitch.IAction1
 import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -25,6 +24,7 @@ import uk.co.kidsloop.features.liveclass.usecases.OpenSfuDownstreamConnection
 import uk.co.kidsloop.features.liveclass.usecases.OpenSfuUpstreamConnectionUseCase
 import uk.co.kidsloop.features.liveclass.usecases.SendDataChannelEventUseCase
 import uk.co.kidsloop.liveswitch.Config
+import javax.inject.Inject
 
 @HiltViewModel
 class LiveClassViewModel @Inject constructor(
@@ -46,6 +46,7 @@ class LiveClassViewModel @Inject constructor(
         data class FailedToJoiningLiveClass(val message: String?) : LiveClassUiState()
         object LiveClassStarted : LiveClassUiState()
         object LiveClassRestarted : LiveClassUiState()
+        object LiveClassEnded : LiveClassUiState()
         object UnregisterSuccessful : LiveClassUiState()
         object UnregisterFailed : LiveClassUiState()
     }
@@ -146,6 +147,14 @@ class LiveClassViewModel @Inject constructor(
     fun showHandLowered() {
         viewModelScope.launch {
             sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.LOWER_HAND)
+        }
+    }
+
+    fun endLiveClass() {
+        viewModelScope.launch {
+            sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.END_LIVE_CLASS)?.then {
+                _classroomStateLiveData.postValue(LiveClassUiState.LiveClassEnded)
+            }
         }
     }
 

@@ -3,12 +3,12 @@ package uk.co.kidsloop.features.liveclass
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
-import javax.inject.Inject
-import javax.inject.Singleton
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.KidsLoopDataChannel
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class LiveClassManager @Inject constructor(private val moshi: Moshi) {
@@ -104,10 +104,11 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         upstreamDataChannel = dataChannel
     }
 
-    fun sendDataString(data: String) {
+    fun sendDataString(data: String): Future<Any>? {
         if (isUpstreamDataChannelConnected()) {
-            upstreamDataChannel?.sendDataString(data)
+            return upstreamDataChannel?.sendDataString(data)
         }
+        return null
     }
 
     private fun parseReceivedDataString(data: String?) {
@@ -136,6 +137,10 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
             DataChannelActionsType.DISABLE_AUDIO -> {
                 setState(LiveClassState.MIC_DISABLED_BY_TEACHER)
                 dataChannelActionsHandler?.onDisableMic(getState())
+            }
+            DataChannelActionsType.END_LIVE_CLASS -> {
+                setState(LiveClassState.TEACHER_ENDED_LIVE_CLASS)
+                dataChannelActionsHandler?.onLiveClassEnding()
             }
         }
     }

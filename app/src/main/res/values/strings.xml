@@ -40,4 +40,5 @@
     <string name="login_as_assistant_teacher">Login as assistant teacher</string>
     <string name="select_language">Select Language</string>
     <string name="select_your_region">Select your Region</string>
+    <string name="this_class_will_close_in_5_seconds">This class will close in 5 seconds</string>
 </resources>
