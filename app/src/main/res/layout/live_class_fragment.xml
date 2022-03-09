@@ -14,14 +14,14 @@
             android:id="@+id/more_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@null"
             android:adjustViewBounds="true"
-            android:clickable="true"
-            android:focusable="true"
             android:background="@drawable/bg_round_white_ripple"
-            android:src="@drawable/ic_more_btn" />
+            android:clickable="true"
+            android:contentDescription="@null"
+            android:focusable="true"
+            android:src="@drawable/ic_more_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ToggleButton
             android:id="@+id/toggle_students_video"
@@ -99,6 +99,28 @@
                 android:textColor="@color/yellow"
                 android:textSize="28sp"
                 android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/showing_bye_imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="@dimen/space_25"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_owl_showing_bye"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/leaving_state_textview"
+                style="@style/LeaveLiveClass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:layout_marginTop="@dimen/space_50"
+                android:text="@string/this_class_will_close_in_5_seconds"
+                android:visibility="gone" />
         </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -156,11 +178,11 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="@dimen/space_32"
             android:layout_toEndOf="@+id/toggle_camera_btn"
-            android:contentDescription="@null"
             android:adjustViewBounds="true"
-            android:clickable="true"
-            android:focusable="true"
             android:background="@drawable/bg_round_white_ripple"
+            android:clickable="true"
+            android:contentDescription="@null"
+            android:focusable="true"
             android:src="@drawable/ic_exit_btn" />
 
         <ImageView
@@ -171,11 +193,11 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="@dimen/space_58"
             android:layout_marginBottom="@dimen/space_44"
-            android:contentDescription="@null"
             android:adjustViewBounds="true"
+            android:background="@drawable/ic_close_btn_with_ripple"
             android:clickable="true"
-            android:focusable="true"
-            android:background="@drawable/ic_close_btn_with_ripple" />
+            android:contentDescription="@null"
+            android:focusable="true" />
 
         <ToggleButton
             android:id="@+id/toggle_microphone_btn"

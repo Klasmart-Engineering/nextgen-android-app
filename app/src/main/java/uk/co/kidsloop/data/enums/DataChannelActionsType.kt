@@ -10,5 +10,6 @@ enum class DataChannelActionsType(val type: String) {
     DISABLE_VIDEO("disable_video"),
     ENABLE_VIDEO("enable_video"),
     DISABLE_AUDIO("disable_audio"),
-    ENABLE_AUDIO("enable_audio")
+    ENABLE_AUDIO("enable_audio"),
+    END_LIVE_CLASS("end_live_class")
 }

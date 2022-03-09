@@ -4,6 +4,8 @@ import android.content.Context
 import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.ImageView
 import android.widget.TextView
@@ -148,6 +150,7 @@ class LiveClassFragment :
                     is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
                     is LiveClassViewModel.LiveClassUiState.LiveClassStarted -> onLiveClassStarted()
                     is LiveClassViewModel.LiveClassUiState.LiveClassRestarted -> onLiveClassRestarted()
+                    is LiveClassViewModel.LiveClassUiState.LiveClassEnded -> onLiveClassEnded()
                 }
             }
         )
@@ -205,6 +208,27 @@ class LiveClassFragment :
         binding.blackboardImageView.visible()
     }
 
+    private fun setupLeavingStateForStudent() {
+        localMedia?.videoMuted = true
+        localMedia?.audioMuted = true
+        binding.raiseHandBtn.isEnabled = false
+
+        binding.toggleCameraBtn.isActivated = false
+        binding.toggleCameraBtn.isChecked = false
+
+        binding.toggleMicrophoneBtn.isActivated = false
+        binding.toggleMicrophoneBtn.isChecked = false
+
+        binding.localMediaFeed.showCameraTurnedOff()
+        binding.localMediaFeed.showMicDisabledMuted()
+        binding.leavingStateTextview.visible()
+        binding.showingByeImageView.visible()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            viewModel.leaveLiveClass()
+        }, 5000)
+    }
+
     private fun setControls() {
         binding.toggleMicrophoneBtn.setOnClickListener {
             if (binding.toggleMicrophoneBtn.isActivated) {
@@ -250,7 +274,11 @@ class LiveClassFragment :
                 LeaveClassDialog.TAG.toString(),
                 viewLifecycleOwner
             ) { _, _ ->
-                viewModel.leaveLiveClass()
+                if (isTeacher) {
+                    viewModel.endLiveClass()
+                } else {
+                    viewModel.leaveLiveClass()
+                }
             }
         }
 
@@ -320,7 +348,7 @@ class LiveClassFragment :
         connection?.addOnStateChange { conn: ManagedConnection ->
             if (conn.state == ConnectionState.Closing || conn.state == ConnectionState.Failing) {
                 val isTeacherDisconnected = remoteConnectionInfo.clientRoles[0] == TEACHER_ROLE
-                if (isTeacherDisconnected) {
+                if (isTeacherDisconnected && liveClassManager.getState() != LiveClassState.TEACHER_ENDED_LIVE_CLASS) {
                     liveClassManager.setState(LiveClassState.TEACHER_DISCONNECTED)
                     localMedia?.videoMuted = true
                     localMedia?.audioMuted = true
@@ -330,7 +358,10 @@ class LiveClassFragment :
                     if (view != null) {
                         if (binding.teacherVideoFeed.tag == clientId) {
                             binding.teacherVideoFeed.removeViewAt(1)
-                            setupWaitingStateForStudent()
+                            if (liveClassManager.getState() != LiveClassState.TEACHER_ENDED_LIVE_CLASS)
+                                setupWaitingStateForStudent()
+                            else
+                                setupLeavingStateForStudent()
                         } else {
                             studentsFeedAdapter.removeVideoFeed(clientId)
                         }
@@ -512,6 +543,10 @@ class LiveClassFragment :
         }
     }
 
+    override fun onLiveClassEnding() {
+        setupLeavingStateForStudent()
+    }
+
     private fun onLiveClassStarted() {
         uiThreadPoster.post {
             binding.teacherVideoFeedOverlay.gone()
@@ -552,5 +587,9 @@ class LiveClassFragment :
             binding.toggleMicrophoneBtn.isChecked = true
             binding.localMediaFeed.showMicMuted()
         }
+    }
+
+    private fun onLiveClassEnded() {
+        viewModel.leaveLiveClass()
     }
 }

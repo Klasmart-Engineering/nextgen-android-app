@@ -41,7 +41,7 @@
         <item name="android:textSize">26sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:letterSpacing">-0.037</item>
-        <item name="lineHeight">32dp</item>
+        <item name="lineHeight">@dimen/space_32</item>
     </style>
 
     <style name="ToastStyle">
@@ -54,17 +54,24 @@
     <style name="LeaveTitleLabel">
         <item name="fontFamily">@font/rooney_sans_bold</item>
         <item name="android:textSize">50sp</item>
-        <item name="android:textColor">#F9CE26</item>
+        <item name="android:textColor">@color/yellow</item>
         <item name="android:letterSpacing">-0.03</item>
-        <item name="lineHeight">62dp</item>
+        <item name="lineHeight">@dimen/space_62</item>
     </style>
 
     <style name="LeaveSubTitleLabel">
         <item name="fontFamily">@font/rooney_sans_bold</item>
         <item name="android:textSize">22sp</item>
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:letterSpacing">-0.026</item>
-        <item name="lineHeight">27dp</item>
+        <item name="lineHeight">@dimen/space_27</item>
     </style>
 
+    <style name="LeaveLiveClass">
+        <item name="fontFamily">@font/rooney_sans_bold</item>
+        <item name="android:textSize">33sp</item>
+        <item name="android:textColor">@color/yellow</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="lineHeight">41dp</item>
+    </style>
 </resources>
