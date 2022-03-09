@@ -33,7 +33,7 @@ class SplashFragment : BaseFragment(R.layout.fragment_splash) {
                 ) {
                     authManager.saveB2CClientApp(application)
                     Navigation.findNavController(requireView())
-                        .navigate(SplashFragmentDirections.splashToB2c())
+                        .navigate(SplashFragmentDirections.splashToLanguage())
                 }
 
                 override fun onError(

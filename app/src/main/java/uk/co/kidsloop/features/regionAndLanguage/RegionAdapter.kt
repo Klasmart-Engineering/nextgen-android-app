@@ -5,23 +5,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.navigation.Navigation
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.R
 
-class RegionAdapter(private val dataSet: Array<String>) :
+class RegionAdapter(
+    private val onRegionClicked: (String) -> Unit,
+    private val dataSet: Array<String>
+) :
     RecyclerView.Adapter<RegionAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         val textView: TextView = view.findViewById(R.id.item_name_textView)
         val checkmark: ImageView = view.findViewById(R.id.checkmark)
 
         init {
             itemView.setOnClickListener {
                 checkmark.visibility = View.VISIBLE
-                textView.setTextColor(R.color.kidsloop_blue)
-//                Navigation.findNavController(itemView)
-//                    .navigate(RegionFragmentDirections.regionToLogin())
+                textView.setTextColor(ContextCompat.getColor(view.context, R.color.kidsloop_blue))
+                onRegionClicked.invoke(textView.text.toString())
             }
         }
     }

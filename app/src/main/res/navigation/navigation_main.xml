@@ -9,30 +9,12 @@
         android:id="@+id/splash_fragment"
         android:name="uk.co.kidsloop.features.splash.SplashFragment"
         tools:layout="@layout/fragment_splash">
-
-        <action
-            android:id="@+id/splash_to_b2c"
-            app:destination="@id/b2c_mode_fragment"
-            app:popUpTo="@id/splash_fragment"
-            app:popUpToInclusive="true" />
-
         <action
             android:id="@+id/splash_to_language"
             app:destination="@id/language_fragment"
             app:popUpTo="@id/splash_fragment"
             app:popUpToInclusive="true" />
 
-    </fragment>
-
-    <fragment
-        android:id="@+id/b2c_mode_fragment"
-        android:name="uk.co.kidsloop.features.authentication.B2CModeFragment"
-        tools:layout="@layout/fragment_b2c_mode">
-        <action
-            android:id="@+id/b2c_to_login"
-            app:destination="@id/login_fragment"
-            app:popUpTo="@id/b2c_mode_fragment"
-            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -87,17 +69,19 @@
         android:name="uk.co.kidsloop.features.regionAndLanguage.LanguageFragment"
         tools:layout="@layout/fragment_language">
 
-        <action android:id="@+id/language_to_region"
+        <action
+            android:id="@+id/language_to_region"
             app:destination="@+id/region_fragment"
-            app:popUpTo="@id/language_fragment"/>
+            app:popUpTo="@id/language_fragment" />
     </fragment>
 
     <fragment
         android:id="@+id/region_fragment"
         android:name="uk.co.kidsloop.features.regionAndLanguage.RegionFragment"
         tools:layout="@layout/fragment_region">
-        <action android:id="@+id/region_to_login"
+        <action
+            android:id="@+id/region_to_login"
             app:destination="@+id/login_fragment"
-            app:popUpTo="@id/login_fragment"/>
+            app:popUpTo="@id/region_fragment" />
     </fragment>
 </navigation>
