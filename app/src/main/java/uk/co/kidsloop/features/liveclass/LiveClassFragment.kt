@@ -31,6 +31,7 @@ import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
+import uk.co.kidsloop.liveswitch.Config.ASSISTANT_TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
@@ -70,12 +71,12 @@ class LiveClassFragment :
 
     private lateinit var studentsFeedAdapter: FeedsAdapter
     private var notificationToast: Toast? = null
-    private var isTeacher: Boolean = false
+    private var isMainTeacher: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        isTeacher = when (viewModel.sharedPrefsWrapper.getRole()) {
+        isMainTeacher = when (viewModel.sharedPrefsWrapper.getRole()) {
             TEACHER_ROLE -> true
             else -> false
         }
@@ -86,7 +87,7 @@ class LiveClassFragment :
             disableVideo = false,
             aecContext = AecContext(),
             enableSimulcast = true,
-            isTeacher
+            isMainTeacher
         )
 
         displayManager =
@@ -128,11 +129,11 @@ class LiveClassFragment :
             }
         }
 
-        if (isTeacher) {
+        if (isMainTeacher) {
             setUiForTeacher()
         } else {
             showLoading()
-            setupWaitingStateForStudent()
+            setupWaitingState()
         }
 
         setControls()
@@ -191,7 +192,7 @@ class LiveClassFragment :
         binding.toggleMicrophoneBtn.isActivated = true
     }
 
-    private fun setupWaitingStateForStudent() {
+    private fun setupWaitingState() {
         localMedia?.videoMuted = true
         localMedia?.audioMuted = true
         binding.raiseHandBtn.isEnabled = false
@@ -208,7 +209,7 @@ class LiveClassFragment :
         binding.blackboardImageView.visible()
     }
 
-    private fun setupLeavingStateForStudent() {
+    private fun setupLeavingState() {
         localMedia?.videoMuted = true
         localMedia?.audioMuted = true
         binding.raiseHandBtn.isEnabled = false
@@ -275,7 +276,7 @@ class LiveClassFragment :
                 LeaveClassDialog.TAG.toString(),
                 viewLifecycleOwner
             ) { _, _ ->
-                if (isTeacher) {
+                if (isMainTeacher) {
                     viewModel.endLiveClass()
                 } else {
                     viewModel.leaveLiveClass()
@@ -344,6 +345,9 @@ class LiveClassFragment :
             STUDENT_ROLE -> uiThreadPoster.post {
                 studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
             }
+            ASSISTANT_TEACHER_ROLE -> uiThreadPoster.post {
+                studentsFeedAdapter.addFirstVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
+            }
         }
 
         connection?.addOnStateChange { conn: ManagedConnection ->
@@ -360,9 +364,9 @@ class LiveClassFragment :
                         if (binding.teacherVideoFeed.tag == clientId) {
                             binding.teacherVideoFeed.removeViewAt(1)
                             if (liveClassManager.getState() != LiveClassState.TEACHER_ENDED_LIVE_CLASS)
-                                setupWaitingStateForStudent()
+                                setupWaitingState()
                             else
-                                setupLeavingStateForStudent()
+                                setupLeavingState()
                         } else {
                             studentsFeedAdapter.removeVideoFeed(clientId)
                         }
@@ -392,7 +396,7 @@ class LiveClassFragment :
     }
 
     private fun hideLoading() {
-        if (!isTeacher) {
+        if (!isMainTeacher) {
             binding.loadingIndication.gone()
             binding.liveClassGroup.visible()
         }
@@ -546,7 +550,7 @@ class LiveClassFragment :
 
     override fun onLiveClassEnding() {
         uiThreadPoster.post {
-            setupLeavingStateForStudent()
+            setupLeavingState()
         }
     }
 

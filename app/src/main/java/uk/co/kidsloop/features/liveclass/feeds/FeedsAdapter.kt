@@ -15,7 +15,7 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.StudentViewHolder>() {
         private const val SHOW_STUDENT_HAND_RAISED = "show_student_hand_raised"
         private const val HIDE_STUDENT_HAND_RAISED = "hide_student_hand_raised"
 
-        private const val MAX_STUDENT_VIDEO_FEEDS = 4
+        private const val MAX_STUDENT_VIDEO_FEEDS = 3
     }
 
     private var remoteStudentFeeds = mutableListOf<StudentFeedItem>()
@@ -63,6 +63,11 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.StudentViewHolder>() {
             remoteStudentFeeds.add(StudentFeedItem(remoteMediaView, clientId))
             notifyItemInserted(studentFeedsCount)
         }
+    }
+
+    fun addFirstVideoFeed(clientId: String, remoteMediaView: View) {
+        remoteStudentFeeds.add(0, StudentFeedItem(remoteMediaView, clientId))
+        notifyItemInserted(0)
     }
 
     fun removeVideoFeed(clientId: String) {

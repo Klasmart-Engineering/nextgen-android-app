@@ -13,7 +13,7 @@ class SplashFragment : BaseFragment(R.layout.fragment_splash) {
 
     private val finishSplash: Runnable = Runnable {
         Navigation.findNavController(requireView())
-            .navigate(SplashFragmentDirections.splashToLogin())
+            .navigate(SplashFragmentDirections.splashToLanguage())
     }
 
     override fun onStart() {
