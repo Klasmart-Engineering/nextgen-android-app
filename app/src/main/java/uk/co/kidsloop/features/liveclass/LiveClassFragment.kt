@@ -221,6 +221,7 @@ class LiveClassFragment :
 
         binding.localMediaFeed.showCameraTurnedOff()
         binding.localMediaFeed.showMicDisabledMuted()
+        binding.teacherVideoFeedBackground.visible()
         binding.leavingStateTextview.visible()
         binding.showingByeImageView.visible()
 

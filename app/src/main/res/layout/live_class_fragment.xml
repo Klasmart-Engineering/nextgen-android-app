@@ -108,6 +108,7 @@
                 android:layout_marginBottom="@dimen/space_25"
                 android:adjustViewBounds="true"
                 android:contentDescription="@null"
+                android:elevation="@dimen/space_20"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_owl_showing_bye"
                 android:visibility="gone" />
@@ -119,7 +120,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|center_horizontal"
                 android:layout_marginTop="@dimen/space_50"
+                android:elevation="@dimen/space_20"
                 android:text="@string/this_class_will_close_in_5_seconds"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/teacher_video_feed_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/dark_blue"
+                android:contentDescription="@null"
                 android:visibility="gone" />
         </androidx.cardview.widget.CardView>
 

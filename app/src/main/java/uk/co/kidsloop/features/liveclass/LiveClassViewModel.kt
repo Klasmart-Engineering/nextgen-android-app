@@ -152,7 +152,9 @@ class LiveClassViewModel @Inject constructor(
 
     fun endLiveClass() {
         viewModelScope.launch {
-            sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.END_LIVE_CLASS)
+            sendDataChannelEventUseCase.sendDataChannelEvent(DataChannelActionsType.END_LIVE_CLASS)?.then {
+                _classroomStateLiveData.postValue(LiveClassUiState.LiveClassEnded)
+            }
         }
     }
 
