@@ -544,7 +544,9 @@ class LiveClassFragment :
     }
 
     override fun onLiveClassEnding() {
-        setupLeavingStateForStudent()
+        uiThreadPoster.post {
+            setupLeavingStateForStudent()
+        }
     }
 
     private fun onLiveClassStarted() {
