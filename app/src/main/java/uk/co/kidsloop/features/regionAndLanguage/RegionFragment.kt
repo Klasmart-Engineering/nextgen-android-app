@@ -73,6 +73,11 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.regionRecyclerView.adapter?.notifyDataSetChanged()
+    }
+
     private fun startAuthenticationFlow() {
         val b2cApp = authManager.getB2CClientApp()
         b2cApp.acquireToken(parameters)
