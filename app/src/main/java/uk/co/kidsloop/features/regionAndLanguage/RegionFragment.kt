@@ -9,17 +9,18 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.FragmentRegionBinding
-import uk.co.kidsloop.features.regionAndLanguage.data.Datasource
+import uk.co.kidsloop.features.regionAndLanguage.data.RegionsAndLanguages
 
 class RegionFragment : BaseFragment(R.layout.fragment_region) {
+
     private val binding by viewBinding(FragmentRegionBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val regions = RegionsAndLanguages.regionsList()
         binding.regionRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = context?.let { Datasource(it).getRegionsList() }
-                ?.let { RegionAdapter(it.toTypedArray()) }
+            adapter = RegionAdapter(regions.toTypedArray())
             addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
 

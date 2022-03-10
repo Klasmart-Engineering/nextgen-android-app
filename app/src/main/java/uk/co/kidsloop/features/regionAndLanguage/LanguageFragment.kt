@@ -8,17 +8,18 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.FragmentLanguageBinding
-import uk.co.kidsloop.features.regionAndLanguage.data.Datasource
+import uk.co.kidsloop.features.regionAndLanguage.data.RegionsAndLanguages
 
 class LanguageFragment : BaseFragment(R.layout.fragment_language) {
+
     private val binding by viewBinding(FragmentLanguageBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val languages = RegionsAndLanguages.languagesList()
         binding.languageRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = context?.let { Datasource(it).getLanguageList() }
-                ?.let { LanguageAdapter(it) }
+            adapter = LanguageAdapter(languages)
             addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
     }
