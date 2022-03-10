@@ -31,6 +31,7 @@ import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
 import uk.co.kidsloop.features.liveclass.remoteviews.AecContext
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
+import uk.co.kidsloop.liveswitch.Config
 import uk.co.kidsloop.liveswitch.Config.ASSISTANT_TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
@@ -343,10 +344,10 @@ class LiveClassFragment :
                 }
             }
             STUDENT_ROLE -> uiThreadPoster.post {
-                studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
+                studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view, STUDENT_ROLE)
             }
             ASSISTANT_TEACHER_ROLE -> uiThreadPoster.post {
-                studentsFeedAdapter.addFirstVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
+                studentsFeedAdapter.addAssistantTeacherVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
             }
         }
 
