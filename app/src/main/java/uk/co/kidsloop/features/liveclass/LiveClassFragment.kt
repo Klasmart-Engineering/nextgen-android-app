@@ -346,7 +346,7 @@ class LiveClassFragment :
                 studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view, STUDENT_ROLE)
             }
             ASSISTANT_TEACHER_ROLE -> uiThreadPoster.post {
-                studentsFeedAdapter.addAssistantTeacherVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
+                studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view, ASSISTANT_TEACHER_ROLE)
             }
         }
 

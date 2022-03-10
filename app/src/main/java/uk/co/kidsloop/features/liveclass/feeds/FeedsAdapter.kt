@@ -54,16 +54,23 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
     }
 
     fun addVideoFeed(clientId: String, remoteMediaView: View, role: String) {
+        when(role) {
+            Config.STUDENT_ROLE -> addStudentVideoFeed(clientId, remoteMediaView)
+            Config.ASSISTANT_TEACHER_ROLE -> addAssistantTeacherVideoFeed(clientId, remoteMediaView)
+        }
+    }
+
+    private fun addStudentVideoFeed(clientId: String, remoteMediaView: View) {
         val newList = mutableListOf<StudentFeedItem>()
         if (isAssistantTeacherPresent()) {
             newList.add(currentList()[0])
-            newList.add(StudentFeedItem(remoteMediaView, clientId, role))
+            newList.add(StudentFeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
             currentList().forEachIndexed { index, studentFeedItem ->
                 if (index != 0)
                     newList.add(studentFeedItem)
             }
         } else {
-            newList.add(StudentFeedItem(remoteMediaView, clientId, role))
+            newList.add(StudentFeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
             currentList().forEach {
                 newList.add(it)
             }
@@ -72,7 +79,7 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
         submitList(reorderRaisedHands(newList))
     }
 
-    fun addAssistantTeacherVideoFeed(clientId: String, remoteMediaView: View) {
+    private fun addAssistantTeacherVideoFeed(clientId: String, remoteMediaView: View) {
         val newList = mutableListOf<StudentFeedItem>()
         newList.add(0, StudentFeedItem(remoteMediaView, clientId, Config.ASSISTANT_TEACHER_ROLE))
         currentList().forEach {
