@@ -6,25 +6,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.R
 import uk.co.kidsloop.features.regionAndLanguage.data.Language
 
-class LanguageAdapter(private val dataSet: List<Language>) :
-    RecyclerView.Adapter<LanguageAdapter.ViewHolder>() {
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class LanguageAdapter(
+    private val onLanguageClicked: (Language) -> Unit,
+    private val dataSet: Array<Language>
+) : RecyclerView.Adapter<LanguageAdapter.ViewHolder>() {
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         val textView: TextView = itemView.findViewById(R.id.item_name_textView)
         val checkmark: ImageView = itemView.findViewById(R.id.checkmark)
-
-        init {
-            itemView.setOnClickListener {
-                checkmark.visibility = View.VISIBLE
-                textView.setTextColor(ContextCompat.getColor(this.itemView.context, R.color.kidsloop_blue))
-                Navigation.findNavController(itemView)
-                    .navigate(LanguageFragmentDirections.languageToRegion())
-            }
-        }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
@@ -36,6 +30,11 @@ class LanguageAdapter(private val dataSet: List<Language>) :
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.textView.text = dataSet[position].name
+        viewHolder.itemView.setOnClickListener {
+            viewHolder.checkmark.visibility = View.VISIBLE
+            viewHolder.textView.setTextColor(ContextCompat.getColor(it.context, R.color.kidsloop_blue))
+            onLanguageClicked.invoke(dataSet[position])
+        }
     }
 
     override fun getItemCount() = dataSet.size
