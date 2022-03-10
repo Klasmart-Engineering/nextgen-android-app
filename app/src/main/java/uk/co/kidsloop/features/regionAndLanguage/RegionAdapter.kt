@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.R
 
 class RegionAdapter(
-    private val onRegionClicked: (String) -> Unit,
+    private val onRegionClicked: () -> Unit,
     private val dataSet: Array<String>
 ) :
     RecyclerView.Adapter<RegionAdapter.ViewHolder>() {
@@ -24,7 +24,7 @@ class RegionAdapter(
             itemView.setOnClickListener {
                 checkmark.visibility = View.VISIBLE
                 textView.setTextColor(ContextCompat.getColor(view.context, R.color.kidsloop_blue))
-                onRegionClicked.invoke(textView.text.toString())
+                onRegionClicked.invoke()
             }
         }
     }

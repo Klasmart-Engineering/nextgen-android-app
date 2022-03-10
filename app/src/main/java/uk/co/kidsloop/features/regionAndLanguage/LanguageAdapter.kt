@@ -19,14 +19,6 @@ class LanguageAdapter(
 
         val textView: TextView = itemView.findViewById(R.id.item_name_textView)
         val checkmark: ImageView = itemView.findViewById(R.id.checkmark)
-
-        init {
-            itemView.setOnClickListener {
-                checkmark.visibility = View.VISIBLE
-
-                textView.setTextColor(ContextCompat.getColor(this.itemView.context, R.color.kidsloop_blue))
-            }
-        }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
@@ -38,7 +30,9 @@ class LanguageAdapter(
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.textView.text = dataSet[position].name
-        viewHolder.textView.setOnClickListener {
+        viewHolder.itemView.setOnClickListener {
+            viewHolder.checkmark.visibility = View.VISIBLE
+            viewHolder.textView.setTextColor(ContextCompat.getColor(it.context, R.color.kidsloop_blue))
             onLanguageClicked.invoke(dataSet[position])
         }
     }

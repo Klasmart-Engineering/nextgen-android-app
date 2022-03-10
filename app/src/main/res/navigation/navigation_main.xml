@@ -79,7 +79,7 @@
             app:destination="@+id/region_fragment"
             app:popUpTo="@id/language_fragment">
             <argument
-                android:name="selectedLanguage"
+                android:name="languageCode"
                 app:argType="string" />
         </action>
     </fragment>

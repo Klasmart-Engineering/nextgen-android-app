@@ -1,6 +1,7 @@
 package uk.co.kidsloop.features.regionAndLanguage.data
 
 object RegionsAndLanguages {
+
     fun languagesList(): List<Language> {
         return listOf(
             Language("English", "en"),
@@ -25,5 +26,4 @@ object RegionsAndLanguages {
             "Pakistan",
         )
     }
-
 }
