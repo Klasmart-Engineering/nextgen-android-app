@@ -2,10 +2,12 @@ package uk.co.kidsloop.features.regionAndLanguage
 
 import android.os.Bundle
 import android.util.Log
+import android.util.Pair
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.microsoft.identity.client.AcquireTokenParameters
 import com.microsoft.identity.client.AuthenticationCallback
@@ -22,14 +24,15 @@ import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.FragmentRegionBinding
 import uk.co.kidsloop.features.authentication.AuthenticationManager
 import uk.co.kidsloop.features.authentication.B2CConfiguration
-import uk.co.kidsloop.features.regionAndLanguage.data.Datasource
+import uk.co.kidsloop.features.regionAndLanguage.data.RegionsAndLanguages
 
 @AndroidEntryPoint
 class RegionFragment : BaseFragment(R.layout.fragment_region) {
 
     companion object {
+
         private val TAG = RegionFragment::class.java.simpleName
-        private const val SELECTED_LANGUAGE = "selectedLanguage"
+        private const val LANGUAGE_CODE = "languageCode"
         private const val SIGN_UP_LOGIN_POLICY = "b2c_1a_relying_party_sign_up_log_in"
     }
 
@@ -42,8 +45,13 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val languageCode: String = arguments?.getString(LANGUAGE_CODE)!!
+        val extraQueryParameters: MutableList<Pair<String, String>> = mutableListOf()
+        extraQueryParameters.add(Pair("ui_locales", languageCode))
+
         parameters = AcquireTokenParameters.Builder()
             .startAuthorizationFromActivity(activity)
+            .withAuthorizationQueryStringParameters(extraQueryParameters)
             .fromAuthority(B2CConfiguration.getAuthorityFromPolicyName(SIGN_UP_LOGIN_POLICY))
             .withScopes(B2CConfiguration.scopes)
             .withPrompt(Prompt.LOGIN)
@@ -53,13 +61,13 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.regionRecyclerView.layoutManager = LinearLayoutManager(context)
-        binding.regionRecyclerView.adapter = context?.let { Datasource(it).getRegionsList() }
-            ?.let {
-                RegionAdapter({ clickedRegion ->
-                    onRegionClicked(clickedRegion)
-                }, it.toTypedArray())
-            }
+        val regions = RegionsAndLanguages.regionsList()
+        binding.regionRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = RegionAdapter({ onRegionClicked() }, regions.toTypedArray())
+            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        }
+
         binding.backButton.setOnClickListener {
             Navigation.findNavController(requireView()).navigateUp()
         }
@@ -70,7 +78,7 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
         b2cApp.acquireToken(parameters)
     }
 
-    private fun onRegionClicked(region: String) {
+    private fun onRegionClicked() {
         binding.regionGroup.isVisible = false
         binding.loadingIndication.isVisible = true
         startAuthenticationFlow()
@@ -87,10 +95,6 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
             override fun onError(exception: MsalException) {
                 val B2C_PASSWORD_CHANGE = "AADB2C90118"
                 if (exception.message!!.contains(B2C_PASSWORD_CHANGE)) {
-                    //                    binding.txtLog.text = """
-                    //                        The user clicks the 'Forgot Password' link in a sign-up or sign-in user flow.
-                    //                        Your application needs to handle this error code by running a specific user flow that resets the password.
-                    //                    """.trimIndent()
                     return
                 }
 
@@ -103,7 +107,6 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
             }
 
             override fun onCancel() {
-                Log.d(TAG, "User cancelled login.")
                 binding.loadingIndication.isVisible = false
                 binding.regionGroup.isVisible = true
             }

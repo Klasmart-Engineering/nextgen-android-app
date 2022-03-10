@@ -8,10 +8,11 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.R
+import uk.co.kidsloop.features.regionAndLanguage.data.Language
 
 class LanguageAdapter(
-    private val onLanguageClicked: (String) -> Unit,
-    private val dataSet: Array<String>
+    private val onLanguageClicked: (Language) -> Unit,
+    private val dataSet: Array<Language>
 ) : RecyclerView.Adapter<LanguageAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,7 +25,6 @@ class LanguageAdapter(
                 checkmark.visibility = View.VISIBLE
 
                 textView.setTextColor(ContextCompat.getColor(this.itemView.context, R.color.kidsloop_blue))
-                onLanguageClicked.invoke(textView.text.toString())
             }
         }
     }
@@ -37,7 +37,10 @@ class LanguageAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.textView.text = dataSet[position]
+        viewHolder.textView.text = dataSet[position].name
+        viewHolder.textView.setOnClickListener {
+            onLanguageClicked.invoke(dataSet[position])
+        }
     }
 
     override fun getItemCount() = dataSet.size
