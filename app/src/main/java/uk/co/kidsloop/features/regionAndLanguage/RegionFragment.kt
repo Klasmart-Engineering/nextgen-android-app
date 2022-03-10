@@ -73,8 +73,8 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         binding.regionRecyclerView.adapter?.notifyDataSetChanged()
     }
 
