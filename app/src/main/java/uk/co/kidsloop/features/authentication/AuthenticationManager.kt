@@ -9,9 +9,6 @@ class AuthenticationManager @Inject constructor() {
 
     private lateinit var b2cClientApp: IMultipleAccountPublicClientApplication
     private var accessToken: String? = null
-    private var scope: String? = null
-    private var expiryDate: String? = null
-    private var tenantId: String? = null
 
     fun saveB2CClientApp(clientApp: IMultipleAccountPublicClientApplication) {
         b2cClientApp = clientApp
@@ -27,5 +24,5 @@ class AuthenticationManager @Inject constructor() {
         return accessToken
     }
 
-    fun isNotAutenticated(): Boolean = accessToken.isNullOrEmpty()
+    fun isNotAuthenticated(): Boolean = accessToken.isNullOrEmpty()
 }
