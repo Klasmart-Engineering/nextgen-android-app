@@ -55,12 +55,12 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
 
     fun addVideoFeed(clientId: String, remoteMediaView: View, role: String) {
         val newList = mutableListOf<StudentFeedItem>()
-        if(isAssistantTeacherPresent()) {
+        if (isAssistantTeacherPresent()) {
             newList.add(currentList()[0])
             newList.add(StudentFeedItem(remoteMediaView, clientId, role))
             currentList().forEachIndexed { index, studentFeedItem ->
-                if(index != 0)
-                newList.add(studentFeedItem)
+                if (index != 0)
+                    newList.add(studentFeedItem)
             }
         } else {
             newList.add(StudentFeedItem(remoteMediaView, clientId, role))
@@ -94,7 +94,7 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
     }
 
     private fun isAssistantTeacherPresent(): Boolean {
-        return if(currentList().isNotEmpty())
+        return if (currentList().isNotEmpty())
             currentList()[0].role == Config.ASSISTANT_TEACHER_ROLE
         else
             false
@@ -106,13 +106,12 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
         val position = currentList().indexOfFirst { it.clientId == clientId }
         if (position > -1) {
             currentList().forEachIndexed { index, element ->
-                when(index) {
+                when (index) {
                     0 -> {
-                        if(isAssistantTeacherPresent()) {
+                        if (isAssistantTeacherPresent()) {
                             newList.add(element)
                             swapPosition = 1
-                        }
-                        else {
+                        } else {
                             if (index == position) {
                                 (element.copy()).let {
                                     it.hasHandRaised = true
@@ -165,19 +164,19 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
         val loweredHandsList = mutableListOf<StudentFeedItem>()
 
         list.forEachIndexed { index, feedItem ->
-            when(index) {
+            when (index) {
                 0 -> {
-                    if(isAssistantTeacherPresent()) {
+                    if (isAssistantTeacherPresent()) {
                         newList.add(feedItem)
                     } else {
-                        if(feedItem.hasHandRaised)
+                        if (feedItem.hasHandRaised)
                             raisedHandsList.add(feedItem)
                         else
                             loweredHandsList.add(feedItem)
                     }
                 }
                 else -> {
-                    if(feedItem.hasHandRaised)
+                    if (feedItem.hasHandRaised)
                         raisedHandsList.add(feedItem)
                     else
                         loweredHandsList.add(feedItem)
