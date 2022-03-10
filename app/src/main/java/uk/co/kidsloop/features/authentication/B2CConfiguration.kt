@@ -1,18 +1,16 @@
 package uk.co.kidsloop.features.authentication
 
-import java.util.*
-
 object B2CConfiguration {
 
     /**
      * Name of your B2C tenant hostname.
      */
-    const val azureAdB2CHostName = "login.sso.kidsloop.live"
+    private const val azureAdB2CHostName = "login.sso.kidsloop.live"
 
     /**
      * Name of your B2C tenant.
      */
-    const val tenantName = "kidsloopb2c.onmicrosoft.com"
+    private const val tenantName = "kidsloopb2c.onmicrosoft.com"
 
     /**
      * Returns an authority for the given policy name.
@@ -20,7 +18,7 @@ object B2CConfiguration {
      * @param policyName name of a B2C policy.
      */
     fun getAuthorityFromPolicyName(policyName: String): String {
-        return "https://" + azureAdB2CHostName + "/" + tenantName + "/" + policyName + "/"
+        return "https://${azureAdB2CHostName}/${tenantName}/${policyName}/"
     }
 
     /**
