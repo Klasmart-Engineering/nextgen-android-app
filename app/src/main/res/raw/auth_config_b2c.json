@@ -1,8 +1,8 @@
 {
   "client_id" : "c9ede186-e9b4-4f08-9df4-7c941df58b27",
-  "redirect_uri" : "live.kidsloop.sso.kidsloop-android://oauth/redirect",
+  "redirect_uri" : "msauth://uk.co.kidsloop/VzSiQcXRmi2kyjzcA%2BmYLEtbGVs%3D",
   "account_mode" : "MULTIPLE",
-  "broker_redirect_uri_registered": false,
+  "broker_redirect_uri_registered": true,
   "authorities": [
     {
       "type": "B2C",

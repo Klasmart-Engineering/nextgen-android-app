@@ -3,6 +3,7 @@ package uk.co.kidsloop.features.regionAndLanguage
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,8 +28,9 @@ import uk.co.kidsloop.features.regionAndLanguage.data.Datasource
 class RegionFragment : BaseFragment(R.layout.fragment_region) {
 
     companion object {
-
         private val TAG = RegionFragment::class.java.simpleName
+        private const val SELECTED_LANGUAGE = "selectedLanguage"
+        private const val SIGN_UP_LOGIN_POLICY = "b2c_1a_relying_party_sign_up_log_in"
     }
 
     private val binding by viewBinding(FragmentRegionBinding::bind)
@@ -42,7 +44,7 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
         super.onCreate(savedInstanceState)
         parameters = AcquireTokenParameters.Builder()
             .startAuthorizationFromActivity(activity)
-            .fromAuthority(B2CConfiguration.getAuthorityFromPolicyName("b2c_1a_relying_party_sign_up_log_in"))
+            .fromAuthority(B2CConfiguration.getAuthorityFromPolicyName(SIGN_UP_LOGIN_POLICY))
             .withScopes(B2CConfiguration.scopes)
             .withPrompt(Prompt.LOGIN)
             .withCallback(authInteractiveCallback)
@@ -69,6 +71,8 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
     }
 
     private fun onRegionClicked(region: String) {
+        binding.regionGroup.isVisible = false
+        binding.loadingIndication.isVisible = true
         startAuthenticationFlow()
     }
 
@@ -99,8 +103,9 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
             }
 
             override fun onCancel() {
-                /* User canceled the authentication */
                 Log.d(TAG, "User cancelled login.")
+                binding.loadingIndication.isVisible = false
+                binding.regionGroup.isVisible = true
             }
         }
 }

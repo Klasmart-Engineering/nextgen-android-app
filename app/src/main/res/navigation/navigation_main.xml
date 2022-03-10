@@ -15,6 +15,11 @@
             app:popUpTo="@id/splash_fragment"
             app:popUpToInclusive="true" />
 
+        <action
+            android:id="@+id/splash_to_login"
+            app:destination="@id/login_fragment"
+            app:popUpTo="@id/splash_fragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -72,7 +77,11 @@
         <action
             android:id="@+id/language_to_region"
             app:destination="@+id/region_fragment"
-            app:popUpTo="@id/language_fragment" />
+            app:popUpTo="@id/language_fragment">
+            <argument
+                android:name="selectedLanguage"
+                app:argType="string" />
+        </action>
     </fragment>
 
     <fragment
@@ -82,6 +91,7 @@
         <action
             android:id="@+id/region_to_login"
             app:destination="@+id/login_fragment"
-            app:popUpTo="@id/region_fragment" />
+            app:popUpTo="@id/language_fragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

@@ -2,7 +2,7 @@ package uk.co.kidsloop.features.splash
 
 import android.content.Context
 import android.os.Bundle
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.microsoft.identity.client.IMultipleAccountPublicClientApplication
 import com.microsoft.identity.client.IPublicClientApplication
 import com.microsoft.identity.client.PublicClientApplication
@@ -24,23 +24,26 @@ class SplashFragment : BaseFragment(R.layout.fragment_splash) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        PublicClientApplication.createMultipleAccountPublicClientApplication(
-            appContext,
-            R.raw.auth_config_b2c,
-            object : IPublicClientApplication.IMultipleAccountApplicationCreatedListener {
-                override fun onCreated(
-                    application: IMultipleAccountPublicClientApplication
-                ) {
-                    authManager.saveB2CClientApp(application)
-                    Navigation.findNavController(requireView())
-                        .navigate(SplashFragmentDirections.splashToLanguage())
-                }
+        if (authManager.isNotAutenticated()) {
+            PublicClientApplication.createMultipleAccountPublicClientApplication(
+                appContext,
+                R.raw.auth_config_b2c,
+                object : IPublicClientApplication.IMultipleAccountApplicationCreatedListener {
+                    override fun onCreated(
+                        application: IMultipleAccountPublicClientApplication
+                    ) {
+                        authManager.saveB2CClientApp(application)
+                        findNavController().navigate(SplashFragmentDirections.splashToLanguage())
+                    }
 
-                override fun onError(
-                    exception: MsalException
-                ) {
+                    override fun onError(
+                        exception: MsalException
+                    ) {
+                    }
                 }
-            }
-        )
+            )
+        } else {
+            findNavController().navigate(SplashFragmentDirections.splashToLogin())
+        }
     }
 }

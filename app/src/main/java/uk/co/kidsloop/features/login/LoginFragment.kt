@@ -17,6 +17,7 @@ import uk.co.kidsloop.app.utils.enable
 import uk.co.kidsloop.app.utils.unclickable
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.databinding.FragmentLoginBinding
+import uk.co.kidsloop.features.authentication.AuthenticationManager
 import uk.co.kidsloop.liveswitch.Config.ASSISTANT_TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.Config.CHANNEL_ID
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
@@ -28,6 +29,9 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
     @Inject
     lateinit var sharedPrefsWrapper: SharedPrefsWrapper
 
+    @Inject
+    lateinit var authManager: AuthenticationManager
+
     private val binding by viewBinding(FragmentLoginBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +41,8 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.accessTokenTextview.text = authManager.getAccessToken()
 
         if (sharedPrefsWrapper.getChannelID() != CHANNEL_ID) {
             binding.channelID.setText(sharedPrefsWrapper.getChannelID())

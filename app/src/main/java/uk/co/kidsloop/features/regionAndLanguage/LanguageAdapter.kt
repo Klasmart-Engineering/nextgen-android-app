@@ -5,13 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.R
 
-class LanguageAdapter(private val dataSet: Array<String>) :
-    RecyclerView.Adapter<LanguageAdapter.ViewHolder>() {
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class LanguageAdapter(
+    private val onLanguageClicked: (String) -> Unit,
+    private val dataSet: Array<String>
+) : RecyclerView.Adapter<LanguageAdapter.ViewHolder>() {
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         val textView: TextView = itemView.findViewById(R.id.item_name_textView)
         val checkmark: ImageView = itemView.findViewById(R.id.checkmark)
 
@@ -19,8 +22,7 @@ class LanguageAdapter(private val dataSet: Array<String>) :
             itemView.setOnClickListener {
                 checkmark.visibility = View.VISIBLE
                 textView.setTextColor(R.color.kidsloop_blue)
-                Navigation.findNavController(itemView)
-                    .navigate(LanguageFragmentDirections.languageToRegion())
+                onLanguageClicked.invoke(textView.text.toString())
             }
         }
     }
