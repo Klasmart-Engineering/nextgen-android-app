@@ -35,4 +35,15 @@
         android:elevation="@dimen/space_20"
         android:src="@drawable/ic_raise_hand_selected"
         android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/badge_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:maxHeight="@dimen/space_12"
+        android:maxWidth="@dimen/space_10"
+        android:contentDescription="@null"
+        android:elevation="@dimen/space_20"
+        android:visibility="gone" />
 </merge>
