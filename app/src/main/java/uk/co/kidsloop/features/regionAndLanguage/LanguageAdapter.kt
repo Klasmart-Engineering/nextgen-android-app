@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.R
 
@@ -21,7 +22,8 @@ class LanguageAdapter(
         init {
             itemView.setOnClickListener {
                 checkmark.visibility = View.VISIBLE
-                textView.setTextColor(R.color.kidsloop_blue)
+
+                textView.setTextColor(ContextCompat.getColor(this.itemView.context, R.color.kidsloop_blue))
                 onLanguageClicked.invoke(textView.text.toString())
             }
         }

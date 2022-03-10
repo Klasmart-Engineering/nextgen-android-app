@@ -1,26 +1,31 @@
 package uk.co.kidsloop.features.liveclass.feeds
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import uk.co.kidsloop.databinding.StudentFeedLayoutBinding
 import uk.co.kidsloop.databinding.StudentFeedLayoutBinding.*
-import uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
+import java.util.*
 
-class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.StudentViewHolder>() {
+class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
+    private val differ: AsyncListDiffer<StudentFeedItem> = AsyncListDiffer(this, DiffCallback())
 
     companion object {
-
-        private const val SHOW_STUDENT_HAND_RAISED = "show_student_hand_raised"
-        private const val HIDE_STUDENT_HAND_RAISED = "hide_student_hand_raised"
-
-        private const val MAX_STUDENT_VIDEO_FEEDS = 3
+        const val HAS_RAISED_HAND = "has_raised_hand"
     }
 
-    private var remoteStudentFeeds = mutableListOf<StudentFeedItem>()
+    private fun currentList(): List<StudentFeedItem> {
+        return differ.currentList
+    }
 
-    override fun getItemCount() = remoteStudentFeeds.size
+    fun submitList(list: List<StudentFeedItem>) {
+        differ.submitList(list)
+    }
+
+    override fun getItemCount() = currentList().size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
         return StudentViewHolder(
@@ -33,62 +38,107 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.StudentViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
-        val feedItem = remoteStudentFeeds[position]
+        val feedItem = currentList()[position]
         holder.setIsRecyclable(false)
-        val videoFeed = feedItem.remoteView
-        val videoFeedContainer = holder.binding.studentVideoFeed
-        if (videoFeed.parent != null) {
-            (videoFeed.parent as RemoteMediaCustomContainer).removeRemoteMediaView()
-        }
-        videoFeedContainer.addRemoteMediaView(videoFeed)
+        holder.bind(feedItem)
     }
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int, payloads: MutableList<Any>) {
         if (payloads.isNotEmpty()) {
-            when (payloads[0]) {
-                SHOW_STUDENT_HAND_RAISED -> holder.binding.studentVideoFeed.showHandRaised()
-                HIDE_STUDENT_HAND_RAISED -> holder.binding.studentVideoFeed.hideRaiseHand()
-            }
+            val bundle = payloads[0] as Bundle
+            holder.update(bundle)
         } else {
             super.onBindViewHolder(holder, position, payloads)
         }
     }
 
-    inner class StudentViewHolder(val binding: StudentFeedLayoutBinding) :
-        RecyclerView.ViewHolder(binding.root)
-
     fun addVideoFeed(clientId: String, remoteMediaView: View) {
-        val studentFeedsCount = remoteStudentFeeds.size
-        if (studentFeedsCount < MAX_STUDENT_VIDEO_FEEDS) {
-            remoteStudentFeeds.add(StudentFeedItem(remoteMediaView, clientId))
-            notifyItemInserted(studentFeedsCount)
+        val newList = mutableListOf<StudentFeedItem>()
+        currentList().forEach {
+            newList.add(it)
         }
+        newList.add(StudentFeedItem(remoteMediaView, clientId))
+        submitList(newList)
     }
 
     fun addFirstVideoFeed(clientId: String, remoteMediaView: View) {
-        remoteStudentFeeds.add(0, StudentFeedItem(remoteMediaView, clientId))
-        notifyItemInserted(0)
+        val newList = mutableListOf<StudentFeedItem>()
+        newList.add(0, StudentFeedItem(remoteMediaView, clientId))
+        currentList().forEach {
+            newList.add(it)
+        }
+        submitList(newList)
     }
 
     fun removeVideoFeed(clientId: String) {
-        val position = remoteStudentFeeds.indexOfFirst { it.clientId == clientId }
+        val newList = mutableListOf<StudentFeedItem>()
+        val position = currentList().indexOfFirst { it.clientId == clientId }
         if (position > -1) {
-            remoteStudentFeeds.removeAt(position)
-            notifyDataSetChanged()
+            currentList().forEachIndexed { index, element ->
+                if (index != position)
+                    newList.add(element)
+            }
         }
+        submitList(newList)
     }
 
     fun onHandRaised(clientId: String?) {
-        val position = remoteStudentFeeds.indexOfFirst { it.clientId == clientId }
+        val newList = mutableListOf<StudentFeedItem>()
+        val position = currentList().indexOfFirst { it.clientId == clientId }
         if (position > -1) {
-            notifyItemChanged(position, SHOW_STUDENT_HAND_RAISED)
+            currentList().forEachIndexed { index, element ->
+                if (index == position) {
+                    (element.copy()).let {
+                        it.hasHandRaised = true
+                        newList.add(it)
+                    }
+                } else {
+                    newList.add(element)
+                }
+            }
+            Collections.swap(newList, 0, position)
         }
+        submitList(newList)
     }
 
     fun onHandLowered(clientId: String?) {
-        val position = remoteStudentFeeds.indexOfFirst { it.clientId == clientId }
+        val newList = mutableListOf<StudentFeedItem>()
+        val position = currentList().indexOfFirst { it.clientId == clientId }
         if (position > -1) {
-            notifyItemChanged(position, HIDE_STUDENT_HAND_RAISED)
+            currentList().forEachIndexed { index, element ->
+                if (index == position) {
+                    (element.copy()).let {
+                        it.hasHandRaised = false
+                        newList.add(it)
+                    }
+                } else {
+                    newList.add(element)
+                }
+            }
+        }
+        submitList(newList)
+    }
+
+    private class DiffCallback : DiffUtil.ItemCallback<StudentFeedItem>() {
+        override fun areItemsTheSame(oldItem: StudentFeedItem, newItem: StudentFeedItem) =
+            oldItem.clientId == newItem.clientId
+
+        override fun areContentsTheSame(oldItem: StudentFeedItem, newItem: StudentFeedItem) =
+            oldItem == newItem
+
+        // This gets called when areItemsTheSame == true && areContentsTheSame == false
+        override fun getChangePayload(oldItem: StudentFeedItem, newItem: StudentFeedItem): Any? {
+            if (oldItem.clientId == newItem.clientId) {
+                return if (oldItem.hasHandRaised == newItem.hasHandRaised)
+                    super.getChangePayload(oldItem, newItem)
+                else {
+                    val diff = Bundle()
+                    diff.putBoolean(HAS_RAISED_HAND, newItem.hasHandRaised)
+                    diff
+                }
+            }
+
+            return super.getChangePayload(oldItem, newItem)
         }
     }
 }

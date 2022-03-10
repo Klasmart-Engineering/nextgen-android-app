@@ -12,4 +12,5 @@ interface DataChannelActionsHandler {
     fun onVideoEnabled()
     fun onEnableMic()
     fun onDisableMic(state: LiveClassState)
+    fun onLiveClassEnding()
 }
