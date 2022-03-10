@@ -18,7 +18,7 @@ class LanguageFragment : BaseFragment(R.layout.fragment_language) {
         binding.languageRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = context?.let { Datasource(it).getLanguageList() }
-                ?.let { LanguageAdapter(it.toTypedArray()) }
+                ?.let { LanguageAdapter(it) }
             addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
     }

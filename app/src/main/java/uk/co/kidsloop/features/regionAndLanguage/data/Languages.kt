@@ -1,12 +1,12 @@
 package uk.co.kidsloop.features.regionAndLanguage.data
 
-fun languagesList(): List<String> {
+fun languagesList(): List<Language> {
     return listOf(
-        "English",
-        "Spanish",
-        "Korean",
-        "Chinese",
-        "Vietnamese",
-        "Bahasa Indonesia",
+        Language("English", "en"),
+        Language("Spanish", "es"),
+        Language("Korean", "ko"),
+        Language("Chinese", "zh"),
+        Language("Vietnamese", "vi"),
+        Language("Bahasa Indonesia", "id")
     )
 }

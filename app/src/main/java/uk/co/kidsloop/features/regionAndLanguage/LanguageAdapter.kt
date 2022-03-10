@@ -9,8 +9,9 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.R
+import uk.co.kidsloop.features.regionAndLanguage.data.Language
 
-class LanguageAdapter(private val dataSet: Array<String>) :
+class LanguageAdapter(private val dataSet: List<Language>) :
     RecyclerView.Adapter<LanguageAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(R.id.item_name_textView)
@@ -34,7 +35,7 @@ class LanguageAdapter(private val dataSet: Array<String>) :
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.textView.text = dataSet[position]
+        viewHolder.textView.text = dataSet[position].name
     }
 
     override fun getItemCount() = dataSet.size
