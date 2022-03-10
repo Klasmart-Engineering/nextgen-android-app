@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.databinding.StudentFeedLayoutBinding.*
+import uk.co.kidsloop.liveswitch.Config
 import java.util.*
 
 class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
@@ -21,7 +22,7 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
         return differ.currentList
     }
 
-    fun submitList(list: List<StudentFeedItem>) {
+    private fun submitList(list: List<StudentFeedItem>) {
         differ.submitList(list)
     }
 
@@ -52,18 +53,35 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
         }
     }
 
-    fun addVideoFeed(clientId: String, remoteMediaView: View) {
-        val newList = mutableListOf<StudentFeedItem>()
-        currentList().forEach {
-            newList.add(it)
+    fun addVideoFeed(clientId: String, remoteMediaView: View, role: String) {
+        when(role) {
+            Config.STUDENT_ROLE -> addStudentVideoFeed(clientId, remoteMediaView)
+            Config.ASSISTANT_TEACHER_ROLE -> addAssistantTeacherVideoFeed(clientId, remoteMediaView)
         }
-        newList.add(StudentFeedItem(remoteMediaView, clientId))
-        submitList(newList)
     }
 
-    fun addFirstVideoFeed(clientId: String, remoteMediaView: View) {
+    private fun addStudentVideoFeed(clientId: String, remoteMediaView: View) {
         val newList = mutableListOf<StudentFeedItem>()
-        newList.add(0, StudentFeedItem(remoteMediaView, clientId))
+        if (isAssistantTeacherPresent()) {
+            newList.add(currentList()[0])
+            newList.add(StudentFeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
+            currentList().forEachIndexed { index, studentFeedItem ->
+                if (index != 0)
+                    newList.add(studentFeedItem)
+            }
+        } else {
+            newList.add(StudentFeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
+            currentList().forEach {
+                newList.add(it)
+            }
+        }
+
+        submitList(reorderRaisedHands(newList))
+    }
+
+    private fun addAssistantTeacherVideoFeed(clientId: String, remoteMediaView: View) {
+        val newList = mutableListOf<StudentFeedItem>()
+        newList.add(0, StudentFeedItem(remoteMediaView, clientId, Config.ASSISTANT_TEACHER_ROLE))
         currentList().forEach {
             newList.add(it)
         }
@@ -82,21 +100,49 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
         submitList(newList)
     }
 
+    private fun isAssistantTeacherPresent(): Boolean {
+        return if (currentList().isNotEmpty())
+            currentList()[0].role == Config.ASSISTANT_TEACHER_ROLE
+        else
+            false
+    }
+
     fun onHandRaised(clientId: String?) {
         val newList = mutableListOf<StudentFeedItem>()
+        var swapPosition = 0
         val position = currentList().indexOfFirst { it.clientId == clientId }
         if (position > -1) {
             currentList().forEachIndexed { index, element ->
-                if (index == position) {
-                    (element.copy()).let {
-                        it.hasHandRaised = true
-                        newList.add(it)
+                when (index) {
+                    0 -> {
+                        if (isAssistantTeacherPresent()) {
+                            newList.add(element)
+                            swapPosition = 1
+                        } else {
+                            if (index == position) {
+                                (element.copy()).let {
+                                    it.hasHandRaised = true
+                                    newList.add(it)
+                                }
+                            } else {
+                                newList.add(element)
+                            }
+                            swapPosition = 0
+                        }
                     }
-                } else {
-                    newList.add(element)
+                    else -> {
+                        if (index == position) {
+                            (element.copy()).let {
+                                it.hasHandRaised = true
+                                newList.add(it)
+                            }
+                        } else {
+                            newList.add(element)
+                        }
+                    }
                 }
             }
-            Collections.swap(newList, 0, position)
+            Collections.swap(newList, swapPosition, position)
         }
         submitList(newList)
     }
@@ -116,7 +162,39 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
                 }
             }
         }
-        submitList(newList)
+        submitList(reorderRaisedHands(newList))
+    }
+
+    private fun reorderRaisedHands(list: List<StudentFeedItem>): List<StudentFeedItem> {
+        val newList = mutableListOf<StudentFeedItem>()
+        val raisedHandsList = mutableListOf<StudentFeedItem>()
+        val loweredHandsList = mutableListOf<StudentFeedItem>()
+
+        list.forEachIndexed { index, feedItem ->
+            when (index) {
+                0 -> {
+                    if (isAssistantTeacherPresent()) {
+                        newList.add(feedItem)
+                    } else {
+                        if (feedItem.hasHandRaised)
+                            raisedHandsList.add(feedItem)
+                        else
+                            loweredHandsList.add(feedItem)
+                    }
+                }
+                else -> {
+                    if (feedItem.hasHandRaised)
+                        raisedHandsList.add(feedItem)
+                    else
+                        loweredHandsList.add(feedItem)
+                }
+            }
+        }
+
+        newList.addAll(raisedHandsList)
+        newList.addAll(loweredHandsList)
+
+        return newList
     }
 
     private class DiffCallback : DiffUtil.ItemCallback<StudentFeedItem>() {

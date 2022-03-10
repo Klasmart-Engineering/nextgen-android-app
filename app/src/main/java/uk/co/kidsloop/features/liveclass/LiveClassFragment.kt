@@ -343,10 +343,10 @@ class LiveClassFragment :
                 }
             }
             STUDENT_ROLE -> uiThreadPoster.post {
-                studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
+                studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view, STUDENT_ROLE)
             }
             ASSISTANT_TEACHER_ROLE -> uiThreadPoster.post {
-                studentsFeedAdapter.addFirstVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view)
+                studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view, ASSISTANT_TEACHER_ROLE)
             }
         }
 
