@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Pair
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.microsoft.identity.client.AcquireTokenParameters
 import com.microsoft.identity.client.AuthenticationCallback
 import com.microsoft.identity.client.IAuthenticationResult
@@ -65,7 +67,9 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
         binding.regionRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = RegionAdapter({ onRegionClicked() }, regions.toTypedArray())
-            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+            val dividerItemDecoration: RecyclerView.ItemDecoration =
+                DividerItemDecorator(ContextCompat.getDrawable(context, R.drawable.divider)!!)
+            binding.regionRecyclerView.addItemDecoration(dividerItemDecoration)
         }
 
         binding.backButton.setOnClickListener {
