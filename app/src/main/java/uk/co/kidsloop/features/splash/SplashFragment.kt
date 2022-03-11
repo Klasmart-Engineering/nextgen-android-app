@@ -8,10 +8,10 @@ import com.microsoft.identity.client.IPublicClientApplication
 import com.microsoft.identity.client.PublicClientApplication
 import com.microsoft.identity.client.exception.MsalException
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.features.authentication.AuthenticationManager
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashFragment : BaseFragment(R.layout.fragment_splash) {
