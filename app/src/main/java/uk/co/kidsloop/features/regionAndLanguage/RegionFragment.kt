@@ -78,13 +78,6 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
         binding.backButton.setOnClickListener {
             Navigation.findNavController(requireView()).navigateUp()
         }
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                }
-            }
-        )
     }
 
     override fun onStart() {
