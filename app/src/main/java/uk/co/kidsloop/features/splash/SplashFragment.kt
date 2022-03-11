@@ -24,7 +24,7 @@ class SplashFragment : BaseFragment(R.layout.fragment_splash) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (authManager.isNotAutenticated()) {
+        if (authManager.isNotAuthenticated()) {
             PublicClientApplication.createMultipleAccountPublicClientApplication(
                 appContext,
                 R.raw.auth_config_b2c,
