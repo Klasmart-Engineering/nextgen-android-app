@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
+import uk.co.kidsloop.app.utils.UI.DividerItemDecorator
 import uk.co.kidsloop.databinding.FragmentLanguageBinding
 import uk.co.kidsloop.features.regionAndLanguage.data.Language
 import uk.co.kidsloop.features.regionAndLanguage.data.RegionsAndLanguages
@@ -16,7 +17,6 @@ import uk.co.kidsloop.features.regionAndLanguage.data.RegionsAndLanguages
 class LanguageFragment : BaseFragment(R.layout.fragment_language) {
 
     private val binding by viewBinding(FragmentLanguageBinding::bind)
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

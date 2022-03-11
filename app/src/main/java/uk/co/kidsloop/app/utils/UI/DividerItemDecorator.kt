@@ -1,4 +1,4 @@
-package uk.co.kidsloop.features.regionAndLanguage
+package uk.co.kidsloop.app.utils.UI
 
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
