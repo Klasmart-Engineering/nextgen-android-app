@@ -18,10 +18,11 @@
 
     <ImageButton
         android:id="@+id/back_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
         android:layout_marginStart="@dimen/space_10"
-        android:background="@drawable/ic_back_btn_small"
+        android:background="@drawable/bg_round_white_ripple"
+        android:src="@drawable/ic_back_btn_small"
         android:contentDescription="@null"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/title_textview"
