@@ -18,13 +18,13 @@ import com.microsoft.identity.client.exception.MsalException
 import com.microsoft.identity.client.exception.MsalServiceException
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.databinding.FragmentRegionBinding
 import uk.co.kidsloop.features.authentication.AuthenticationManager
 import uk.co.kidsloop.features.authentication.B2CConfiguration
 import uk.co.kidsloop.features.regionAndLanguage.data.RegionsAndLanguages
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RegionFragment : BaseFragment(R.layout.fragment_region) {
