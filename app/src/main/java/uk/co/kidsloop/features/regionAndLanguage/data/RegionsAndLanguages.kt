@@ -14,17 +14,16 @@ object RegionsAndLanguages {
         )
     }
 
-    fun regionsList(): List<String> {
+    fun regionsList(): List<Region> {
         return listOf(
-            "United Kingdom",
-            "Sri Lanka",
-            "South Korea",
-            "India",
-            "Vietnam",
-            "Indonesia",
-            "Thailand",
-            "United States",
-            "Pakistan",
+            Region("United Kingdom"),
+            Region("Sri Lanka"),
+            Region("South Korea"),
+            Region("India"),
+            Region("Vietnam"),
+            Region("Indonesia"),
+            Region("Thailand"),
+            Region("Pakistan"),
         )
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Pair
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.Navigation
@@ -39,6 +40,8 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
     }
 
     private val binding by viewBinding(FragmentRegionBinding::bind)
+    private val regions = RegionsAndLanguages.regionsList()
+    val adapterRegion = RegionAdapter({ onRegionClicked() }, regions.toTypedArray())
 
     private lateinit var parameters: AcquireTokenParameters
 
@@ -63,10 +66,10 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val regions = RegionsAndLanguages.regionsList()
+
         binding.regionRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = RegionAdapter({ onRegionClicked() }, regions.toTypedArray())
+            adapter = adapterRegion
             val dividerItemDecoration: RecyclerView.ItemDecoration =
                 DividerItemDecorator(ContextCompat.getDrawable(context, R.drawable.divider)!!)
             binding.regionRecyclerView.addItemDecoration(dividerItemDecoration)
@@ -75,11 +78,19 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
         binding.backButton.setOnClickListener {
             Navigation.findNavController(requireView()).navigateUp()
         }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                }
+            }
+        )
     }
 
     override fun onStart() {
         super.onStart()
-        binding.regionRecyclerView.adapter?.notifyDataSetChanged()
+
+        adapterRegion.invalidateSelection()
     }
 
     private fun startAuthenticationFlow() {
