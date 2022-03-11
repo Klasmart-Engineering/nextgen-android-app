@@ -98,6 +98,8 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
             }
 
             override fun onError(exception: MsalException) {
+                binding.loadingIndication.isVisible = false
+                binding.regionGroup.isVisible = true
                 val B2C_PASSWORD_CHANGE = "AADB2C90118"
                 if (exception.message!!.contains(B2C_PASSWORD_CHANGE)) {
                     return
