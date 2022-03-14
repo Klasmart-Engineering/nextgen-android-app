@@ -12,6 +12,7 @@ import fm.liveswitch.IAction1
 import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,7 +25,6 @@ import uk.co.kidsloop.features.liveclass.usecases.OpenSfuDownstreamConnection
 import uk.co.kidsloop.features.liveclass.usecases.OpenSfuUpstreamConnectionUseCase
 import uk.co.kidsloop.features.liveclass.usecases.SendDataChannelEventUseCase
 import uk.co.kidsloop.liveswitch.Config
-import javax.inject.Inject
 
 @HiltViewModel
 class LiveClassViewModel @Inject constructor(
@@ -72,30 +72,6 @@ class LiveClassViewModel @Inject constructor(
         val upstreamConnection =
             openSfuUpstreamConnectionUseCase.openSfuUpstreamConnection(audioStream, videoStream)
         return upstreamConnection
-    }
-
-    fun toggleLocalAudio() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
-                    val config = upstreamConnection.config
-                    config.localAudioMuted = !config.localAudioMuted
-                    upstreamConnection.update(config)
-                }
-            }
-        }
-    }
-
-    fun toggleLocalVideo() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                liveClassManager.getUpstreamConnection()?.let { upstreamConnection ->
-                    val config = upstreamConnection.config
-                    config.localVideoMuted = !config.localVideoMuted
-                    upstreamConnection.update(config)
-                }
-            }
-        }
     }
 
     fun turnOffVideoForStudents() {

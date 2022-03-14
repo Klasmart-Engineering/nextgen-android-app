@@ -163,6 +163,7 @@ class LiveClassFragment :
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
+                    showLoading()
                     viewModel.leaveLiveClass()
                 }
             }
@@ -268,6 +269,7 @@ class LiveClassFragment :
                 val messageId = when (liveClassManager.getState()) {
                     LiveClassState.JOINED_AND_WAITING_FOR_TEACHER -> R.string.wait_for_teacher_to_arrive
                     LiveClassState.TEACHER_DISCONNECTED -> R.string.teacher_has_left_the_classroom
+                    LiveClassState.TEACHER_ENDED_LIVE_CLASS -> return@setOnClickListener
                     else -> R.string.teacher_turned_off_all_microphones
                 }
                 showCustomToast(getString(messageId), true, false)
@@ -287,6 +289,7 @@ class LiveClassFragment :
                 val messageId = when (liveClassManager.getState()) {
                     LiveClassState.JOINED_AND_WAITING_FOR_TEACHER -> R.string.wait_for_teacher_to_arrive
                     LiveClassState.TEACHER_DISCONNECTED -> R.string.teacher_has_left_the_classroom
+                    LiveClassState.TEACHER_ENDED_LIVE_CLASS -> return@setOnClickListener
                     else -> R.string.teacher_turned_off_all_cameras
                 }
                 showCustomToast(getString(messageId), false, true)
@@ -299,6 +302,7 @@ class LiveClassFragment :
                 LeaveClassDialog.TAG.toString(),
                 viewLifecycleOwner
             ) { _, _ ->
+                showLoading()
                 if (isMainTeacher) {
                     viewModel.endLiveClass()
                 } else {
@@ -511,7 +515,6 @@ class LiveClassFragment :
         uiThreadPoster.post {
             binding.localMediaFeed.showCameraTurnedOff()
             binding.toggleCameraBtn.isActivated = false
-
             if (state == LiveClassState.CAM_DISABLED_BY_TEACHER) {
                 showCustomToast(getString(R.string.teacher_turned_off_all_cameras), false, true)
             } else {
