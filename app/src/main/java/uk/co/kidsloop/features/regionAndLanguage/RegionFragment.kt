@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Pair
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.microsoft.identity.client.AcquireTokenParameters
 import com.microsoft.identity.client.AuthenticationCallback
@@ -18,13 +18,14 @@ import com.microsoft.identity.client.exception.MsalException
 import com.microsoft.identity.client.exception.MsalServiceException
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
+import uk.co.kidsloop.app.utils.UI.DividerItemDecorator
 import uk.co.kidsloop.databinding.FragmentRegionBinding
 import uk.co.kidsloop.features.authentication.AuthenticationManager
 import uk.co.kidsloop.features.authentication.B2CConfiguration
 import uk.co.kidsloop.features.regionAndLanguage.data.RegionsAndLanguages
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RegionFragment : BaseFragment(R.layout.fragment_region) {
@@ -37,6 +38,8 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
     }
 
     private val binding by viewBinding(FragmentRegionBinding::bind)
+    private val regions = RegionsAndLanguages.regionsList()
+    val adapterRegion = RegionAdapter({ onRegionClicked() }, regions.toTypedArray())
 
     private lateinit var parameters: AcquireTokenParameters
 
@@ -61,11 +64,18 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val regions = RegionsAndLanguages.regionsList()
+
         binding.regionRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = RegionAdapter({ onRegionClicked() }, regions.toTypedArray())
-            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+            adapter = adapterRegion
+            binding.regionRecyclerView.addItemDecoration(
+                DividerItemDecorator(
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.divider
+                    )!!
+                )
+            )
         }
 
         binding.backButton.setOnClickListener {
@@ -75,7 +85,8 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
 
     override fun onStart() {
         super.onStart()
-        binding.regionRecyclerView.adapter?.notifyDataSetChanged()
+
+        adapterRegion.invalidateSelection()
     }
 
     private fun startAuthenticationFlow() {

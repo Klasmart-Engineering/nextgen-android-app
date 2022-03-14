@@ -20,5 +20,6 @@
     <color name="amaranth">#F02747</color>
     <color name="light_gray">#EFF2F3</color>
     <color name="kidsloop_blue">#5A86EE</color>
+    <color name="dark_gray">#444444</color>
     <color name="soft_blue">#5C8AE6</color>
 </resources>

@@ -2,12 +2,13 @@ package uk.co.kidsloop.features.regionAndLanguage
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
+import uk.co.kidsloop.app.utils.UI.DividerItemDecorator
 import uk.co.kidsloop.databinding.FragmentLanguageBinding
 import uk.co.kidsloop.features.regionAndLanguage.data.Language
 import uk.co.kidsloop.features.regionAndLanguage.data.RegionsAndLanguages
@@ -22,7 +23,14 @@ class LanguageFragment : BaseFragment(R.layout.fragment_language) {
         binding.languageRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = LanguageAdapter({ language -> onLanguageClicked(language) }, languages.toTypedArray())
-            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+            binding.languageRecyclerView.addItemDecoration(
+                DividerItemDecorator(
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.divider
+                    )!!
+                )
+            )
         }
     }
 
