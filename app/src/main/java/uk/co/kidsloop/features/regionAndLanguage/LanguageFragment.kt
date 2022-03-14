@@ -5,7 +5,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -24,9 +23,14 @@ class LanguageFragment : BaseFragment(R.layout.fragment_language) {
         binding.languageRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = LanguageAdapter({ language -> onLanguageClicked(language) }, languages.toTypedArray())
-            val dividerItemDecoration: ItemDecoration =
-                DividerItemDecorator(ContextCompat.getDrawable(context, R.drawable.divider)!!)
-            binding.languageRecyclerView.addItemDecoration(dividerItemDecoration)
+            binding.languageRecyclerView.addItemDecoration(
+                DividerItemDecorator(
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.divider
+                    )!!
+                )
+            )
         }
     }
 
