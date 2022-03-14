@@ -1,5 +1,7 @@
 package uk.co.kidsloop.features.regionAndLanguage
 
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +35,9 @@ class LanguageAdapter(
         viewHolder.itemView.setOnClickListener {
             viewHolder.checkmark.visibility = View.VISIBLE
             viewHolder.textView.setTextColor(ContextCompat.getColor(it.context, R.color.kidsloop_blue))
-            onLanguageClicked.invoke(dataSet[position])
+            Handler(Looper.getMainLooper()).postDelayed({
+                onLanguageClicked.invoke(dataSet[position])
+            }, 500)
         }
     }
 

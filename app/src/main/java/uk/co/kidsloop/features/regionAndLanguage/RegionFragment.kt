@@ -1,6 +1,8 @@
 package uk.co.kidsloop.features.regionAndLanguage
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.util.Pair
 import android.view.View
@@ -95,9 +97,11 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
     }
 
     private fun onRegionClicked() {
-        binding.regionGroup.isVisible = false
-        binding.loadingIndication.isVisible = true
-        startAuthenticationFlow()
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.regionGroup.isVisible = false
+            binding.loadingIndication.isVisible = true
+            startAuthenticationFlow()
+        }, 500)
     }
 
     private val authInteractiveCallback: AuthenticationCallback
