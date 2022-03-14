@@ -23,6 +23,7 @@ object RegionsAndLanguages {
             Region("Vietnam"),
             Region("Indonesia"),
             Region("Thailand"),
+            Region("United States"),
             Region("Pakistan"),
         )
     }
