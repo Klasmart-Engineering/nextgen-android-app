@@ -133,17 +133,6 @@
                 android:visibility="gone" />
         </androidx.cardview.widget.CardView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/student_feeds_recyclerview"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginEnd="@dimen/space_8"
-            android:nestedScrollingEnabled="false"
-            android:overScrollMode="never"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/more_btn"
-            app:layout_constraintTop_toBottomOf="@+id/local_media_feed" />
-
         <uk.co.kidsloop.features.liveclass.localmedia.LocalMediaCustomContainer
             android:id="@+id/local_media_feed"
             android:layout_width="wrap_content"
@@ -152,6 +141,30 @@
             app:cardCornerRadius="@dimen/space_12"
             app:layout_constraintEnd_toStartOf="@+id/more_btn"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/student_feeds_recyclerview"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/space_8"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toTopOf="@id/others_label"
+            app:layout_constraintEnd_toStartOf="@+id/more_btn"
+            app:layout_constraintTop_toBottomOf="@+id/local_media_feed" />
+
+        <TextView
+            android:id="@+id/others_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rooney_sans_bold"
+            android:textSize="17sp"
+            android:textColor="@color/soft_blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/student_feeds_recyclerview"
+            app:layout_constraintEnd_toEndOf="@+id/student_feeds_recyclerview"
+            app:layout_constraintStart_toStartOf="@id/student_feeds_recyclerview"
+            android:visibility="gone"/>
 
         <ProgressBar
             android:id="@+id/loading_indication"

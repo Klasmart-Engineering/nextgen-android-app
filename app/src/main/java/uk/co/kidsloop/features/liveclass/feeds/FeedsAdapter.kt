@@ -37,7 +37,6 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
         Timber.d(getItemCount().toString())
     }
 
-//    override fun getItemCount() = min(currentList().size, MAX_FEEDS_VISIBLE)
     override fun getItemCount() = currentList().size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
@@ -52,7 +51,7 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
         val feedItem = currentList()[position]
-        //holder.setIsRecyclable(false)
+        holder.setIsRecyclable(false)
         holder.bind(feedItem)
     }
 

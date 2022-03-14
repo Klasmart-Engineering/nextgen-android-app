@@ -137,6 +137,7 @@ class LiveClassFragment :
         }
 
         setControls()
+        observeAdapter()
 
         viewModel.classroomStateLiveData.observe(
             viewLifecycleOwner,
@@ -231,6 +232,28 @@ class LiveClassFragment :
         }, 5000)
     }
 
+    private fun checkNumberOfStudents(number: Int) {
+        (number - FeedsAdapter.MAX_FEEDS_VISIBLE).let {
+            when (it) {
+                in Int.MIN_VALUE..0 -> hideOthersLabel()
+                0 -> hideOthersLabel()
+                else -> showOthersLabel(it)
+            }
+        }
+    }
+
+    private fun showOthersLabel(number: Int) {
+        when(number) {
+            1 -> binding.othersLabel.text = getString(R.string.other_students_number_label, number)
+            else -> binding.othersLabel.text = getString(R.string.others_students_number_label, number)
+        }
+        binding.othersLabel.visible()
+    }
+
+    private fun hideOthersLabel() {
+        binding.othersLabel.gone()
+    }
+
     private fun setControls() {
         binding.toggleMicrophoneBtn.setOnClickListener {
             if (binding.toggleMicrophoneBtn.isActivated) {
@@ -321,6 +344,12 @@ class LiveClassFragment :
         }
     }
 
+    private fun observeAdapter() = with(FeedsAdapter) {
+        studentsFeedAdapter.itemCount.observe(viewLifecycleOwner, Observer {
+            checkNumberOfStudents(it)
+        })
+    }
+
     private fun openSfuDownstreamConnection(remoteConnectionInfo: ConnectionInfo) {
         // Create remote media.
         val remoteMedia = SFURemoteMedia(
@@ -346,7 +375,11 @@ class LiveClassFragment :
                 studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view, STUDENT_ROLE)
             }
             ASSISTANT_TEACHER_ROLE -> uiThreadPoster.post {
-                studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view, ASSISTANT_TEACHER_ROLE)
+                studentsFeedAdapter.addVideoFeed(
+                    remoteConnectionInfo.clientId,
+                    remoteMedia.view,
+                    ASSISTANT_TEACHER_ROLE
+                )
             }
         }
 
