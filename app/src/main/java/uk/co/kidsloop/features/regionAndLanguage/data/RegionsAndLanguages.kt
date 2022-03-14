@@ -9,21 +9,21 @@ object RegionsAndLanguages {
             Language("Korean", "ko"),
             Language("Chinese", "zh"),
             Language("Vietnamese", "vi"),
-            Language("Bahasa Indonesia", "id")
+            Language("Bahasa Indonesia", "id"),
+            Language("Thai", "th")
         )
     }
 
-    fun regionsList(): List<String> {
+    fun regionsList(): List<Region> {
         return listOf(
-            "United Kingdom",
-            "Sri Lanka",
-            "South Korea",
-            "India",
-            "Vietnam",
-            "Indonesia",
-            "Thailand",
-            "United States",
-            "Pakistan",
+            Region("United Kingdom"),
+            Region("Sri Lanka"),
+            Region("South Korea"),
+            Region("India"),
+            Region("Vietnam"),
+            Region("Indonesia"),
+            Region("Thailand"),
+            Region("Pakistan"),
         )
     }
 }

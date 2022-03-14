@@ -8,12 +8,13 @@
 
     <ImageButton
         android:id="@+id/back_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/space_53"
+        android:layout_height="@dimen/space_53"
         android:layout_marginStart="41dp"
         android:layout_marginTop="14dp"
-        android:background="@drawable/ic_back_button"
+        android:background="@drawable/bg_round_white_ripple"
         android:contentDescription="@null"
+        android:src="@drawable/ic_back_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -148,9 +149,9 @@
         android:focusable="true"
         android:minHeight="@dimen/space_53"
         android:paddingHorizontal="@dimen/space_15"
+        android:text="@string/join_live_class"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:text="@string/join_live_class"
         app:layout_constraintBottom_toBottomOf="@id/camera_preview_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/camera_preview_container" />

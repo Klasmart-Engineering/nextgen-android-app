@@ -24,7 +24,6 @@
         android:layout_marginHorizontal="@dimen/space_15"
         android:layout_marginTop="@dimen/space_18"
         android:background="@drawable/bg_list_rounded"
-        android:paddingHorizontal="@dimen/space_15"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_textview" />

@@ -163,7 +163,11 @@ class LiveClassFragment :
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     showLoading()
-                    viewModel.leaveLiveClass()
+                    if (isMainTeacher) {
+                        viewModel.endLiveClass()
+                    } else {
+                        viewModel.leaveLiveClass()
+                    }
                 }
             }
         )
