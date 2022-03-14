@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
-import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.structure.BaseFragment
@@ -36,6 +35,7 @@ import uk.co.kidsloop.liveswitch.Config.ASSISTANT_TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.Config.STUDENT_ROLE
 import uk.co.kidsloop.liveswitch.Config.TEACHER_ROLE
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LiveClassFragment :
@@ -195,6 +195,26 @@ class LiveClassFragment :
 
         binding.toggleCameraBtn.isActivated = true
         binding.toggleMicrophoneBtn.isActivated = true
+
+        if (requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
+            localMedia?.videoMuted = false
+            binding.toggleCameraBtn.isChecked = false
+            binding.localMediaFeed.showCameraTurnedOn()
+        } else {
+            localMedia?.videoMuted = true
+            binding.toggleCameraBtn.isChecked = true
+            binding.localMediaFeed.showCameraTurnedOff()
+        }
+
+        if (requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
+            localMedia?.audioMuted = false
+            binding.toggleMicrophoneBtn.isChecked = false
+            binding.localMediaFeed.showMicTurnedOn()
+        } else {
+            localMedia?.audioMuted = true
+            binding.toggleMicrophoneBtn.isChecked = true
+            binding.localMediaFeed.showMicMuted()
+        }
     }
 
     private fun setupWaitingState() {
@@ -356,7 +376,11 @@ class LiveClassFragment :
                 studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view, STUDENT_ROLE)
             }
             ASSISTANT_TEACHER_ROLE -> uiThreadPoster.post {
-                studentsFeedAdapter.addVideoFeed(remoteConnectionInfo.clientId, remoteMedia.view, ASSISTANT_TEACHER_ROLE)
+                studentsFeedAdapter.addVideoFeed(
+                    remoteConnectionInfo.clientId,
+                    remoteMedia.view,
+                    ASSISTANT_TEACHER_ROLE
+                )
             }
         }
 
