@@ -7,7 +7,7 @@ object RegionsAndLanguages {
             Language("English", "en"),
             Language("Spanish", "es"),
             Language("Korean", "ko"),
-            Language("Chinese", "zh"),
+            Language("Chinese", "zh-Hans"),
             Language("Vietnamese", "vi"),
             Language("Bahasa Indonesia", "id")
         )

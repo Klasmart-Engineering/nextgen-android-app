@@ -94,6 +94,7 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
             override fun onSuccess(result: IAuthenticationResult) {
 
                 authManager.saveAccessToken(result.accessToken)
+                authManager.saveAccountId(result.account.id)
                 findNavController().navigate(RegionFragmentDirections.regionToLogin())
             }
 

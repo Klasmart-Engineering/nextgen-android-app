@@ -5,12 +5,12 @@ object B2CConfiguration {
     /**
      * Name of your B2C tenant hostname.
      */
-    private const val azureAdB2CHostName = "login.sso.kidsloop.live"
+    private const val azureAdB2CHostName = "login.alpha.kidsloop.net"
 
     /**
      * Name of your B2C tenant.
      */
-    private const val tenantName = "kidsloopb2c.onmicrosoft.com"
+    private const val tenantName = "klkralpha.onmicrosoft.com"
 
     /**
      * Returns an authority for the given policy name.
@@ -18,7 +18,7 @@ object B2CConfiguration {
      * @param policyName name of a B2C policy.
      */
     fun getAuthorityFromPolicyName(policyName: String): String {
-        return "https://${azureAdB2CHostName}/${tenantName}/${policyName}/"
+        return "https://$azureAdB2CHostName/$tenantName/$policyName/"
     }
 
     /**
@@ -27,7 +27,6 @@ object B2CConfiguration {
      */
     val scopes: List<String>
         get() = listOf(
-            "https://login.sso.kidsloop.live/010eb29e-d42b-4ca3-9c16-1961a528ce77/tasks.read",
-            "https://login.sso.kidsloop.live/010eb29e-d42b-4ca3-9c16-1961a528ce77/tasks.write"
+            "https://login.alpha.kidsloop.net/63a170f9-9d0c-4198-b587-8c63ab59ebdf/tasks.write"
         )
 }
