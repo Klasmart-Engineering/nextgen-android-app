@@ -2,9 +2,9 @@ package uk.co.kidsloop.features.liveclass
 
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import javax.inject.Inject
 import uk.co.kidsloop.app.di.ChildFragmentManger
 import uk.co.kidsloop.app.di.ParentFragmentManager
-import javax.inject.Inject
 
 class DialogsManager @Inject constructor(
     @ParentFragmentManager private val parentFragmentManager: FragmentManager,
