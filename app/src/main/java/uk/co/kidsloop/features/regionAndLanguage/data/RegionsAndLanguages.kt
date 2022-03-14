@@ -5,12 +5,12 @@ object RegionsAndLanguages {
     fun languagesList(): List<Language> {
         return listOf(
             Language("English", "en"),
-            Language("Español", "es"),
+            Language("Spanish", "es"),
             Language("Korean", "ko"),
             Language("Chinese", "zh"),
             Language("Vietnamese", "vi"),
             Language("Bahasa Indonesia", "id"),
-            Language("ภาษาไทย", "th")
+            Language("Thai", "th")
         )
     }
 
