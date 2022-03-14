@@ -1,12 +1,12 @@
 {
-  "client_id" : "c9ede186-e9b4-4f08-9df4-7c941df58b27",
+  "client_id" : "bea5a0d4-a7aa-4998-a9d4-707823d1d549",
   "redirect_uri" : "msauth://uk.co.kidsloop/VzSiQcXRmi2kyjzcA%2BmYLEtbGVs%3D",
   "account_mode" : "MULTIPLE",
   "broker_redirect_uri_registered": true,
   "authorities": [
     {
       "type": "B2C",
-      "authority_url": "https://login.sso.kidsloop.live/010eb29e-d42b-4ca3-9c16-1961a528ce77",
+      "authority_url": "https://login.alpha.kidsloop.net/63a170f9-9d0c-4198-b587-8c63ab59ebdf",
       "default": true
     },
     {
