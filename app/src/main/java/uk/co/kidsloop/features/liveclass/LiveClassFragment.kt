@@ -251,6 +251,7 @@ class LiveClassFragment :
                     LiveClassState.JOINED_AND_WAITING_FOR_TEACHER -> R.string.wait_for_teacher_to_arrive
                     LiveClassState.TEACHER_DISCONNECTED -> R.string.teacher_has_left_the_classroom
                     LiveClassState.TEACHER_ENDED_LIVE_CLASS -> return@setOnClickListener
+                    LiveClassState.IDLE -> return@setOnClickListener
                     else -> R.string.teacher_turned_off_all_microphones
                 }
                 showCustomToast(getString(messageId), true, false)
@@ -271,6 +272,7 @@ class LiveClassFragment :
                     LiveClassState.JOINED_AND_WAITING_FOR_TEACHER -> R.string.wait_for_teacher_to_arrive
                     LiveClassState.TEACHER_DISCONNECTED -> R.string.teacher_has_left_the_classroom
                     LiveClassState.TEACHER_ENDED_LIVE_CLASS -> return@setOnClickListener
+                    LiveClassState.IDLE -> return@setOnClickListener
                     else -> R.string.teacher_turned_off_all_cameras
                 }
                 showCustomToast(getString(messageId), false, true)
