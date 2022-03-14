@@ -54,7 +54,6 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
 
     fun showCameraTurnedOn() {
         binding.localVideoStudentOverlay.elevation = 0F
-        binding.localVideoStudentOverlay.invisible()
     }
 
     fun showHandRaised() {
