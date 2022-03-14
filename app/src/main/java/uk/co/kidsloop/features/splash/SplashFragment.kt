@@ -2,16 +2,17 @@ package uk.co.kidsloop.features.splash
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.navigation.fragment.findNavController
 import com.microsoft.identity.client.IMultipleAccountPublicClientApplication
 import com.microsoft.identity.client.IPublicClientApplication
 import com.microsoft.identity.client.PublicClientApplication
 import com.microsoft.identity.client.exception.MsalException
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.structure.BaseFragment
 import uk.co.kidsloop.features.authentication.AuthenticationManager
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashFragment : BaseFragment(R.layout.fragment_splash) {
@@ -39,6 +40,7 @@ class SplashFragment : BaseFragment(R.layout.fragment_splash) {
                     override fun onError(
                         exception: MsalException
                     ) {
+                        Log.d("SplashFragment", exception.message.toString())
                     }
                 }
             )
