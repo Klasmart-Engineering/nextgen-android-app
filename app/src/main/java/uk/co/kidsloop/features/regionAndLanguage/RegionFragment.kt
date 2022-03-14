@@ -101,7 +101,7 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
             binding.regionGroup.isVisible = false
             binding.loadingIndication.isVisible = true
             startAuthenticationFlow()
-        }, 500)
+        }, 300)
     }
 
     private val authInteractiveCallback: AuthenticationCallback

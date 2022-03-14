@@ -37,7 +37,7 @@ class LanguageAdapter(
             viewHolder.textView.setTextColor(ContextCompat.getColor(it.context, R.color.kidsloop_blue))
             Handler(Looper.getMainLooper()).postDelayed({
                 onLanguageClicked.invoke(dataSet[position])
-            }, 500)
+            }, 300)
         }
     }
 
