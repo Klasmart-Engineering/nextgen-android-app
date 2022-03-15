@@ -12,6 +12,7 @@ object Config {
     const val deviceId = "00000000-0000-0000-0000-000000000000"
     const val userId = "KidsLoop"
 
+    const val LOCAL_ROLE = "local"
     const val STUDENT_ROLE = "student"
     const val TEACHER_ROLE = "teacher"
     const val ASSISTANT_TEACHER_ROLE = "assistant"

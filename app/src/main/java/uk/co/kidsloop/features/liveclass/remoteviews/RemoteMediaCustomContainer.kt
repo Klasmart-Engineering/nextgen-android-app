@@ -5,9 +5,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.ResourcesCompat
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.invisible
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.databinding.RemoteMediaContainerBinding
@@ -57,5 +56,10 @@ class RemoteMediaCustomContainer @JvmOverloads constructor(
     fun hideRaiseHand() {
         binding.raiseHandImageView.elevation = 0F
         binding.raiseHandImageView.invisible()
+    }
+
+    fun showBadge(badge: Int) {
+        binding.badgeImageView.visible()
+        binding.badgeImageView.setImageDrawable(ResourcesCompat.getDrawable(resources, badge, null))
     }
 }
