@@ -19,8 +19,17 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
 
     private val binding = LocalMediaContainerBinding.inflate(LayoutInflater.from(context), this)
 
-    fun addLocalMediaView(localMediaView: View?) {
+    fun replaceLocalMediaView(remoteMediaView: View?) {
+        removeLocalMediaView()
+        addLocalMediaView(remoteMediaView)
+    }
+
+    private fun addLocalMediaView(localMediaView: View?) {
         addView(localMediaView, 1)
+    }
+
+    fun removeLocalMediaView() {
+        removeViewAt(1)
     }
 
     fun updateLocalMediaViewOrientationReverse() {
@@ -29,10 +38,6 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
 
     fun updateLocalMediaViewOrientationDefault() {
         updateLayoutParams { getChildAt(1)?.rotation = 0F }
-    }
-
-    fun removeLocalMediaView() {
-        removeViewAt(1)
     }
 
     fun showMicMuted() {

@@ -7,6 +7,7 @@ import android.view.View
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import uk.co.kidsloop.R
+import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.invisible
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.databinding.RemoteMediaContainerBinding
@@ -22,8 +23,13 @@ class RemoteMediaCustomContainer @JvmOverloads constructor(
 
     private val binding = RemoteMediaContainerBinding.inflate(LayoutInflater.from(context), this)
 
-    fun addRemoteMediaView(remoteMediaView: View?) {
-       addView(remoteMediaView, 1)
+    fun replaceRemoteMediaView(remoteMediaView: View?) {
+        removeRemoteMediaView()
+        addRemoteMediaView(remoteMediaView)
+    }
+
+    private fun addRemoteMediaView(remoteMediaView: View?) {
+        addView(remoteMediaView, 1)
     }
 
     fun removeRemoteMediaView() {
@@ -61,5 +67,9 @@ class RemoteMediaCustomContainer @JvmOverloads constructor(
     fun showBadge(badge: Int) {
         binding.badgeImageView.visible()
         binding.badgeImageView.setImageDrawable(ResourcesCompat.getDrawable(resources, badge, null))
+    }
+
+    fun hideBadge() {
+        binding.badgeImageView.gone()
     }
 }
