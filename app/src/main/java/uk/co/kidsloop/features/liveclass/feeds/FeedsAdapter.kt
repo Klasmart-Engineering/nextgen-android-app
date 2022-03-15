@@ -78,7 +78,7 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
     }
 
     fun addVideoFeed(clientId: String, remoteMediaView: View, role: String) {
-        when(role) {
+        when (role) {
             Config.LOCAL_ROLE -> addLocalVideoFeed(clientId, remoteMediaView)
             Config.STUDENT_ROLE -> addStudentVideoFeed(clientId, remoteMediaView)
             Config.ASSISTANT_TEACHER_ROLE -> addAssistantTeacherVideoFeed(clientId, remoteMediaView)
@@ -104,7 +104,10 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
 
     private fun addAssistantTeacherVideoFeed(clientId: String, remoteMediaView: View) {
         val newList = currentList().toMutableList()
-        newList.add(ASSISTANT_TEACHER_POSITION, StudentFeedItem(remoteMediaView, clientId, Config.ASSISTANT_TEACHER_ROLE))
+        newList.add(
+            ASSISTANT_TEACHER_POSITION,
+            StudentFeedItem(remoteMediaView, clientId, Config.ASSISTANT_TEACHER_ROLE)
+        )
 
         submitList(newList)
     }
@@ -112,7 +115,7 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
     fun removeVideoFeed(clientId: String) {
         val newList = currentList().toMutableList()
         val positionToBeRemoved = currentList().indexOfFirst { it.clientId == clientId }
-        if(positionToBeRemoved > -1) {
+        if (positionToBeRemoved > -1) {
             newList.removeAt(positionToBeRemoved)
             submitList(newList)
         }
@@ -129,7 +132,8 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
         var firstPosition = 0
         val position = currentList().indexOfFirst { it.clientId == clientId }
         if (position > -1) {
-            firstPosition = if (isAssistantTeacherPresent()) ASSISTANT_TEACHER_POSITION + 1 else ASSISTANT_TEACHER_POSITION
+            firstPosition =
+                if (isAssistantTeacherPresent()) ASSISTANT_TEACHER_POSITION + 1 else ASSISTANT_TEACHER_POSITION
 
             val element = (currentList()[position]).copy()
             element.hasHandRaised = true
@@ -144,7 +148,7 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
 
     fun onHandLowered(clientId: String?) {
         val position = currentList().indexOfFirst { it.clientId == clientId }
-        if(position > -1) {
+        if (position > -1) {
             val element = (currentList()[position]).copy()
             element.hasHandRaised = false
 
@@ -158,22 +162,22 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
         val isAssistantPresent = isAssistantTeacherPresent()
 
         val localFeed = list[0]
-        val assistantTeacherFeed = if(isAssistantPresent) list[1] else null
+        val assistantTeacherFeed = if (isAssistantPresent) list[1] else null
 
-        val raisedHandsList = if(isAssistantPresent) {
-            list.subList(2,list.size).filter { it.hasHandRaised }
+        val raisedHandsList = if (isAssistantPresent) {
+            list.subList(2, list.size).filter { it.hasHandRaised }
         } else {
-            list.subList(1,list.size).filter { it.hasHandRaised }
+            list.subList(1, list.size).filter { it.hasHandRaised }
         }
 
-        val loweredHandsList = if(isAssistantPresent) {
-            list.subList(2,list.size).filter { !it.hasHandRaised }
+        val loweredHandsList = if (isAssistantPresent) {
+            list.subList(2, list.size).filter { !it.hasHandRaised }
         } else {
-            list.subList(1,list.size).filter { !it.hasHandRaised }
+            list.subList(1, list.size).filter { !it.hasHandRaised }
         }
 
         newList.add(localFeed)
-        if(assistantTeacherFeed != null)
+        if (assistantTeacherFeed != null)
             newList.add(assistantTeacherFeed)
         newList.addAll(raisedHandsList)
         newList.addAll(loweredHandsList)
