@@ -202,21 +202,21 @@ class LiveClassFragment :
         if (requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
             localMedia?.videoMuted = false
             binding.toggleCameraBtn.isChecked = false
-            binding.localMediaFeed.showCameraTurnedOn()
+            //binding.localMediaFeed.showCameraTurnedOn()
         } else {
             localMedia?.videoMuted = true
             binding.toggleCameraBtn.isChecked = true
-            binding.localMediaFeed.showCameraTurnedOff()
+            //binding.localMediaFeed.showCameraTurnedOff()
         }
 
         if (requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
             localMedia?.audioMuted = false
             binding.toggleMicrophoneBtn.isChecked = false
-            binding.localMediaFeed.showMicTurnedOn()
+            //binding.localMediaFeed.showMicTurnedOn()
         } else {
             localMedia?.audioMuted = true
             binding.toggleMicrophoneBtn.isChecked = true
-            binding.localMediaFeed.showMicMuted()
+            //binding.localMediaFeed.showMicMuted()
         }
     }
 
