@@ -64,6 +64,7 @@
             app:cardBackgroundColor="@color/dark_blue"
             app:cardCornerRadius="@dimen/space_21"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_weight="0.85"
             app:layout_constraintEnd_toStartOf="@+id/student_feeds_recyclerview"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -145,11 +146,12 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/student_feeds_recyclerview"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="@dimen/space_8"
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never"
+            app:layout_constraintHorizontal_weight="0.2"
             app:layout_constraintBottom_toTopOf="@id/others_label"
             app:layout_constraintStart_toEndOf="@id/teacher_video_feed"
             app:layout_constraintEnd_toStartOf="@+id/more_btn"

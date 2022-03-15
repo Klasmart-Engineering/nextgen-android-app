@@ -20,7 +20,7 @@ class LocalViewHolder(private val binding: LayoutFeedLocalBinding) : GenericFeed
             false -> { binding.localVideoFeed.hideRaiseHand() }
         }
 
-        videoFeedContainer.replaceLocalMediaView(videoFeed)
+        videoFeedContainer.addLocalMediaView(videoFeed)
     }
 
     override fun update(bundle: Bundle) {

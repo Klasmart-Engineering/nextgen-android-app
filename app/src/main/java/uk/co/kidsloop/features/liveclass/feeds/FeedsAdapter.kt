@@ -1,6 +1,8 @@
 package uk.co.kidsloop.features.liveclass.feeds
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +40,6 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
     private fun submitList(list: List<FeedItem>) {
         differ.submitList(list)
         _itemCount.postValue(list.size)
-        Timber.d(getItemCount().toString())
     }
 
     override fun getItemCount() = currentList().size
@@ -101,9 +102,6 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         Timber.d("FEEDS ADAPTER onBindViewHolder")
 
         val feedItem = currentList()[position]
-        Timber.d(feedItem.videoFeedView.toString())
-
-        //holder.setIsRecyclable(false)
         holder.bind(feedItem)
     }
 
@@ -137,7 +135,7 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
 
     private fun addLocalVideoFeed(clientId: String, remoteMediaView: View) {
         val newList = currentList().toMutableList()
-        newList.add(0, FeedItem(remoteMediaView, clientId, Config.LOCAL_ROLE))
+        newList.add(0, FeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
         submitList(newList)
     }
 

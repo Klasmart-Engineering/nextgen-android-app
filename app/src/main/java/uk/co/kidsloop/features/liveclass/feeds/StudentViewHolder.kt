@@ -21,7 +21,7 @@ class StudentViewHolder(private val binding: LayoutFeedStudentBinding) : Generic
         handleRaiseHand(item.hasHandRaised)
         handleBadge(item.role)
 
-        videoFeedContainer.replaceRemoteMediaView(videoFeed)
+        videoFeedContainer.addRemoteMediaView(videoFeed)
     }
 
     override fun update(bundle: Bundle) {

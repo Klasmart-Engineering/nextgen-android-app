@@ -19,12 +19,9 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
 
     private val binding = LocalMediaContainerBinding.inflate(LayoutInflater.from(context), this)
 
-    fun replaceLocalMediaView(remoteMediaView: View?) {
-        removeLocalMediaView()
-        addLocalMediaView(remoteMediaView)
-    }
-
-    private fun addLocalMediaView(localMediaView: View?) {
+    fun addLocalMediaView(localMediaView: View?) {
+        if(getChildAt(1) != null)
+            removeLocalMediaView()
         addView(localMediaView, 1)
     }
 
