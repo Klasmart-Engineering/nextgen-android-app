@@ -22,14 +22,6 @@ class RegionAdapter(
 
         val textView: TextView = view.findViewById(R.id.item_name_textView)
         val checkmark: ImageView = view.findViewById(R.id.checkmark)
-
-        init {
-            itemView.setOnClickListener {
-                checkmark.visibility = View.VISIBLE
-                textView.setTextColor(ContextCompat.getColor(view.context, R.color.kidsloop_blue))
-                onRegionClicked.invoke()
-            }
-        }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
