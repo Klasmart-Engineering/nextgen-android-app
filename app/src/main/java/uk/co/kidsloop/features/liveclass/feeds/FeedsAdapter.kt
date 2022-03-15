@@ -19,9 +19,10 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
     private val differ: AsyncListDiffer<StudentFeedItem> = AsyncListDiffer(this, DiffCallback())
 
     companion object {
-        const val MAX_FEEDS_VISIBLE: Int = 3
+        const val MAX_FEEDS_VISIBLE: Int = 4
         const val HAS_RAISED_HAND = "has_raised_hand"
-        const val ASSISTANT_TEACHER_POSITION = 0
+        const val LOCAL_MEDIA_POSITION = 0
+        const val ASSISTANT_TEACHER_POSITION = 1
     }
 
     private var _itemCount = MutableLiveData<Int>()
@@ -39,6 +40,18 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
 
     override fun getItemCount() = currentList().size
 
+//    override fun onViewAttachedToWindow(holder: StudentViewHolder) {
+//        if(holder.adapterPosition == ASSISTANT_TEACHER_POSITION)
+//            holder.setIsRecyclable(false)
+//        super.onViewAttachedToWindow(holder)
+//    }
+//
+//    override fun onViewDetachedFromWindow(holder: StudentViewHolder) {
+//        if(holder.adapterPosition == ASSISTANT_TEACHER_POSITION)
+//            holder.setIsRecyclable(true)
+//        super.onViewDetachedFromWindow(holder)
+//    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
         return StudentViewHolder(
             inflate(
@@ -51,7 +64,7 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
         val feedItem = currentList()[position]
-        holder.setIsRecyclable(false)
+        //holder.setIsRecyclable(false)
         holder.bind(feedItem)
     }
 
@@ -66,17 +79,24 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
 
     fun addVideoFeed(clientId: String, remoteMediaView: View, role: String) {
         when(role) {
+            Config.LOCAL_ROLE -> addLocalVideoFeed(clientId, remoteMediaView)
             Config.STUDENT_ROLE -> addStudentVideoFeed(clientId, remoteMediaView)
             Config.ASSISTANT_TEACHER_ROLE -> addAssistantTeacherVideoFeed(clientId, remoteMediaView)
         }
     }
 
+    private fun addLocalVideoFeed(clientId: String, remoteMediaView: View) {
+        val newList = currentList().toMutableList()
+        newList.add(0, StudentFeedItem(remoteMediaView, clientId, Config.LOCAL_ROLE))
+        submitList(newList)
+    }
+
     private fun addStudentVideoFeed(clientId: String, remoteMediaView: View) {
         val newList = currentList().toMutableList()
         if (isAssistantTeacherPresent()) {
-            newList.add(1, StudentFeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
+            newList.add(ASSISTANT_TEACHER_POSITION + 1, StudentFeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
         } else {
-            newList.add(0, StudentFeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
+            newList.add(LOCAL_MEDIA_POSITION + 1, StudentFeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
         }
 
         submitList(reorderRaisedHands(newList))
@@ -90,34 +110,35 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
     }
 
     fun removeVideoFeed(clientId: String) {
-        val newListe = currentList().toMutableList()
+        val newList = currentList().toMutableList()
         val positionToBeRemoved = currentList().indexOfFirst { it.clientId == clientId }
         if(positionToBeRemoved > -1) {
-            newListe.removeAt(positionToBeRemoved)
-            submitList(newListe)
+            newList.removeAt(positionToBeRemoved)
+            submitList(newList)
         }
     }
 
     private fun isAssistantTeacherPresent(): Boolean {
-        return if (currentList().isNotEmpty())
+        return if (currentList().size >= 2)
             currentList()[ASSISTANT_TEACHER_POSITION].role == Config.ASSISTANT_TEACHER_ROLE
         else
             false
     }
 
     fun onHandRaised(clientId: String?) {
-        var swapPosition = 0
+        var firstPosition = 0
         val position = currentList().indexOfFirst { it.clientId == clientId }
         if (position > -1) {
-            swapPosition = if (isAssistantTeacherPresent()) 1 else 0
+            firstPosition = if (isAssistantTeacherPresent()) ASSISTANT_TEACHER_POSITION + 1 else ASSISTANT_TEACHER_POSITION
 
             val element = (currentList()[position]).copy()
             element.hasHandRaised = true
 
-            val newList = currentList().toMutableList().apply { this[position] = element }
+            val newList = currentList().toMutableList()
+            newList.removeAt(position)
+            newList.add(firstPosition, element)
 
-            Collections.swap(newList, swapPosition, position)
-            submitList(newList)
+            submitList(reorderRaisedHands(newList))
         }
     }
 
@@ -134,10 +155,26 @@ class FeedsAdapter : RecyclerView.Adapter<StudentViewHolder>() {
 
     private fun reorderRaisedHands(list: List<StudentFeedItem>): List<StudentFeedItem> {
         val newList = mutableListOf<StudentFeedItem>()
+        val isAssistantPresent = isAssistantTeacherPresent()
 
-        val raisedHandsList = list.filter { it.hasHandRaised }
-        val loweredHandsList = list.filter { !it.hasHandRaised }
+        val localFeed = list[0]
+        val assistantTeacherFeed = if(isAssistantPresent) list[1] else null
 
+        val raisedHandsList = if(isAssistantPresent) {
+            list.subList(2,list.size).filter { it.hasHandRaised }
+        } else {
+            list.subList(1,list.size).filter { it.hasHandRaised }
+        }
+
+        val loweredHandsList = if(isAssistantPresent) {
+            list.subList(2,list.size).filter { !it.hasHandRaised }
+        } else {
+            list.subList(1,list.size).filter { !it.hasHandRaised }
+        }
+
+        newList.add(localFeed)
+        if(assistantTeacherFeed != null)
+            newList.add(assistantTeacherFeed)
         newList.addAll(raisedHandsList)
         newList.addAll(loweredHandsList)
 
