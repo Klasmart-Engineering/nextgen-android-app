@@ -41,7 +41,7 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
 
     private val binding by viewBinding(FragmentRegionBinding::bind)
     private val regions = RegionsAndLanguages.regionsList()
-    val adapterRegion = RegionAdapter({ onRegionClicked() }, regions.toTypedArray())
+    private val adapterRegion = RegionAdapter({ onRegionClicked() }, regions.toTypedArray())
 
     private lateinit var parameters: AcquireTokenParameters
 
@@ -97,10 +97,10 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
     }
 
     private fun onRegionClicked() {
+        startAuthenticationFlow()
         Handler(Looper.getMainLooper()).postDelayed({
             binding.regionGroup.isVisible = false
             binding.loadingIndication.isVisible = true
-            startAuthenticationFlow()
         }, 300)
     }
 
