@@ -198,6 +198,26 @@ class LiveClassFragment :
 
         binding.toggleCameraBtn.isActivated = true
         binding.toggleMicrophoneBtn.isActivated = true
+
+        if (requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
+            localMedia?.videoMuted = false
+            binding.toggleCameraBtn.isChecked = false
+            binding.localMediaFeed.showCameraTurnedOn()
+        } else {
+            localMedia?.videoMuted = true
+            binding.toggleCameraBtn.isChecked = true
+            binding.localMediaFeed.showCameraTurnedOff()
+        }
+
+        if (requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
+            localMedia?.audioMuted = false
+            binding.toggleMicrophoneBtn.isChecked = false
+            binding.localMediaFeed.showMicTurnedOn()
+        } else {
+            localMedia?.audioMuted = true
+            binding.toggleMicrophoneBtn.isChecked = true
+            binding.localMediaFeed.showMicMuted()
+        }
     }
 
     private fun setupWaitingState() {
@@ -276,6 +296,7 @@ class LiveClassFragment :
                     LiveClassState.JOINED_AND_WAITING_FOR_TEACHER -> R.string.wait_for_teacher_to_arrive
                     LiveClassState.TEACHER_DISCONNECTED -> R.string.teacher_has_left_the_classroom
                     LiveClassState.TEACHER_ENDED_LIVE_CLASS -> return@setOnClickListener
+                    LiveClassState.IDLE -> return@setOnClickListener
                     else -> R.string.teacher_turned_off_all_microphones
                 }
                 showCustomToast(getString(messageId), true, false)
@@ -296,6 +317,7 @@ class LiveClassFragment :
                     LiveClassState.JOINED_AND_WAITING_FOR_TEACHER -> R.string.wait_for_teacher_to_arrive
                     LiveClassState.TEACHER_DISCONNECTED -> R.string.teacher_has_left_the_classroom
                     LiveClassState.TEACHER_ENDED_LIVE_CLASS -> return@setOnClickListener
+                    LiveClassState.IDLE -> return@setOnClickListener
                     else -> R.string.teacher_turned_off_all_cameras
                 }
                 showCustomToast(getString(messageId), false, true)

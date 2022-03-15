@@ -9,7 +9,7 @@ class SharedPrefsWrapper(private val sharedPref: SharedPreferences) {
 
         const val LIVE_CLASS_ROLE = "live_class_role"
         const val CHANNEL_ID = "channel_id"
-        const val SELECTED_LANGUAGE = "selected_language"
+        const val ACCOUNT_ID = "account_id"
     }
 
     fun saveRole(role: String) {
@@ -24,9 +24,9 @@ class SharedPrefsWrapper(private val sharedPref: SharedPreferences) {
 
     fun getChannelID() = sharedPref.getString(CHANNEL_ID, Config.CHANNEL_ID) ?: Config.CHANNEL_ID
 
-    fun saveSelectedLanguage(language: String) {
-        sharedPref.edit().putString(SELECTED_LANGUAGE, language).apply()
+    fun saveAccountId(accountId: String) {
+        sharedPref.edit().putString(ACCOUNT_ID, accountId).apply()
     }
 
-    fun getSelectedLanguage() = sharedPref.getString(SELECTED_LANGUAGE, "english")
+    fun getAccountId(): String? = sharedPref.getString(ACCOUNT_ID, "")
 }

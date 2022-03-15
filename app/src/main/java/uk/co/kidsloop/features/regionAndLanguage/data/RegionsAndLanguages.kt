@@ -7,7 +7,7 @@ object RegionsAndLanguages {
             Language("English", "en"),
             Language("Spanish", "es"),
             Language("Korean", "ko"),
-            Language("Chinese", "zh"),
+            Language("Chinese", "zh-Hans"),
             Language("Vietnamese", "vi"),
             Language("Bahasa Indonesia", "id"),
             Language("Thai", "th")
@@ -23,6 +23,7 @@ object RegionsAndLanguages {
             Region("Vietnam"),
             Region("Indonesia"),
             Region("Thailand"),
+            Region("United States"),
             Region("Pakistan"),
         )
     }

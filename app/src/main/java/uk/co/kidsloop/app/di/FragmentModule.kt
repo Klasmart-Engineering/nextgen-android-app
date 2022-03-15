@@ -6,8 +6,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
-import uk.co.kidsloop.features.liveclass.DialogsManager
 import javax.inject.Qualifier
+import uk.co.kidsloop.features.liveclass.DialogsManager
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

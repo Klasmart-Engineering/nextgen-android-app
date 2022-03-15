@@ -3,9 +3,10 @@ package uk.co.kidsloop.features.authentication
 import com.microsoft.identity.client.IMultipleAccountPublicClientApplication
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 
 @Singleton
-class AuthenticationManager @Inject constructor() {
+class AuthenticationManager @Inject constructor(val sharedPrefsWrapper: SharedPrefsWrapper) {
 
     private lateinit var b2cClientApp: IMultipleAccountPublicClientApplication
     private var accessToken: String? = null
@@ -20,9 +21,13 @@ class AuthenticationManager @Inject constructor() {
         this.accessToken = accessToken
     }
 
+    fun saveAccountId(accountId: String) {
+        sharedPrefsWrapper.saveAccountId(accountId)
+    }
+
     fun getAccessToken(): String? {
         return accessToken
     }
 
-    fun isNotAuthenticated(): Boolean = accessToken.isNullOrEmpty()
+    fun isNotAuthenticated(): Boolean = sharedPrefsWrapper.getAccountId().isNullOrEmpty()
 }
