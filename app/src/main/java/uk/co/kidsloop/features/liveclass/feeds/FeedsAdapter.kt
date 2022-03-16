@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.runBlocking
 import uk.co.kidsloop.liveswitch.Config
 import uk.co.kidsloop.databinding.LayoutFeedLocalBinding.inflate as inflateLocal
 import uk.co.kidsloop.databinding.LayoutFeedStudentBinding.inflate as inflateStudent
