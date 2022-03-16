@@ -187,25 +187,23 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         val localFeed = list[0]
         val assistantTeacherFeed = if (isAssistantPresent) list[1] else null
 
-        runBlocking {
-            val raisedHandsList = if (isAssistantPresent) {
-                list.subList(ASSISTANT_TEACHER_POSITION + 1, list.size).filter { it.hasHandRaised }
-            } else {
-                list.subList(ASSISTANT_TEACHER_POSITION, list.size).filter { it.hasHandRaised }
-            }
-
-            val loweredHandsList = if (isAssistantPresent) {
-                list.subList(ASSISTANT_TEACHER_POSITION + 1, list.size).filter { !it.hasHandRaised }
-            } else {
-                list.subList(ASSISTANT_TEACHER_POSITION, list.size).filter { !it.hasHandRaised }
-            }
-
-            newList.add(localFeed)
-            if (assistantTeacherFeed != null)
-                newList.add(assistantTeacherFeed)
-            newList.addAll(raisedHandsList)
-            newList.addAll(loweredHandsList)
+        val raisedHandsList = if (isAssistantPresent) {
+            list.subList(ASSISTANT_TEACHER_POSITION + 1, list.size).filter { it.hasHandRaised }
+        } else {
+            list.subList(ASSISTANT_TEACHER_POSITION, list.size).filter { it.hasHandRaised }
         }
+
+        val loweredHandsList = if (isAssistantPresent) {
+            list.subList(ASSISTANT_TEACHER_POSITION + 1, list.size).filter { !it.hasHandRaised }
+        } else {
+            list.subList(ASSISTANT_TEACHER_POSITION, list.size).filter { !it.hasHandRaised }
+        }
+
+        newList.add(localFeed)
+        if (assistantTeacherFeed != null)
+            newList.add(assistantTeacherFeed)
+        newList.addAll(raisedHandsList)
+        newList.addAll(loweredHandsList)
 
         return newList
     }
