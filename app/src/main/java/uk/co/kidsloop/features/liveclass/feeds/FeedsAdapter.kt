@@ -26,6 +26,7 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         const val VIEW_TYPE_STUDENT = 11
     }
 
+    // TODO: find a better way of monitoring the elements' number
     private var _itemCount = MutableLiveData<Int>()
     val itemCount: LiveData<Int> get() = _itemCount
 
