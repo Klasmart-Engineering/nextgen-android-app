@@ -497,7 +497,6 @@ class LiveClassFragment :
     private fun startLocalMedia() {
         localMedia?.start()?.then({
             uiThreadPoster.post {
-                Timber.d(liveClassManager.getUpstreamClientId())
                 Timber.d(localMedia?.view.toString())
                 val clientId = liveClassManager.getUpstreamClientId() ?: "a1b2c3"
                 val localView = localMedia?.view!!
