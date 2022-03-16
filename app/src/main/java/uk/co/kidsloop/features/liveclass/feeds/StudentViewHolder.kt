@@ -1,7 +1,6 @@
 package uk.co.kidsloop.features.liveclass.feeds
 
 import android.os.Bundle
-import timber.log.Timber
 import uk.co.kidsloop.R
 import uk.co.kidsloop.databinding.LayoutFeedStudentBinding
 import uk.co.kidsloop.features.liveclass.remoteviews.RemoteMediaCustomContainer
