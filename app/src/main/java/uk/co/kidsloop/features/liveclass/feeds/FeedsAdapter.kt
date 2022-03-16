@@ -42,18 +42,6 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
 
     override fun getItemCount() = currentList().size
 
-//    override fun onViewAttachedToWindow(holder: GenericFeedViewHolder) {
-//        if(holder.adapterPosition == ASSISTANT_TEACHER_POSITION)
-//            holder.setIsRecyclable(false)
-//        super.onViewAttachedToWindow(holder)
-//    }
-//
-//    override fun onViewDetachedFromWindow(holder: GenericFeedViewHolder) {
-//        if(holder.adapterPosition == ASSISTANT_TEACHER_POSITION)
-//            holder.setIsRecyclable(true)
-//        super.onViewDetachedFromWindow(holder)
-//    }
-
     override fun getItemViewType(position: Int): Int {
         return when (position) {
             //0 -> VIEW_TYPE_LOCAL
