@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.runBlocking
-import timber.log.Timber
 import uk.co.kidsloop.liveswitch.Config
 import uk.co.kidsloop.databinding.LayoutFeedLocalBinding.inflate as inflateLocal
 import uk.co.kidsloop.databinding.LayoutFeedStudentBinding.inflate as inflateStudent
@@ -51,8 +50,6 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenericFeedViewHolder {
-        Timber.d("FEEDS ADAPTER onCreateViewHolder")
-
         when (viewType) {
             VIEW_TYPE_LOCAL -> {
                 return LocalViewHolder(
@@ -85,15 +82,11 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: GenericFeedViewHolder, position: Int) {
-        Timber.d("FEEDS ADAPTER onBindViewHolder")
-
         val feedItem = currentList()[position]
         holder.bind(feedItem)
     }
 
     override fun onBindViewHolder(holder: GenericFeedViewHolder, position: Int, payloads: MutableList<Any>) {
-        Timber.d("FEEDS ADAPTER onBindViewHolder WITH payloads")
-
         val viewType = getItemViewType(position)
 
         if (payloads.isNotEmpty()) {
@@ -109,11 +102,7 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
 
     fun addVideoFeed(clientId: String, remoteMediaView: View, role: String) {
         when (role) {
-            Config.LOCAL_ROLE -> {
-                addLocalVideoFeed(clientId, remoteMediaView)
-                Timber.d("LOCAL ROLE ADDED")
-                Timber.d(remoteMediaView.toString())
-            }
+            Config.LOCAL_ROLE -> addLocalVideoFeed(clientId, remoteMediaView)
             Config.STUDENT_ROLE -> addStudentVideoFeed(clientId, remoteMediaView)
             Config.ASSISTANT_TEACHER_ROLE -> addAssistantTeacherVideoFeed(clientId, remoteMediaView)
         }
