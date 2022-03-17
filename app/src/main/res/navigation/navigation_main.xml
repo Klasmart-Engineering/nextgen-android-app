@@ -89,9 +89,15 @@
         android:name="uk.co.kidsloop.features.regionAndLanguage.RegionFragment"
         tools:layout="@layout/fragment_region">
         <action
-            android:id="@+id/region_to_login"
-            app:destination="@+id/login_fragment"
+            android:id="@+id/region_to_profile"
+            app:destination="@+id/profile_fragment"
             app:popUpTo="@id/language_fragment"
             app:popUpToInclusive="true" />
+
     </fragment>
-</navigation>
+
+    <fragment
+        android:id="@+id/profile_fragment"
+        android:name="uk.co.kidsloop.features.profile.ProfileFragment"
+        tools:layout="@layout/fragment_profile">
+    </fragment></navigation>
