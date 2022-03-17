@@ -1,4 +1,4 @@
-package uk.co.kidsloop.features.liveclass
+package uk.co.kidsloop.app.common
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
+import java.util.*
 import uk.co.kidsloop.R
 import uk.co.kidsloop.databinding.LeaveClassDialogFragmentBinding
-import java.util.*
 
 class LeaveClassDialog : DialogFragment() {
     companion object {
