@@ -16,8 +16,8 @@
             app:popUpToInclusive="true" />
 
         <action
-            android:id="@+id/splash_to_login"
-            app:destination="@id/login_fragment"
+            android:id="@+id/splash_to_profile"
+            app:destination="@id/profile_fragment"
             app:popUpTo="@id/splash_fragment"
             app:popUpToInclusive="true" />
     </fragment>
