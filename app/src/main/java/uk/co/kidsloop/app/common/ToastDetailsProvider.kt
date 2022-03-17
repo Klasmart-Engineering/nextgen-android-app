@@ -12,7 +12,6 @@ class ToastDetailsProvider @Inject constructor(
 ) {
 
     companion object {
-
         private const val NO_MESSAGE_TO_BE_DISPLAYED: Int = -1
     }
 

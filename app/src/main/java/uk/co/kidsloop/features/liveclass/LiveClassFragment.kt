@@ -69,7 +69,6 @@ class LiveClassFragment :
     private lateinit var displayManager: DisplayManager
     private lateinit var display: Display
     private var initialDisplayOrientation: Int = 1
-    private lateinit var toastView: View
 
     private val viewModel by viewModels<LiveClassViewModel>()
 
@@ -107,7 +106,6 @@ class LiveClassFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toastView = layoutInflater.inflate(R.layout.custom_toast_layout, null)
         window = requireActivity().window
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
