@@ -7,8 +7,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.app.utils.UI.DividerItemDecorator
+import uk.co.kidsloop.app.common.BaseFragment
+import uk.co.kidsloop.app.common.DividerItemDecorator
 import uk.co.kidsloop.databinding.FragmentLanguageBinding
 import uk.co.kidsloop.features.regionAndLanguage.data.Language
 import uk.co.kidsloop.features.regionAndLanguage.data.RegionsAndLanguages

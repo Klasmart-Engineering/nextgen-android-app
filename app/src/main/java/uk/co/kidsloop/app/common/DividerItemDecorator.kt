@@ -1,4 +1,4 @@
-package uk.co.kidsloop.app.utils.UI
+package uk.co.kidsloop.app.common
 
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
