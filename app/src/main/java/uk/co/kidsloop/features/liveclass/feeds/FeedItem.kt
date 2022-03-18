@@ -14,5 +14,3 @@ data class FeedItem(
     var cameraStatus: CameraStatus = CameraStatus.INITIAL,
     var isOrientationDefault: Boolean = true // true->DEFAULT, false->REVERSE
 )
-
-

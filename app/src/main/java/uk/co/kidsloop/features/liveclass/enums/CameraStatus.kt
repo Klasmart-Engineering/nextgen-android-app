@@ -1,5 +1,4 @@
 package uk.co.kidsloop.features.liveclass.enums
-
 /**
  *  Created by paulbisioc on 17.03.2022
  */
