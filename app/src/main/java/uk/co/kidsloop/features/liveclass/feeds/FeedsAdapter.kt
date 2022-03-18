@@ -268,7 +268,7 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         submitList(newList)
     }
 
-    fun updateLocalMediaViewOrientationDefault(position: Int) {
+    fun updateMediaViewOrientationDefault(position: Int) {
         val element = (currentList()[position]).copy()
         element.isOrientationDefault = true
 
@@ -276,7 +276,7 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         submitList(newList)
     }
 
-    fun updateLocalMediaViewOrientationReverse(position: Int) {
+    fun updateMediaViewOrientationReverse(position: Int) {
         val element = (currentList()[position]).copy()
         element.isOrientationDefault = false
 

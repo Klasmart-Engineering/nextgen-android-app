@@ -586,17 +586,17 @@ class LiveClassFragment :
     override fun onDisplayChanged(displayId: Int) {
         if (initialDisplayOrientation == Surface.ROTATION_90) {
             if (display.rotation == Surface.ROTATION_90) {
-                studentsFeedAdapter.updateLocalMediaViewOrientationDefault(0)
+                studentsFeedAdapter.updateMediaViewOrientationDefault(0)
             }
             if (display.rotation == Surface.ROTATION_270) {
-                studentsFeedAdapter.updateLocalMediaViewOrientationReverse(0)
+                studentsFeedAdapter.updateMediaViewOrientationReverse(0)
             }
         } else {
             if (display.rotation == Surface.ROTATION_90) {
-                studentsFeedAdapter.updateLocalMediaViewOrientationReverse(0)
+                studentsFeedAdapter.updateMediaViewOrientationReverse(0)
             }
             if (display.rotation == Surface.ROTATION_270) {
-                studentsFeedAdapter.updateLocalMediaViewOrientationDefault(0)
+                studentsFeedAdapter.updateMediaViewOrientationDefault(0)
             }
         }
     }
