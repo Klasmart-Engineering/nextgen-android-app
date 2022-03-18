@@ -21,6 +21,19 @@ class LocalViewHolder(private val binding: LayoutFeedLocalBinding) : GenericFeed
             false -> binding.localVideoFeed.hideRaiseHand()
         }
 
+        when (item.cameraStatus) {
+            CameraStatus.ON -> binding.localVideoFeed.showCameraTurnedOn()
+            CameraStatus.OFF -> binding.localVideoFeed.showCameraTurnedOff()
+            CameraStatus.INITIAL -> binding.localVideoFeed.showCameraTurnedOff()
+        }
+
+        when (item.micStatus) {
+            MicStatus.ON -> binding.localVideoFeed.showMicTurnedOn()
+            MicStatus.MUTED -> binding.localVideoFeed.showMicMuted()
+            MicStatus.DISABLED -> binding.localVideoFeed.showMicDisabledMuted()
+            MicStatus.INITIAL -> binding.localVideoFeed.showMicMuted()
+        }
+
         videoFeedContainer.addLocalMediaView(videoFeed)
     }
 

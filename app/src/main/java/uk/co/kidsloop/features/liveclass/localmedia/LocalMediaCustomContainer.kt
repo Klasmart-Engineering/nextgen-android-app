@@ -7,7 +7,7 @@ import android.view.View
 import androidx.cardview.widget.CardView
 import androidx.core.view.updateLayoutParams
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.utils.invisible
+import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.databinding.LocalMediaContainerBinding
 
@@ -20,13 +20,13 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
     private val binding = LocalMediaContainerBinding.inflate(LayoutInflater.from(context), this)
 
     fun addLocalMediaView(localMediaView: View?) {
-        if (getChildAt(1) != null)
+        if (getChildAt(0) != null)
             removeLocalMediaView()
-        addView(localMediaView, 1)
+        addView(localMediaView, 0)
     }
 
     fun removeLocalMediaView() {
-        removeViewAt(1)
+        removeViewAt(0)
     }
 
     fun updateLocalMediaViewOrientationReverse() {
@@ -54,7 +54,7 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
     }
 
     fun showCameraTurnedOn() {
-        binding.localVideoStudentOverlay.invisible()
+        binding.localVideoStudentOverlay.gone()
     }
 
     fun showHandRaised() {
@@ -62,6 +62,6 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
     }
 
     fun hideRaiseHand() {
-        binding.raiseHandImageView.invisible()
+        binding.raiseHandImageView.gone()
     }
 }

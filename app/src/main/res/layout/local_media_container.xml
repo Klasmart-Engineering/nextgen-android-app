@@ -2,27 +2,11 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/dummy1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:contentDescription="@null"
-        android:maxWidth="10dp"
-        android:maxHeight="12dp"
-        android:src="@drawable/ic_placeholder_assistant_teacher_badge"
-        android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/dummy2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:contentDescription="@null"
-        android:maxWidth="10dp"
-        android:maxHeight="12dp"
-        android:src="@drawable/ic_placeholder_assistant_teacher_badge"
-        android:visibility="gone" />
+    <!-- We need this dummy view because at this position we add the actual video feed -->
+    <View
+        android:id="@+id/dummy"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
 
     <ImageView
         android:id="@+id/local_video_student_overlay"
@@ -31,8 +15,8 @@
         android:adjustViewBounds="true"
         android:contentDescription="@null"
         android:scaleType="centerCrop"
-        android:visibility="gone"
-        android:src="@drawable/ic_local_media_turned_off_teacher" />
+        android:src="@drawable/ic_local_media_turned_off_teacher"
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/raise_hand_image_view"
@@ -55,6 +39,6 @@
         android:contentDescription="@null"
         android:maxWidth="10dp"
         android:maxHeight="12dp"
-        tools:src="@drawable/ic_mic_on"
-        android:visibility="visible" />
+        android:visibility="visible"
+        tools:src="@drawable/ic_mic_on" />
 </merge>
