@@ -43,13 +43,11 @@ class RemoteMediaCustomContainer @JvmOverloads constructor(
     }
 
     fun showCameraTurnedOff() {
-        binding.localVideoStudentOverlay.elevation = 10F
         binding.localVideoStudentOverlay.visible()
     }
 
     fun showCameraTurnedOn() {
-        binding.localVideoStudentOverlay.elevation = 0F
-        binding.localVideoStudentOverlay.invisible()
+        binding.localVideoStudentOverlay.gone()
     }
 
     fun showHandRaised() {
