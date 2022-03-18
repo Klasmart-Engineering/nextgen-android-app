@@ -18,9 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
-import kotlinx.coroutines.*
 import javax.inject.Inject
-import timber.log.Timber
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.common.BaseFragment

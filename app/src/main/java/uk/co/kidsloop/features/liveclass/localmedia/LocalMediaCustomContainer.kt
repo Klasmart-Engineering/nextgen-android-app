@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.cardview.widget.CardView
 import androidx.core.view.updateLayoutParams
-import timber.log.Timber
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.utils.invisible
 import uk.co.kidsloop.app.utils.visible
