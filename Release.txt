@@ -4,4 +4,4 @@
 
 ## Teacher disconnected
 
-## Leave class
+## Leave class change
