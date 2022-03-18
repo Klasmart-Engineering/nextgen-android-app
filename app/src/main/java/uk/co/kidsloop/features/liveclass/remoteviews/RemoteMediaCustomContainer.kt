@@ -25,13 +25,13 @@ class RemoteMediaCustomContainer @JvmOverloads constructor(
     private val binding = RemoteMediaContainerBinding.inflate(LayoutInflater.from(context), this)
 
     fun addRemoteMediaView(remoteMediaView: View?) {
-        if (getChildAt(1) != null)
+        if (getChildAt(0) != null)
             removeRemoteMediaView()
-        addView(remoteMediaView, 1)
+        addView(remoteMediaView, 0)
     }
 
     fun removeRemoteMediaView() {
-        removeViewAt(1)
+        removeViewAt(0)
     }
 
     fun showMicMuted() {
