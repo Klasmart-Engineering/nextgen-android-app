@@ -20,13 +20,18 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
     private val binding = LocalMediaContainerBinding.inflate(LayoutInflater.from(context), this)
 
     fun addLocalMediaView(localMediaView: View?) {
-        if (getChildAt(0) != null)
+        if (getChildAt(1) != null)
             removeLocalMediaView()
-        addView(localMediaView, 0)
+        addView(localMediaView, 1)
+        hideInitialImage()
     }
 
     fun removeLocalMediaView() {
-        removeViewAt(0)
+        removeViewAt(1)
+    }
+
+    private fun hideInitialImage() {
+        binding.localVideoInitialImage.elevation = -10F
     }
 
     fun updateLocalMediaViewOrientationReverse() {
