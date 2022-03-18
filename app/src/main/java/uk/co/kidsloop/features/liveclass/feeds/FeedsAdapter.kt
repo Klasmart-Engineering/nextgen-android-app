@@ -9,6 +9,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import uk.co.kidsloop.features.liveclass.enums.CameraStatus
+import uk.co.kidsloop.features.liveclass.enums.MicStatus
 import uk.co.kidsloop.liveswitch.Config
 import uk.co.kidsloop.databinding.LayoutFeedLocalBinding.inflate as inflateLocal
 import uk.co.kidsloop.databinding.LayoutFeedStudentBinding.inflate as inflateStudent
@@ -19,6 +21,10 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
     companion object {
         const val MAX_FEEDS_VISIBLE: Int = 4
         const val HAS_RAISED_HAND = "has_raised_hand"
+        const val IS_CAMERA_TURNED_ON = "is_camera_turned_on"
+        const val IS_MIC_MUTED = "is_mic_muted"
+        const val IS_ORIENTATION_DEFAULT = "is_orientation_default"
+
         const val LOCAL_MEDIA_POSITION = 0
         const val ASSISTANT_TEACHER_POSITION = 1
 
@@ -43,8 +49,7 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
-            //0 -> VIEW_TYPE_LOCAL
-            0 -> VIEW_TYPE_STUDENT
+            0 -> VIEW_TYPE_LOCAL
             else -> VIEW_TYPE_STUDENT
         }
     }
@@ -110,17 +115,16 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
 
     private fun addLocalVideoFeed(clientId: String, remoteMediaView: View) {
         val newList = currentList().toMutableList()
-        newList.add(0, FeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
+        newList.add(0, FeedItem(remoteMediaView, clientId, Config.LOCAL_ROLE))
         submitList(newList)
     }
 
     private fun addStudentVideoFeed(clientId: String, remoteMediaView: View) {
         val newList = currentList().toMutableList()
-        if (isAssistantTeacherPresent()) {
+        if (isAssistantTeacherPresent())
             newList.add(ASSISTANT_TEACHER_POSITION + 1, FeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
-        } else {
+        else
             newList.add(LOCAL_MEDIA_POSITION + 1, FeedItem(remoteMediaView, clientId, Config.STUDENT_ROLE))
-        }
 
         submitList(reorderRaisedHands(newList))
     }
@@ -208,6 +212,87 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         return newList
     }
 
+    fun showCameraTurnedOn(position: Int) {
+        val element = (currentList()[position]).copy()
+        element.cameraStatus = CameraStatus.ON
+
+        val newList = currentList().toMutableList().apply { this[position] = element }
+        submitList(newList)
+    }
+
+    fun showCameraTurnedOff(position: Int) {
+        val element = (currentList()[position]).copy()
+        element.cameraStatus = CameraStatus.OFF
+
+        val newList = currentList().toMutableList().apply { this[position] = element }
+        submitList(newList)
+    }
+
+    fun showMicTurnedOn(position: Int) {
+        val element = (currentList()[position]).copy()
+        element.micStatus = MicStatus.ON
+
+        val newList = currentList().toMutableList().apply { this[position] = element }
+        submitList(newList)
+    }
+
+    fun showMicMuted(position: Int) {
+        val element = (currentList()[position]).copy()
+        element.micStatus = MicStatus.MUTED
+
+        val newList = currentList().toMutableList().apply { this[position] = element }
+        submitList(newList)
+    }
+
+    fun showMicDisabledMuted(position: Int) {
+        val element = (currentList()[position]).copy()
+        element.micStatus = MicStatus.DISABLED
+
+        val newList = currentList().toMutableList().apply { this[position] = element }
+        submitList(newList)
+    }
+
+    fun showLocalMediaHandRaised() {
+        val element = (currentList()[0]).copy()
+        element.hasHandRaised = true
+
+        val newList = currentList().toMutableList().apply { this[0] = element }
+        submitList(newList)
+    }
+
+    fun hideLocalMediaRaiseHand() {
+        val element = (currentList()[0]).copy()
+        element.hasHandRaised = false
+
+        val newList = currentList().toMutableList().apply { this[0] = element }
+        submitList(newList)
+    }
+
+    fun updateMediaViewOrientationDefault(position: Int) {
+        val element = (currentList()[position]).copy()
+        element.isOrientationDefault = true
+
+        val newList = currentList().toMutableList().apply { this[position] = element }
+        submitList(newList)
+    }
+
+    fun updateMediaViewOrientationReverse(position: Int) {
+        val element = (currentList()[position]).copy()
+        element.isOrientationDefault = false
+
+        val newList = currentList().toMutableList().apply { this[position] = element }
+        submitList(newList)
+    }
+
+    fun updateMicAndCameraStatus(newMicStatus: MicStatus, newCameraStatus: CameraStatus, position: Int) {
+        val element = (currentList()[position]).copy()
+        element.cameraStatus = newCameraStatus
+        element.micStatus = newMicStatus
+
+        val newList = currentList().toMutableList().apply { this[position] = element }
+        submitList(newList)
+    }
+
     private class DiffCallback : DiffUtil.ItemCallback<FeedItem>() {
         override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem) =
             oldItem.clientId == newItem.clientId
@@ -218,13 +303,21 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         // This gets called when areItemsTheSame == true && areContentsTheSame == false
         override fun getChangePayload(oldItem: FeedItem, newItem: FeedItem): Any? {
             if (oldItem.clientId == newItem.clientId) {
-                return if (oldItem.hasHandRaised == newItem.hasHandRaised)
-                    super.getChangePayload(oldItem, newItem)
-                else {
-                    val diff = Bundle()
+                val diff = Bundle()
+
+                if (oldItem.hasHandRaised != newItem.hasHandRaised)
                     diff.putBoolean(HAS_RAISED_HAND, newItem.hasHandRaised)
-                    diff
-                }
+
+                if (oldItem.micStatus != newItem.micStatus)
+                    diff.putSerializable(IS_MIC_MUTED, newItem.micStatus)
+
+                if (oldItem.cameraStatus != newItem.cameraStatus)
+                    diff.putSerializable(IS_CAMERA_TURNED_ON, newItem.cameraStatus)
+
+                if (oldItem.isOrientationDefault != newItem.isOrientationDefault)
+                    diff.putBoolean(IS_ORIENTATION_DEFAULT, newItem.isOrientationDefault)
+
+                return diff
             }
 
             return super.getChangePayload(oldItem, newItem)

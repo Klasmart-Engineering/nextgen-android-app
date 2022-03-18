@@ -8,6 +8,7 @@ import javax.inject.Singleton
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.KidsLoopDataChannel
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
+import uk.co.kidsloop.liveswitch.Config
 import uk.co.kidsloop.liveswitch.DataChannelActionsHandler
 
 @Singleton
@@ -102,6 +103,12 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
 
     fun setUpstreamDataChannel(dataChannel: DataChannel) {
         upstreamDataChannel = dataChannel
+    }
+
+    fun isTeacherMissing(): Boolean {
+        return getDownStreamConnections().values.firstOrNull {
+            it?.remoteConnectionInfo?.clientRoles?.get(0) == Config.TEACHER_ROLE
+        } == null
     }
 
     fun sendDataString(data: String): Future<Any>? {

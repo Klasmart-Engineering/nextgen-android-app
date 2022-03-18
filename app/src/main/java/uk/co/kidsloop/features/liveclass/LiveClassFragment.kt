@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.* // ktlint-disable no-wildcard-imports
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -18,7 +19,6 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
 import javax.inject.Inject
-import timber.log.Timber
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.common.BaseFragment
@@ -27,6 +27,8 @@ import uk.co.kidsloop.app.common.LeaveClassDialog
 import uk.co.kidsloop.app.common.ToastHelper
 import uk.co.kidsloop.app.utils.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
+import uk.co.kidsloop.features.liveclass.enums.CameraStatus
+import uk.co.kidsloop.features.liveclass.enums.MicStatus
 import uk.co.kidsloop.features.liveclass.feeds.FeedsAdapter
 import uk.co.kidsloop.features.liveclass.localmedia.CameraLocalMedia
 import uk.co.kidsloop.features.liveclass.localmedia.LocalMedia
@@ -75,6 +77,11 @@ class LiveClassFragment :
     private lateinit var studentsFeedAdapter: FeedsAdapter
     private var isMainTeacher: Boolean = false
 
+    // This is used to avoid calling OnLiveClassStarted before the RecyclerView is laid out
+    // and therefore changes are calculated before they can be applied
+    private var pendingUiState: LiveClassViewModel.LiveClassUiState? = null
+    private var isPendingUiStateAllowed: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -112,6 +119,8 @@ class LiveClassFragment :
         studentsFeedAdapter = FeedsAdapter()
         startLocalMedia()
 
+        showLoading()
+
         binding.studentFeedsRecyclerview.apply {
             adapter = studentsFeedAdapter
             layoutManager = object : LinearLayoutManager(context) {
@@ -128,13 +137,18 @@ class LiveClassFragment :
                     return false
                 }
             }
-        }
 
-        if (isMainTeacher) {
-            setUiForTeacher()
-        } else {
-            showLoading()
-            setupWaitingState()
+            doOnNextLayout {
+                startSettingUpUi()
+                if (pendingUiState != null && isPendingUiStateAllowed)
+                    when (pendingUiState) {
+                        LiveClassViewModel.LiveClassUiState.LiveClassStarted -> {
+                            onLiveClassStarted()
+                            isPendingUiStateAllowed = false
+                        }
+                        else -> {}
+                    }
+            }
         }
 
         setControls()
@@ -151,7 +165,9 @@ class LiveClassFragment :
                     is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> hideLoading()
                     is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
                     is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
-                    is LiveClassViewModel.LiveClassUiState.LiveClassStarted -> onLiveClassStarted()
+                    is LiveClassViewModel.LiveClassUiState.LiveClassStarted -> {
+                        pendingUiState = LiveClassViewModel.LiveClassUiState.LiveClassStarted
+                    }
                     is LiveClassViewModel.LiveClassUiState.LiveClassRestarted -> onLiveClassRestarted()
                     is LiveClassViewModel.LiveClassUiState.LiveClassEnded -> onLiveClassEnded()
                 }
@@ -185,6 +201,14 @@ class LiveClassFragment :
         displayManager.unregisterDisplayListener(this)
     }
 
+    private fun startSettingUpUi() {
+        when {
+            isMainTeacher -> setUiForTeacher()
+            liveClassManager.isTeacherMissing() -> setupWaitingState()
+            else -> setUiForStudent()
+        }
+    }
+
     private fun setUiForTeacher() {
         binding.teacherVideoFeedOverlay.visible()
         binding.liveClassGroup.visible()
@@ -198,25 +222,60 @@ class LiveClassFragment :
         binding.toggleCameraBtn.isActivated = true
         binding.toggleMicrophoneBtn.isActivated = true
 
+        val newCameraStatus: CameraStatus
+        val newMicStatus: MicStatus
+
         if (requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
             localMedia?.videoMuted = false
             binding.toggleCameraBtn.isChecked = false
-            // binding.localMediaFeed.showCameraTurnedOn()
+            newCameraStatus = CameraStatus.ON
         } else {
             localMedia?.videoMuted = true
             binding.toggleCameraBtn.isChecked = true
-            // binding.localMediaFeed.showCameraTurnedOff()
+            newCameraStatus = CameraStatus.OFF
         }
 
         if (requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
             localMedia?.audioMuted = false
             binding.toggleMicrophoneBtn.isChecked = false
-            // binding.localMediaFeed.showMicTurnedOn()
+            newMicStatus = MicStatus.ON
         } else {
             localMedia?.audioMuted = true
             binding.toggleMicrophoneBtn.isChecked = true
-            // binding.localMediaFeed.showMicMuted()
+            newMicStatus = MicStatus.MUTED
         }
+
+        studentsFeedAdapter.updateMicAndCameraStatus(newMicStatus, newCameraStatus, 0)
+    }
+
+    private fun setUiForStudent() {
+        binding.liveClassGroup.visible()
+        binding.raiseHandBtn.visible()
+
+        val newCameraStatus: CameraStatus
+        val newMicStatus: MicStatus
+
+        if (requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
+            localMedia?.videoMuted = false
+            binding.toggleCameraBtn.isChecked = false
+            newCameraStatus = CameraStatus.ON
+        } else {
+            localMedia?.videoMuted = true
+            binding.toggleCameraBtn.isChecked = true
+            newCameraStatus = CameraStatus.OFF
+        }
+
+        if (requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
+            localMedia?.audioMuted = false
+            binding.toggleMicrophoneBtn.isChecked = false
+            newMicStatus = MicStatus.ON
+        } else {
+            localMedia?.audioMuted = true
+            binding.toggleMicrophoneBtn.isChecked = true
+            newMicStatus = MicStatus.MUTED // --> also here the same problem
+        }
+
+        studentsFeedAdapter.updateMicAndCameraStatus(newMicStatus, newCameraStatus, 0)
     }
 
     private fun setupWaitingState() {
@@ -230,8 +289,8 @@ class LiveClassFragment :
         binding.toggleMicrophoneBtn.isActivated = false
         binding.toggleMicrophoneBtn.isChecked = false
 
-        // binding.localMediaFeed.showCameraTurnedOff()
-        // binding.localMediaFeed.showMicDisabledMuted()
+        studentsFeedAdapter.updateMicAndCameraStatus(MicStatus.DISABLED, CameraStatus.OFF, 0)
+
         binding.waitingStateTextview.visible()
         binding.blackboardImageView.visible()
     }
@@ -247,8 +306,7 @@ class LiveClassFragment :
         binding.toggleMicrophoneBtn.isActivated = false
         binding.toggleMicrophoneBtn.isChecked = false
 
-        // binding.localMediaFeed.showCameraTurnedOff()
-        // binding.localMediaFeed.showMicDisabledMuted()
+        studentsFeedAdapter.updateMicAndCameraStatus(MicStatus.MUTED, CameraStatus.OFF, 0)
         binding.teacherVideoFeedBackground.visible()
         binding.leavingStateTextview.visible()
         binding.showingByeImageView.visible()
@@ -284,10 +342,10 @@ class LiveClassFragment :
         binding.toggleMicrophoneBtn.setOnClickListener {
             if (binding.toggleMicrophoneBtn.isActivated) {
                 if (binding.toggleMicrophoneBtn.isChecked) {
-                    // binding.localMediaFeed.showMicMuted()
+                    studentsFeedAdapter.showMicMuted(0)
                     localMedia?.audioMuted = true
                 } else {
-                    // binding.localMediaFeed.showMicTurnedOn()
+                    studentsFeedAdapter.showMicTurnedOn(0)
                     localMedia?.audioMuted = false
                 }
             } else {
@@ -298,10 +356,10 @@ class LiveClassFragment :
         binding.toggleCameraBtn.setOnClickListener {
             if (binding.toggleCameraBtn.isActivated) {
                 if (binding.toggleCameraBtn.isChecked) {
-                    // binding.localMediaFeed.showCameraTurnedOff()
+                    studentsFeedAdapter.showCameraTurnedOff(0)
                     localMedia?.videoMuted = true
                 } else {
-                    // binding.localMediaFeed.showCameraTurnedOn()
+                    studentsFeedAdapter.showCameraTurnedOn(0)
                     localMedia?.videoMuted = false
                 }
             } else {
@@ -345,10 +403,10 @@ class LiveClassFragment :
 
             if (binding.raiseHandBtn.isSelected) {
                 viewModel.showHandRaised()
-                // binding.localMediaFeed.showHandRaised()
+                studentsFeedAdapter.showLocalMediaHandRaised()
             } else {
                 viewModel.showHandLowered()
-                // binding.localMediaFeed.hideRaiseHand()
+                studentsFeedAdapter.hideLocalMediaRaiseHand()
             }
         }
 
@@ -449,10 +507,8 @@ class LiveClassFragment :
     }
 
     private fun hideLoading() {
-        if (!isMainTeacher) {
-            binding.loadingIndication.gone()
-            binding.liveClassGroup.visible()
-        }
+        binding.loadingIndication.gone()
+        binding.liveClassGroup.visible()
     }
 
     private fun onClientRegistered(channel: Channel) {
@@ -485,12 +541,10 @@ class LiveClassFragment :
     private fun startLocalMedia() {
         localMedia?.start()?.then({
             uiThreadPoster.post {
-                Timber.d(localMedia?.view.toString())
                 val clientId = liveClassManager.getUpstreamClientId() ?: "a1b2c3"
                 val localView = localMedia?.view!!
 
                 studentsFeedAdapter.addVideoFeed(clientId, localView, LOCAL_ROLE)
-                // binding.localMediaFeed.addLocalMediaView(localMedia?.view)
                 viewModel.joinLiveClass()
             }
         }, { exception -> })
@@ -534,7 +588,7 @@ class LiveClassFragment :
     override fun onVideoDisabled(state: LiveClassState) {
         viewModel.turnOffVideo()
         uiThreadPoster.post {
-            // binding.localMediaFeed.showCameraTurnedOff()
+            studentsFeedAdapter.showCameraTurnedOff(0)
             binding.toggleCameraBtn.isActivated = false
             toastHelper.showCustomToast(binding.liveClassOverlay.isVisible)
         }
@@ -547,24 +601,24 @@ class LiveClassFragment :
     override fun onDisplayChanged(displayId: Int) {
         if (initialDisplayOrientation == Surface.ROTATION_90) {
             if (display.rotation == Surface.ROTATION_90) {
-                // binding.localMediaFeed.updateLocalMediaViewOrientationDefault()
+                studentsFeedAdapter.updateMediaViewOrientationDefault(0)
             }
             if (display.rotation == Surface.ROTATION_270) {
-                // binding.localMediaFeed.updateLocalMediaViewOrientationReverse()
+                studentsFeedAdapter.updateMediaViewOrientationReverse(0)
             }
         } else {
             if (display.rotation == Surface.ROTATION_90) {
-                // binding.localMediaFeed.updateLocalMediaViewOrientationReverse()
+                studentsFeedAdapter.updateMediaViewOrientationReverse(0)
             }
             if (display.rotation == Surface.ROTATION_270) {
-                // binding.localMediaFeed.updateLocalMediaViewOrientationDefault()
+                studentsFeedAdapter.updateMediaViewOrientationDefault(0)
             }
         }
     }
 
     override fun onEnableMic() {
         uiThreadPoster.post {
-            // binding.localMediaFeed.showMicMuted()
+            studentsFeedAdapter.showMicMuted(0)
             binding.toggleMicrophoneBtn.isActivated = true
             binding.toggleMicrophoneBtn.isChecked = true
         }
@@ -573,7 +627,7 @@ class LiveClassFragment :
     override fun onDisableMic(state: LiveClassState) {
         viewModel.turnOffAudio()
         uiThreadPoster.post {
-            // binding.localMediaFeed.showMicDisabledMuted()
+            studentsFeedAdapter.showMicDisabledMuted(0)
             binding.toggleMicrophoneBtn.isActivated = false
             toastHelper.showCustomToast(binding.liveClassOverlay.isVisible)
         }
@@ -586,30 +640,37 @@ class LiveClassFragment :
     }
 
     private fun onLiveClassStarted() {
-        uiThreadPoster.post {
-            binding.teacherVideoFeedOverlay.gone()
-            binding.blackboardImageView.gone()
-            binding.waitingStateTextview.gone()
-            binding.toggleCameraBtn.isActivated = true
+        binding.teacherVideoFeedOverlay.gone()
+        binding.blackboardImageView.gone()
+        binding.waitingStateTextview.gone()
 
-            if (requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
-                localMedia?.videoMuted = false
-                binding.toggleCameraBtn.isChecked = false
-                // binding.localMediaFeed.showCameraTurnedOn()
-            } else {
-                binding.toggleCameraBtn.isChecked = true
-            }
+        binding.toggleCameraBtn.isActivated = true
+        binding.toggleMicrophoneBtn.isActivated = true
 
-            binding.toggleMicrophoneBtn.isActivated = true
-            if (requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
-                localMedia?.audioMuted = false
-                binding.toggleMicrophoneBtn.isChecked = false
-                // binding.localMediaFeed.showMicTurnedOn()
-            } else {
-                // binding.localMediaFeed.showMicMuted()
-                binding.toggleMicrophoneBtn.isChecked = true
-            }
+        val newCameraStatus: CameraStatus
+        val newMicStatus: MicStatus
+
+        if (requireArguments().getBoolean(IS_CAMERA_TURNED_ON)) {
+            localMedia?.videoMuted = false
+            binding.toggleCameraBtn.isChecked = false
+            newCameraStatus = CameraStatus.ON
+        } else {
+            localMedia?.videoMuted = true
+            binding.toggleCameraBtn.isChecked = true
+            newCameraStatus = CameraStatus.OFF
         }
+
+        if (requireArguments().getBoolean(IS_MICROPHONE_TURNED_ON)) {
+            localMedia?.audioMuted = false
+            binding.toggleMicrophoneBtn.isChecked = false
+            newMicStatus = MicStatus.ON
+        } else {
+            localMedia?.audioMuted = true
+            binding.toggleMicrophoneBtn.isChecked = true
+            newMicStatus = MicStatus.MUTED // --> also here the same problem
+        }
+
+        studentsFeedAdapter.updateMicAndCameraStatus(newMicStatus, newCameraStatus, 0)
     }
 
     private fun onLiveClassRestarted() {
@@ -623,7 +684,7 @@ class LiveClassFragment :
 
             binding.toggleMicrophoneBtn.isActivated = true
             binding.toggleMicrophoneBtn.isChecked = true
-            // binding.localMediaFeed.showMicMuted()
+            studentsFeedAdapter.showMicMuted(0)
         }
     }
 

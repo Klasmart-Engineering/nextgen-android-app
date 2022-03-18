@@ -50,32 +50,18 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
     }
 
     fun showCameraTurnedOff() {
-        binding.localVideoStudentOverlay.elevation = 10F
         binding.localVideoStudentOverlay.visible()
     }
 
     fun showCameraTurnedOn() {
-        binding.localVideoStudentOverlay.elevation = 0F
+        binding.localVideoStudentOverlay.invisible()
     }
 
     fun showHandRaised() {
-        binding.raiseHandImageView.elevation = 10F
         binding.raiseHandImageView.visible()
     }
 
     fun hideRaiseHand() {
-        binding.raiseHandImageView.elevation = 0F
         binding.raiseHandImageView.invisible()
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val parentHeight = MeasureSpec.getSize(heightMeasureSpec)
-        val desiredHeight = parentHeight / 4 - resources.getDimensionPixelSize(R.dimen.space_8)
-        val desiredWidth = parentHeight / 3
-        this.setMeasuredDimension(desiredWidth, desiredHeight)
-        measureChildren(
-            MeasureSpec.makeMeasureSpec(desiredWidth, MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(desiredHeight, MeasureSpec.EXACTLY)
-        )
     }
 }
