@@ -25,7 +25,7 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.KidsloopActivity
-import uk.co.kidsloop.app.structure.BaseFragment
+import uk.co.kidsloop.app.common.BaseFragment
 import uk.co.kidsloop.app.utils.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.app.utils.permissions.isPermissionGranted
 import uk.co.kidsloop.app.utils.permissions.showSettingsDialog

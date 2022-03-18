@@ -11,7 +11,7 @@ import com.microsoft.identity.client.exception.MsalException
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.structure.BaseFragment
+import uk.co.kidsloop.app.common.BaseFragment
 import uk.co.kidsloop.features.authentication.AuthenticationManager
 
 @AndroidEntryPoint
@@ -25,27 +25,27 @@ class SplashFragment : BaseFragment(R.layout.fragment_splash) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        if (authManager.isNotAuthenticated()) {
-//            PublicClientApplication.createMultipleAccountPublicClientApplication(
-//                appContext,
-//                R.raw.auth_config_b2c,
-//                object : IPublicClientApplication.IMultipleAccountApplicationCreatedListener {
-//                    override fun onCreated(
-//                        application: IMultipleAccountPublicClientApplication
-//                    ) {
-//                        authManager.saveB2CClientApp(application)
-//                        findNavController().navigate(SplashFragmentDirections.splashToLanguage())
-//                    }
-//
-//                    override fun onError(
-//                        exception: MsalException
-//                    ) {
-//                        Log.d("SplashFragment", exception.message.toString())
-//                    }
-//                }
-//            )
-//        } else {
+        if (authManager.isNotAuthenticated()) {
+            PublicClientApplication.createMultipleAccountPublicClientApplication(
+                appContext,
+                R.raw.auth_config_b2c,
+                object : IPublicClientApplication.IMultipleAccountApplicationCreatedListener {
+                    override fun onCreated(
+                        application: IMultipleAccountPublicClientApplication
+                    ) {
+                        authManager.saveB2CClientApp(application)
+                        findNavController().navigate(SplashFragmentDirections.splashToLanguage())
+                    }
+
+                    override fun onError(
+                        exception: MsalException
+                    ) {
+                        Log.d("SplashFragment", exception.message.toString())
+                    }
+                }
+            )
+        } else {
             findNavController().navigate(SplashFragmentDirections.splashToLogin())
-//        }
+        }
     }
 }

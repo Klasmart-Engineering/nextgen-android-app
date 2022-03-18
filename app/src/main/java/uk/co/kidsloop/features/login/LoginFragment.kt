@@ -10,7 +10,7 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.structure.BaseFragment
+import uk.co.kidsloop.app.common.BaseFragment
 import uk.co.kidsloop.app.utils.clickable
 import uk.co.kidsloop.app.utils.disable
 import uk.co.kidsloop.app.utils.enable

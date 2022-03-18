@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.runBlocking
 import uk.co.kidsloop.features.liveclass.enums.CameraStatus
 import uk.co.kidsloop.features.liveclass.enums.MicStatus
 import uk.co.kidsloop.liveswitch.Config
@@ -33,6 +32,7 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         const val VIEW_TYPE_STUDENT = 11
     }
 
+    // TODO: find a better way of monitoring the elements' number
     private var _itemCount = MutableLiveData<Int>()
     val itemCount: LiveData<Int> get() = _itemCount
 
@@ -191,25 +191,23 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         val localFeed = list[0]
         val assistantTeacherFeed = if (isAssistantPresent) list[1] else null
 
-        runBlocking {
-            val raisedHandsList = if (isAssistantPresent) {
-                list.subList(ASSISTANT_TEACHER_POSITION + 1, list.size).filter { it.hasHandRaised }
-            } else {
-                list.subList(ASSISTANT_TEACHER_POSITION, list.size).filter { it.hasHandRaised }
-            }
-
-            val loweredHandsList = if (isAssistantPresent) {
-                list.subList(ASSISTANT_TEACHER_POSITION + 1, list.size).filter { !it.hasHandRaised }
-            } else {
-                list.subList(ASSISTANT_TEACHER_POSITION, list.size).filter { !it.hasHandRaised }
-            }
-
-            newList.add(localFeed)
-            if (assistantTeacherFeed != null)
-                newList.add(assistantTeacherFeed)
-            newList.addAll(raisedHandsList)
-            newList.addAll(loweredHandsList)
+        val raisedHandsList = if (isAssistantPresent) {
+            list.subList(ASSISTANT_TEACHER_POSITION + 1, list.size).filter { it.hasHandRaised }
+        } else {
+            list.subList(ASSISTANT_TEACHER_POSITION, list.size).filter { it.hasHandRaised }
         }
+
+        val loweredHandsList = if (isAssistantPresent) {
+            list.subList(ASSISTANT_TEACHER_POSITION + 1, list.size).filter { !it.hasHandRaised }
+        } else {
+            list.subList(ASSISTANT_TEACHER_POSITION, list.size).filter { !it.hasHandRaised }
+        }
+
+        newList.add(localFeed)
+        if (assistantTeacherFeed != null)
+            newList.add(assistantTeacherFeed)
+        newList.addAll(raisedHandsList)
+        newList.addAll(loweredHandsList)
 
         return newList
     }

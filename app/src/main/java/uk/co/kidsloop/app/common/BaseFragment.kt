@@ -1,4 +1,4 @@
-package uk.co.kidsloop.app.structure
+package uk.co.kidsloop.app.common
 
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog

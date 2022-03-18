@@ -21,8 +21,8 @@ import com.microsoft.identity.client.exception.MsalServiceException
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.structure.BaseFragment
-import uk.co.kidsloop.app.utils.UI.DividerItemDecorator
+import uk.co.kidsloop.app.common.BaseFragment
+import uk.co.kidsloop.app.common.DividerItemDecorator
 import uk.co.kidsloop.databinding.FragmentRegionBinding
 import uk.co.kidsloop.features.authentication.AuthenticationManager
 import uk.co.kidsloop.features.authentication.B2CConfiguration
