@@ -77,6 +77,11 @@ class LiveClassFragment :
     private lateinit var studentsFeedAdapter: FeedsAdapter
     private var isMainTeacher: Boolean = false
 
+    // This is used to avoid calling OnLiveClassStarted before the RecyclerView is laid out
+    // and therefore changes are calculated before they can be applied
+    private var pendingUiState: LiveClassViewModel.LiveClassUiState? = null
+    private var isPendingUiStateAllowed: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -135,6 +140,14 @@ class LiveClassFragment :
 
             doOnNextLayout {
                 startSettingUpUi()
+                if (pendingUiState != null && isPendingUiStateAllowed)
+                    when (pendingUiState) {
+                        LiveClassViewModel.LiveClassUiState.LiveClassStarted -> {
+                            onLiveClassStarted()
+                            isPendingUiStateAllowed = false
+                        }
+                        else -> {}
+                    }
             }
         }
 
@@ -152,7 +165,9 @@ class LiveClassFragment :
                     is LiveClassViewModel.LiveClassUiState.FailedToJoiningLiveClass -> hideLoading()
                     is LiveClassViewModel.LiveClassUiState.UnregisterSuccessful -> stopLocalMedia()
                     is LiveClassViewModel.LiveClassUiState.UnregisterFailed -> stopLocalMedia()
-                    is LiveClassViewModel.LiveClassUiState.LiveClassStarted -> onLiveClassStarted()
+                    is LiveClassViewModel.LiveClassUiState.LiveClassStarted -> {
+                        pendingUiState = LiveClassViewModel.LiveClassUiState.LiveClassStarted
+                    }
                     is LiveClassViewModel.LiveClassUiState.LiveClassRestarted -> onLiveClassRestarted()
                     is LiveClassViewModel.LiveClassUiState.LiveClassEnded -> onLiveClassEnded()
                 }
@@ -625,9 +640,6 @@ class LiveClassFragment :
     }
 
     private fun onLiveClassStarted() {
-        // TODO: find a way of doing this
-        // The issue here is that onLiveClassStarted gets called before the RecyclerView has inflated it's views.
-        // Because of this the changes are calculated before they can be displayed.
         binding.teacherVideoFeedOverlay.gone()
         binding.blackboardImageView.gone()
         binding.waitingStateTextview.gone()
