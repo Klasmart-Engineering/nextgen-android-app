@@ -105,7 +105,7 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         upstreamDataChannel = dataChannel
     }
 
-    fun isTeacherPresent(): Boolean {
+    fun isTeacherMissing(): Boolean {
         return getDownStreamConnections().values.firstOrNull {
             it?.remoteConnectionInfo?.clientRoles?.get(0) == Config.TEACHER_ROLE
         } == null

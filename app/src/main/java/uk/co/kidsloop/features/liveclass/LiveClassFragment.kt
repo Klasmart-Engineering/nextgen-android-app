@@ -189,7 +189,7 @@ class LiveClassFragment :
     private fun startSettingUpUi() {
         when {
             isMainTeacher -> setUiForTeacher()
-            liveClassManager.isTeacherPresent() -> setupWaitingState()
+            liveClassManager.isTeacherMissing() -> setupWaitingState()
             else -> setUiForStudent()
         }
     }
