@@ -1,37 +1,34 @@
 package uk.co.kidsloop.app.di
 
+import android.app.Activity
+import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
-import javax.inject.Qualifier
-import uk.co.kidsloop.features.liveclass.DialogsManager
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class ParentFragmentManager
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class ChildFragmentManger
+import uk.co.kidsloop.app.common.DialogsManager
+import uk.co.kidsloop.app.common.ToastDetailsProvider
+import uk.co.kidsloop.app.common.ToastHelper
 
 @Module
 @InstallIn(FragmentComponent::class)
 object FragmentModule {
-    @Provides
-    @ParentFragmentManager
-    fun providesParentFragmentManager(fragment: Fragment): FragmentManager = fragment.parentFragmentManager
 
     @Provides
-    @ChildFragmentManger
     fun providesChildFragmentManger(fragment: Fragment): FragmentManager = fragment.childFragmentManager
 
     @Provides
-    fun providesDialogManager(
-        @ParentFragmentManager parentFragmentManager: FragmentManager,
-        @ChildFragmentManger childFragmentManager: FragmentManager
-    ) =
-        DialogsManager(parentFragmentManager, childFragmentManager)
+    fun providesLayoutInflater(fragment: Fragment): LayoutInflater = fragment.layoutInflater
+
+    @Provides
+    fun providesToastHelper(
+        layoutInflater: LayoutInflater,
+        context: Activity,
+        toastDetailsProvider: ToastDetailsProvider
+    ): ToastHelper = ToastHelper(layoutInflater, context, toastDetailsProvider)
+
+    @Provides
+    fun providesDialogManager(childFragmentManager: FragmentManager) = DialogsManager(childFragmentManager)
 }

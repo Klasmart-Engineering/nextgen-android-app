@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/light_gray">
+
+    <TextView
+        android:id="@+id/title_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/bg_top_view_profiles"
+        android:paddingBottom="54dp"
+        android:paddingTop="54dp"
+        style="@style/LeaveSubTitleLabel"
+        android:gravity="center"
+        android:text="@string/welcome_to_kidsloop"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/title_textview"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_progress_bar_dummy"
+        android:layout_marginBottom="@dimen/space_10"
+        android:layout_marginEnd="28dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/profiles_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/title_textview"
+        android:layout_marginTop="33dp"
+        android:layout_marginHorizontal="@dimen/space_25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

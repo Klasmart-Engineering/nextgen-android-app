@@ -7,7 +7,7 @@ import android.view.View
 import androidx.cardview.widget.CardView
 import androidx.core.view.updateLayoutParams
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.utils.invisible
+import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.databinding.LocalMediaContainerBinding
 
@@ -23,10 +23,15 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
         if (getChildAt(1) != null)
             removeLocalMediaView()
         addView(localMediaView, 1)
+        hideInitialImage()
     }
 
     fun removeLocalMediaView() {
         removeViewAt(1)
+    }
+
+    private fun hideInitialImage() {
+        binding.localVideoInitialImage.elevation = -10F
     }
 
     fun updateLocalMediaViewOrientationReverse() {
@@ -50,32 +55,18 @@ class LocalMediaCustomContainer @JvmOverloads constructor(
     }
 
     fun showCameraTurnedOff() {
-        binding.localVideoStudentOverlay.elevation = 10F
         binding.localVideoStudentOverlay.visible()
     }
 
     fun showCameraTurnedOn() {
-        binding.localVideoStudentOverlay.elevation = 0F
+        binding.localVideoStudentOverlay.gone()
     }
 
     fun showHandRaised() {
-        binding.raiseHandImageView.elevation = 10F
         binding.raiseHandImageView.visible()
     }
 
     fun hideRaiseHand() {
-        binding.raiseHandImageView.elevation = 0F
-        binding.raiseHandImageView.invisible()
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val parentHeight = MeasureSpec.getSize(heightMeasureSpec)
-        val desiredHeight = parentHeight / 4 - resources.getDimensionPixelSize(R.dimen.space_8)
-        val desiredWidth = parentHeight / 3
-        this.setMeasuredDimension(desiredWidth, desiredHeight)
-        measureChildren(
-            MeasureSpec.makeMeasureSpec(desiredWidth, MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(desiredHeight, MeasureSpec.EXACTLY)
-        )
+        binding.raiseHandImageView.gone()
     }
 }

@@ -25,13 +25,13 @@ class RemoteMediaCustomContainer @JvmOverloads constructor(
     private val binding = RemoteMediaContainerBinding.inflate(LayoutInflater.from(context), this)
 
     fun addRemoteMediaView(remoteMediaView: View?) {
-        if (getChildAt(1) != null)
+        if (getChildAt(0) != null)
             removeRemoteMediaView()
-        addView(remoteMediaView, 1)
+        addView(remoteMediaView, 0)
     }
 
     fun removeRemoteMediaView() {
-        removeViewAt(1)
+        removeViewAt(0)
     }
 
     fun showMicMuted() {
@@ -43,22 +43,18 @@ class RemoteMediaCustomContainer @JvmOverloads constructor(
     }
 
     fun showCameraTurnedOff() {
-        binding.localVideoStudentOverlay.elevation = 10F
         binding.localVideoStudentOverlay.visible()
     }
 
     fun showCameraTurnedOn() {
-        binding.localVideoStudentOverlay.elevation = 0F
-        binding.localVideoStudentOverlay.invisible()
+        binding.localVideoStudentOverlay.gone()
     }
 
     fun showHandRaised() {
-        binding.raiseHandImageView.elevation = 10F
         binding.raiseHandImageView.visible()
     }
 
     fun hideRaiseHand() {
-        binding.raiseHandImageView.elevation = 0F
         binding.raiseHandImageView.invisible()
     }
 

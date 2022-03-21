@@ -1,0 +1,10 @@
+query profiles {
+            myUser {
+                profiles {
+                    id
+                    givenName
+                    familyName
+                    dateOfBirth
+                }
+            }
+        }

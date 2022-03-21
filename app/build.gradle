@@ -6,6 +6,7 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
     id 'dagger.hilt.android.plugin'
     id "io.gitlab.arturbosch.detekt" version "1.19.0"
+    id("com.apollographql.apollo3").version("3.0.0")
 }
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -89,6 +90,10 @@ android {
     }
 }
 
+apollo {
+    packageName.set("uk.co.kidsloop")
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: '../lib')
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -99,6 +104,9 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     implementation "com.github.Zhuinden:fragmentviewbindingdelegate-kt:$view_binding_delegate_version"
+
+    // Lifecycle
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.1"
 
     implementation "com.google.dagger:dagger:$hilt_version"
     kapt "com.google.dagger:dagger-compiler:$hilt_version"
@@ -114,6 +122,7 @@ dependencies {
     // https://github.com/square/retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    implementation "com.squareup.retrofit2:converter-scalars:2.7.1"
 
     // Moshi
     // https://github.com/square/moshi/
@@ -143,6 +152,10 @@ dependencies {
 
     //Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    //Apollo Graphql
+    implementation 'com.apollographql.apollo3:apollo-api:3.0.0'
+    implementation 'com.apollographql.apollo3:apollo-runtime:3.0.0'
 
     //Microsoft dependencies
     if (findProject(':msal') != null) {

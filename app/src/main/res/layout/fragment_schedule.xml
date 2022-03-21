@@ -14,12 +14,11 @@
         android:layout_marginTop="@dimen/space_14"
         android:background="@drawable/bg_round_pink_ripple"
         android:gravity="center"
-        android:text="@string/user_initials"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/setup_label"
+        android:id="@+id/welcome_label"
         style="@style/TitleLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

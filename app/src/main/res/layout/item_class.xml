@@ -48,7 +48,6 @@
         android:layout_marginBottom="@dimen/space_27"
         android:background="@drawable/bg_round_pink_ripple"
         android:gravity="center"
-        android:text="@string/user_initials"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

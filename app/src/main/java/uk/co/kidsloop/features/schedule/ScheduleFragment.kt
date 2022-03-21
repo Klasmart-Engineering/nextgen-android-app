@@ -11,7 +11,8 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import uk.co.kidsloop.R
-import uk.co.kidsloop.app.structure.BaseFragment
+import uk.co.kidsloop.app.common.BaseFragment
+import uk.co.kidsloop.app.utils.getInitials
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.databinding.FragmentScheduleBinding
@@ -24,11 +25,15 @@ class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
     companion object {
         const val MAX_CLASSES_VISIBLE: Int = 6
         const val FIVE_MIN_IN_MILLIS = (5 * 60 * 1000).toLong()
+        const val PROFILE_NAME = "profileName"
     }
+
+    private var profileName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+        profileName = arguments?.getString(PROFILE_NAME)!!
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,6 +74,9 @@ class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
                 )
             }
         }
+
+        binding.initials.text = getInitials(profileName)
+        binding.welcomeLabel.text = getString(R.string.welcome_comma_first_name_of_user, profileName.split(" ")[0])
     }
 
     private fun onClassClicked() {
