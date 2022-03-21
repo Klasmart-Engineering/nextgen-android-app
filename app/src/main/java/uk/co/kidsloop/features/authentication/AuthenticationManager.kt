@@ -21,12 +21,12 @@ class AuthenticationManager @Inject constructor(val sharedPrefsWrapper: SharedPr
         this.accessToken = accessToken
     }
 
-    fun saveAccountId(accountId: String) {
-        sharedPrefsWrapper.saveAccountId(accountId)
-    }
-
     fun getAccessToken(): String? {
         return accessToken
+    }
+
+    fun saveAccountId(accountId: String) {
+        sharedPrefsWrapper.saveAccountId(accountId)
     }
 
     fun isNotAuthenticated(): Boolean = sharedPrefsWrapper.getAccountId().isNullOrEmpty()
