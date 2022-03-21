@@ -5,10 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.co.kidsloop.ProfilesQuery
 import uk.co.kidsloop.features.profile.usecases.FetchProfilesUseCase
-import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(private val fetchProfile: FetchProfilesUseCase) : ViewModel() {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -13,7 +14,8 @@ import uk.co.kidsloop.databinding.FragmentProfileBinding
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment(R.layout.fragment_profile) {
-    private val profileAdapter = ProfileAdapter()
+
+    private val profileAdapter = ProfileAdapter { onProfileClicked() }
 
     private val binding by viewBinding(FragmentProfileBinding::bind)
 
@@ -32,5 +34,9 @@ class ProfileFragment : BaseFragment(R.layout.fragment_profile) {
                 }
             }
         )
+    }
+
+    private fun onProfileClicked() {
+        findNavController().navigate(ProfileFragmentDirections.profileToLogin())
     }
 }

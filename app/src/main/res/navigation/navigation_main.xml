@@ -100,4 +100,10 @@
         android:id="@+id/profile_fragment"
         android:name="uk.co.kidsloop.features.profile.ui.ProfileFragment"
         tools:layout="@layout/fragment_profile">
-    </fragment></navigation>
+        <action
+            android:id="@+id/profile_to_login"
+            app:destination="@+id/login_fragment"
+            app:popUpTo="@id/profile_fragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>

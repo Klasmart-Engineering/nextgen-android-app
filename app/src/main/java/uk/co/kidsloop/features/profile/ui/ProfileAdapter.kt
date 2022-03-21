@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.ProfilesQuery
 import uk.co.kidsloop.R
 
-class ProfileAdapter() :
+class ProfileAdapter(private val onProfileClicked: () -> Unit) :
     RecyclerView.Adapter<ProfileAdapter.ViewHolder>() {
     private var dataSet: List<ProfilesQuery.Profile> = emptyList()
 
@@ -27,11 +27,14 @@ class ProfileAdapter() :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val fullName = dataSet[position].familyName + " " + dataSet[position].givenName
         holder.textView.text = fullName
+        holder.itemView.setOnClickListener {
+            onProfileClicked.invoke()
+        }
     }
 
     override fun getItemCount() = dataSet.size
 
-    fun refresh(dataSet: List<ProfilesQuery.Profile>){
+    fun refresh(dataSet: List<ProfilesQuery.Profile>) {
         this.dataSet = dataSet
         notifyDataSetChanged()
     }
