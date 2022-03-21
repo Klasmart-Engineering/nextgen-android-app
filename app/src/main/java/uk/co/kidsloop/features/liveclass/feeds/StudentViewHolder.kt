@@ -26,10 +26,10 @@ class StudentViewHolder(private val binding: LayoutFeedStudentBinding) : Generic
     override fun update(bundle: Bundle) {
         if (bundle.containsKey(FeedsAdapter.HAS_RAISED_HAND)) {
             val newValue = bundle.getBoolean(FeedsAdapter.HAS_RAISED_HAND)
-            if (newValue)
-                binding.studentVideoFeed.showHandRaised()
-            else
-                binding.studentVideoFeed.hideRaiseHand()
+            when (newValue) {
+                true -> binding.studentVideoFeed.showHandRaised()
+                false -> binding.studentVideoFeed.hideRaiseHand()
+            }
         }
     }
 

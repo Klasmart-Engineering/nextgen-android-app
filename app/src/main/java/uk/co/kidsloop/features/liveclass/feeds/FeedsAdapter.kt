@@ -86,6 +86,16 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         }
     }
 
+    override fun onViewAttachedToWindow(holder: GenericFeedViewHolder) {
+        holder.setIsRecyclable(true)
+        super.onViewAttachedToWindow(holder)
+    }
+
+    override fun onViewDetachedFromWindow(holder: GenericFeedViewHolder) {
+        holder.setIsRecyclable(false)
+        super.onViewDetachedFromWindow(holder)
+    }
+
     override fun onBindViewHolder(holder: GenericFeedViewHolder, position: Int) {
         val feedItem = currentList()[position]
         holder.bind(feedItem)
