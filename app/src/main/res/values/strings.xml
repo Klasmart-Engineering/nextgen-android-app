@@ -43,4 +43,7 @@
     <string name="this_class_will_close_in_5_seconds">This class will close in 5 seconds</string>
     <string name="other_students_number_label">%d other</string>
     <string name="others_students_number_label">%d others</string>
+    <string name="user_initials">MG</string>
+    <string name="welcome_comma_first_name_of_user">Welcome, Maria</string>
+    <string name="there_are_no_live_classes_scheduled_please_refresh">There are no Live Classes scheduled.\nPlease refresh!</string>
 </resources>

@@ -22,4 +22,8 @@
     <color name="kidsloop_blue">#5A86EE</color>
     <color name="dark_gray">#444444</color>
     <color name="soft_blue">#5C8AE6</color>
+    <color name="pink">#F284DB</color>
+    <color name="regular_blue">#00B7FF</color>
+    <color name="more_light_blue">#A6FFFF</color>
+    <color name="gray">#80A7CE</color>
 </resources>

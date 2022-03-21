@@ -5,6 +5,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  *  Created by paulbisioc on 07.01.2022
@@ -75,3 +78,21 @@ fun View?.unclickable() {
 
 // String functions
 fun emptyString(): String = ""
+
+fun getInitials(string: String): String {
+    var initials = ""
+    for (s in string.split(" ")) {
+        initials += s[0]
+    }
+    return initials
+}
+
+fun convertTimestampConsideringTimeZone(time: Long, pattern: String): String {
+    val cal: Calendar = Calendar.getInstance()
+    val tz = TimeZone.getDefault()
+    cal.timeInMillis = time * 1000
+    cal.add(Calendar.MILLISECOND, tz.getOffset(cal.timeInMillis))
+    val dateFormat: DateFormat = SimpleDateFormat(pattern)
+    val currentTimeZone = cal.time as Date
+    return dateFormat.format(currentTimeZone)
+}

@@ -45,7 +45,7 @@ class SplashFragment : BaseFragment(R.layout.fragment_splash) {
                 }
             )
         } else {
-            findNavController().navigate(SplashFragmentDirections.splashToLogin())
+            findNavController().navigate(SplashFragmentDirections.splashToSchedule())
         }
     }
 }

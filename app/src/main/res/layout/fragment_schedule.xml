@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_cyan">
+
+    <TextView
+        android:id="@+id/initials"
+        style="@style/NameInitials"
+        android:layout_width="@dimen/space_53"
+        android:layout_height="@dimen/space_53"
+        android:layout_marginStart="@dimen/space_40"
+        android:layout_marginTop="@dimen/space_14"
+        android:background="@drawable/bg_round_pink_ripple"
+        android:gravity="center"
+        android:text="@string/user_initials"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/setup_label"
+        style="@style/TitleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_14"
+        android:text="@string/welcome_comma_first_name_of_user"
+        app:layout_constraintBottom_toBottomOf="@id/initials"
+        app:layout_constraintStart_toEndOf="@id/initials"
+        app:layout_constraintTop_toTopOf="@id/initials" />
+
+    <ImageButton
+        android:id="@+id/refresh_btn"
+        android:layout_width="@dimen/space_53"
+        android:layout_height="@dimen/space_53"
+        android:layout_marginTop="@dimen/space_14"
+        android:layout_marginEnd="@dimen/space_12"
+        android:adjustViewBounds="true"
+        android:background="@drawable/bg_round_white_ripple"
+        android:clickable="true"
+        android:contentDescription="@null"
+        android:focusable="true"
+        android:src="@drawable/ic_refresh"
+        app:layout_constraintEnd_toStartOf="@id/switch_profile_btn"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/switch_profile_btn"
+        android:layout_width="@dimen/space_53"
+        android:layout_height="@dimen/space_53"
+        android:layout_marginTop="@dimen/space_14"
+        android:layout_marginEnd="@dimen/space_40"
+        android:adjustViewBounds="true"
+        android:background="@drawable/bg_round_white_ripple"
+        android:clickable="true"
+        android:contentDescription="@null"
+        android:focusable="true"
+        android:src="@drawable/ic_switch_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/no_class_textview"
+        style="@style/NoClassesLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_58"
+        android:drawablePadding="@dimen/space_12"
+        android:gravity="center"
+        android:text="@string/there_are_no_live_classes_scheduled_please_refresh"
+        android:visibility="gone"
+        app:drawableTopCompat="@drawable/ic_no_classes_scheduled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/classes_recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/space_50"
+        android:layout_marginBottom="@dimen/space_36"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingStart="@dimen/space_58"
+        android:paddingEnd="@dimen/space_3"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/initials" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

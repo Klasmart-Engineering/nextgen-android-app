@@ -110,7 +110,7 @@ class RegionFragment : BaseFragment(R.layout.fragment_region) {
 
                 authManager.saveAccessToken(result.accessToken)
                 authManager.saveAccountId(result.account.id)
-                findNavController().navigate(RegionFragmentDirections.regionToLogin())
+                findNavController().navigate(RegionFragmentDirections.regionToSchedule())
             }
 
             override fun onError(exception: MsalException) {
