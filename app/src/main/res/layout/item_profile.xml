@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/space_100"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/rounded_bg">
+    android:background="@drawable/rounded_bg"
+    android:backgroundTint="@color/white"
+    android:layout_marginBottom="@dimen/space_10">
 
     <TextView
         android:id="@+id/initials_textView"

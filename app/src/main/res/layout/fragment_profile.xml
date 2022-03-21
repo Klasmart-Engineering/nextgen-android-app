@@ -30,7 +30,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/profiles_recyclerview"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/title_textview"
         android:layout_marginTop="33dp"
