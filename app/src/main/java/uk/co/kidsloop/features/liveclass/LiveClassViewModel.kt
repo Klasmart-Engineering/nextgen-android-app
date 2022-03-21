@@ -1,9 +1,6 @@
 package uk.co.kidsloop.features.liveclass
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fm.liveswitch.AudioStream
 import fm.liveswitch.Channel
@@ -12,10 +9,15 @@ import fm.liveswitch.IAction1
 import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
+import uk.co.kidsloop.features.connectivity.NetworkFetchState
+import uk.co.kidsloop.features.connectivity.NetworkStatusTracker
+import uk.co.kidsloop.features.connectivity.map
 import uk.co.kidsloop.features.liveclass.remoteviews.SFURemoteMedia
 import uk.co.kidsloop.features.liveclass.state.LiveClassState
 import uk.co.kidsloop.features.liveclass.usecases.JoinLiveClassUseCase
@@ -30,7 +32,8 @@ class LiveClassViewModel @Inject constructor(
     private val openSfuUpstreamConnectionUseCase: OpenSfuUpstreamConnectionUseCase,
     private val openSfuDownstreamConnection: OpenSfuDownstreamConnection,
     private val sendDataChannelEventUseCase: SendDataChannelEventUseCase,
-    private val liveClassManager: LiveClassManager
+    private val liveClassManager: LiveClassManager,
+    private val networkStatusTracker: NetworkStatusTracker
 ) : ViewModel() {
 
     @Inject
@@ -38,6 +41,13 @@ class LiveClassViewModel @Inject constructor(
 
     private var _classroomStateLiveData = MutableLiveData<LiveClassUiState>()
     val classroomStateLiveData: LiveData<LiveClassUiState> get() = _classroomStateLiveData
+
+    @ExperimentalCoroutinesApi
+    val networkState = networkStatusTracker.networkStatus.map(
+        onWiFi = { NetworkFetchState.FETCHED_WIFI },
+        onMobileData = { NetworkFetchState.FETCHED_MOBILE_DATA },
+        onUnavailable = { NetworkFetchState.ERROR }
+    ).asLiveData(Dispatchers.IO)
 
     sealed class LiveClassUiState {
         data class RegistrationSuccessful(val channel: Channel) : LiveClassUiState()
