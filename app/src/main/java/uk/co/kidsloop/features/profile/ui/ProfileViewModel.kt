@@ -5,10 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.co.kidsloop.ProfilesQuery
 import uk.co.kidsloop.features.profile.usecases.FetchProfilesUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(private val fetchProfile: FetchProfilesUseCase) : ViewModel() {
@@ -24,8 +24,10 @@ class ProfileViewModel @Inject constructor(private val fetchProfile: FetchProfil
     init {
         viewModelScope.launch {
             val result = fetchProfile.fetchProfiles()
-            when(result){
-                is FetchProfilesUseCase.ProfilesResult.Success -> _profilesLiveData.value = ProfilesUiState.Success(result.myUser.profiles) // ktlint-disable max-line-length
+            when (result) {
+                is FetchProfilesUseCase.ProfilesResult.Success ->
+                    _profilesLiveData.value =
+                        ProfilesUiState.Success(result.myUser.profiles) // ktlint-disable max-line-length
                 is FetchProfilesUseCase.ProfilesResult.Failure -> _profilesLiveData.value = ProfilesUiState.Failure
             }
         }
