@@ -1,0 +1,2422 @@
+directive @key(fields: String!) on OBJECT | INTERFACE
+
+directive @extends on OBJECT | INTERFACE
+
+directive @external on OBJECT | FIELD_DEFINITION
+
+directive @requires(fields: String!) on FIELD_DEFINITION
+
+directive @provides(fields: String!) on FIELD_DEFINITION
+
+directive @isAdmin(entity: String) on FIELD_DEFINITION
+
+directive @isAuthenticated on FIELD_DEFINITION
+
+directive @isMIMEType(mimetype: String!) on FIELD_DEFINITION
+
+directive @complexity(cost: Int, count: Int) on FIELD_DEFINITION
+
+type File {
+  filename: String!
+  mimetype: String!
+  encoding: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  endCursor: String!
+  startCursor: String!
+  hasPreviousPage: Boolean!
+}
+
+type ScheduleEntry {
+  id: ID!
+  timestamp: Date
+}
+
+enum LogicalOperator {
+  AND
+  OR
+}
+
+enum ConnectionDirection {
+  FORWARD
+  BACKWARD
+}
+
+input ConnectionsDirectionArgs {
+  count: PageSize
+  cursor: String
+}
+
+type ConnectionPageInfo {
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  startCursor: String
+  endCursor: String
+}
+
+interface iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+}
+
+interface iConnectionEdge {
+  cursor: String
+}
+
+enum SortOrder {
+  ASC
+  DESC
+}
+
+input StringFilter {
+  operator: StringOperator!
+  value: String!
+  caseInsensitive: Boolean
+}
+
+input NumberFilter {
+  operator: NumberOrDateOperator!
+  value: Float!
+}
+
+input UUIDFilter {
+  operator: UUIDOperator!
+  value: UUID!
+}
+
+input UUIDExclusiveFilter {
+  operator: UUIDExclusiveOperator!
+  value: UUID
+}
+
+input BooleanFilter {
+  operator: BooleanOperator!
+  value: Boolean!
+}
+
+input DateFilter {
+  operator: NumberOrDateOperator!
+  value: String!
+}
+
+input AgeRangeTypeFilter {
+  operator: NumberOrDateOperator!
+  value: AgeRangeValue!
+}
+
+input AgeRangeUnitFilter {
+  operator: UUIDOperator!
+  value: AgeRangeUnit!
+}
+
+input AgeRangeValueFilter {
+  operator: NumberOrDateOperator!
+  value: Int!
+}
+
+input AgeRangeValue {
+  value: Int!
+  unit: AgeRangeUnit!
+}
+
+enum StringOperator {
+  contains
+  eq
+  neq
+}
+
+enum UUIDOperator {
+  eq
+  neq
+}
+
+enum UUIDExclusiveOperator {
+  eq
+  neq
+  isNull
+}
+
+enum NumberOrDateOperator {
+  eq
+  neq
+  gt
+  gte
+  lt
+  lte
+}
+
+enum BooleanOperator {
+  eq
+}
+
+type AgeRangesConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [AgeRangesConnectionEdge]
+}
+
+type AgeRangesConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: AgeRangeConnectionNode
+}
+
+enum AgeRangeSortBy {
+  id
+  lowValue
+  lowValueUnit
+}
+
+input AgeRangeSortInput {
+  field: [AgeRangeSortBy!]!
+  order: SortOrder!
+}
+
+input AgeRangeFilter {
+  ageRangeValueFrom: AgeRangeValueFilter
+  ageRangeUnitFrom: AgeRangeUnitFilter
+  ageRangeValueTo: AgeRangeValueFilter
+  ageRangeUnitTo: AgeRangeUnitFilter
+  status: StringFilter
+  system: BooleanFilter
+  organizationId: UUIDFilter
+  programId: UUIDFilter
+  AND: [AgeRangeFilter!]
+  OR: [AgeRangeFilter!]
+}
+
+type AgeRangeConnectionNode {
+  id: ID!
+  name: String
+  status: Status!
+  system: Boolean!
+  lowValue: Int!
+  lowValueUnit: AgeRangeUnit!
+  highValue: Int!
+  highValueUnit: AgeRangeUnit!
+}
+
+type AgeRange {
+  id: ID!
+  name: String!
+  low_value: Int!
+  high_value: Int!
+  low_value_unit: AgeRangeUnit!
+  high_value_unit: AgeRangeUnit!
+  system: Boolean!
+  status: Status
+  delete(_: Int): Boolean
+}
+
+input AgeRangeDetail {
+  id: ID
+  name: String
+  low_value: Int
+  high_value: Int
+  low_value_unit: AgeRangeUnit
+  high_value_unit: AgeRangeUnit
+  system: Boolean
+}
+
+type CategoriesConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [CategoriesConnectionEdge]
+}
+
+type CategoriesConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: CategoryConnectionNode
+}
+
+enum CategorySortBy {
+  id
+  name
+}
+
+input CategorySortInput {
+  field: CategorySortBy!
+  order: SortOrder!
+}
+
+input CategoryFilter {
+  status: StringFilter
+  system: BooleanFilter
+  AND: [CategoryFilter]
+  OR: [CategoryFilter]
+}
+
+type CategoryConnectionNode {
+  id: ID!
+  name: String
+  status: Status!
+  system: Boolean!
+  subjectsConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: SubjectFilter
+    sort: SubjectSortInput
+  ): SubjectsConnectionResponse
+  subcategoriesConnection(
+    count: PageSize
+    cursor: String
+    filter: SubcategoryFilter
+    sort: SubcategorySortInput
+    direction: ConnectionDirection
+  ): SubcategoriesConnectionResponse
+}
+
+input CreateCategoryInput {
+  name: String!
+  organizationId: ID!
+  subcategoryIds: [ID!]
+}
+
+input DeleteCategoryInput {
+  id: ID!
+}
+
+input UpdateCategoryInput {
+  id: ID!
+  name: String
+  subcategoryIds: [ID!]
+}
+
+type CategoriesMutationResult {
+  categories: [CategoryConnectionNode!]!
+}
+
+input AddSubcategoriesToCategoryInput {
+  categoryId: ID!
+  subcategoryIds: [ID!]!
+}
+
+input RemoveSubcategoriesFromCategoryInput {
+  categoryId: ID!
+  subcategoryIds: [ID!]!
+}
+
+type Category {
+  id: ID!
+  name: String!
+  subcategories: [Subcategory!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  system: Boolean!
+  status: Status
+  editSubcategories(subcategory_ids: [ID!]): [Subcategory]
+    @deprecated(
+      reason: "Sunset Date: 22/02/2022 Details: https://calmisland.atlassian.net/l/c/U107XwHS"
+    )
+  delete(_: Int): Boolean
+    @deprecated(
+      reason: "Sunset Date: 24/02/2022 Details: https://calmisland.atlassian.net/l/c/mTni58mA"
+    )
+}
+
+input CategoryDetail {
+  id: ID
+  name: String
+  subcategories: [ID!]
+  system: Boolean
+}
+
+type ClassesConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [ClassesConnectionEdge]
+}
+
+type ClassesConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: ClassConnectionNode
+}
+
+enum ClassSortBy {
+  id
+  name
+}
+
+input ClassSortInput {
+  field: ClassSortBy!
+  order: SortOrder!
+}
+
+input ClassFilter {
+  id: UUIDFilter
+  name: StringFilter
+  status: StringFilter
+  organizationId: UUIDFilter
+  ageRangeValueFrom: AgeRangeValueFilter
+  ageRangeUnitFrom: AgeRangeUnitFilter
+  ageRangeValueTo: AgeRangeValueFilter
+  ageRangeUnitTo: AgeRangeUnitFilter
+  schoolId: UUIDExclusiveFilter
+  gradeId: UUIDFilter
+  subjectId: UUIDFilter
+  studentId: UUIDFilter
+  teacherId: UUIDFilter
+  programId: UUIDFilter
+  AND: [ClassFilter!]
+  OR: [ClassFilter!]
+}
+
+type ClassConnectionNode {
+  id: ID!
+  name: String
+  status: Status!
+  shortCode: String
+  schools: [SchoolSummaryNode!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  ageRanges: [AgeRangeConnectionNode!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  grades: [GradeSummaryNode!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  subjects: [CoreSubjectConnectionNode!]
+    @deprecated(
+      reason: "Sunset Date: 07/03/2022 Details: https://calmisland.atlassian.net/l/c/Ts9fp60C"
+    )
+  programs: [CoreProgramConnectionNode!]
+    @deprecated(
+      reason: "Sunset Date: 01/03/22 Details: https://calmisland.atlassian.net/l/c/aaSJnmbQ"
+    )
+  studentsConnection(
+    count: PageSize
+    cursor: String
+    filter: UserFilter
+    sort: UserSortInput
+    direction: ConnectionDirection
+  ): UsersConnectionResponse
+  teachersConnection(
+    count: PageSize
+    cursor: String
+    filter: UserFilter
+    sort: UserSortInput
+    direction: ConnectionDirection
+  ): UsersConnectionResponse
+  schoolsConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: SchoolFilter
+    sort: SchoolSortInput
+  ): SchoolsConnectionResponse
+  subjectsConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: SubjectFilter
+    sort: SubjectSortInput
+  ): SubjectsConnectionResponse
+  programsConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: ProgramFilter
+    sort: ProgramSortInput
+  ): ProgramsConnectionResponse
+  gradesConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: GradeFilter
+    sort: GradeSortInput
+  ): GradesConnectionResponse
+  ageRangesConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection!
+    filter: AgeRangeFilter
+    sort: AgeRangeSortInput
+  ): AgeRangesConnectionResponse
+}
+
+type CoreProgramConnectionNode {
+  id: ID!
+  name: String
+  status: Status!
+  system: Boolean!
+}
+
+type Class {
+  class_id: ID!
+  class_name: String
+  status: Status
+  shortcode: String
+  organization: Organization
+  schools: [School]
+  teachers: [User]
+  students: [User]
+  programs: [Program!]
+  age_ranges: [AgeRange!]
+  grades: [Grade!]
+  subjects: [Subject!]
+  eligibleTeachers: [User]
+    @deprecated(
+      reason: "Sunset Date: 31/03/2022 Details: [https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2478735554]"
+    )
+  eligibleStudents: [User]
+    @deprecated(
+      reason: "Sunset Date: 31/03/2022 Details: [https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2478735554]"
+    )
+  set(class_name: String, shortcode: String): Class
+  addTeacher(user_id: ID!): User
+  editTeachers(teacher_ids: [ID!]): [User]
+  removeTeacher(user_id: ID!): Boolean
+  addStudent(user_id: ID!): User
+    @deprecated(
+      reason: "Sunset Date: 24/04/2022 Details: https://calmisland.atlassian.net/l/c/av1p2bKY"
+    )
+  editStudents(student_ids: [ID!]): [User]
+  removeStudent(user_id: ID!): Boolean
+  editSchools(school_ids: [ID!]): [School]
+  addSchool(school_id: ID!): School
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/l/c/av1p2bKY"
+    )
+  editPrograms(program_ids: [ID!]): [Program]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/l/c/av1p2bKY"
+    )
+  editAgeRanges(age_range_ids: [ID!]): [AgeRange]
+  editGrades(grade_ids: [ID!]): [Grade]
+  editSubjects(subject_ids: [ID!]): [Subject]
+  removeSchool(school_id: ID!): Boolean
+  delete(_: Int): Boolean @deprecated(reason: "Use deleteClasses() method")
+}
+
+input DeleteClassInput {
+  id: ID!
+}
+
+input CreateClassInput {
+  organizationId: ID!
+  name: String!
+  shortcode: String
+}
+
+input UpdateClassInput {
+  classId: ID!
+  className: String
+  shortcode: String
+}
+
+type ClassesMutationResult {
+  classes: [ClassConnectionNode!]!
+}
+
+input AddProgramsToClassInput {
+  classId: ID!
+  programIds: [ID!]!
+}
+
+input RemoveProgramsFromClassInput {
+  classId: ID!
+  programIds: [ID!]!
+}
+
+input AddStudentsToClassInput {
+  classId: ID!
+  studentIds: [ID!]!
+}
+
+input RemoveStudentsFromClassInput {
+  classId: ID!
+  studentIds: [ID!]!
+}
+
+input AddTeachersToClassInput {
+  classId: ID!
+  teacherIds: [ID!]!
+}
+
+input RemoveTeachersFromClassInput {
+  classId: ID!
+  teacherIds: [ID!]!
+}
+
+type Complexity {
+  score: Int
+  limit: Int
+}
+
+type GradesConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [GradesConnectionEdge]
+}
+
+type GradesConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: GradeConnectionNode
+}
+
+enum GradeSortBy {
+  id
+  name
+}
+
+input GradeSortInput {
+  field: [GradeSortBy!]!
+  order: SortOrder!
+}
+
+input GradeFilter {
+  id: UUIDFilter
+  name: StringFilter
+  status: StringFilter
+  system: BooleanFilter
+  organizationId: UUIDFilter
+  programId: UUIDFilter
+  fromGradeId: UUIDFilter
+  toGradeId: UUIDFilter
+  AND: [GradeFilter!]
+  OR: [GradeFilter!]
+}
+
+type GradeConnectionNode {
+  id: ID!
+  name: String
+  status: Status!
+  system: Boolean!
+  fromGrade: GradeSummaryNode!
+  toGrade: GradeSummaryNode!
+}
+
+type Grade {
+  id: ID!
+  name: String!
+  progress_from_grade: Grade
+  progress_to_grade: Grade
+  system: Boolean!
+  status: Status
+  delete(_: Int): Boolean
+}
+
+input GradeDetail {
+  id: ID
+  name: String
+  progress_from_grade_id: ID
+  progress_to_grade_id: ID
+  system: Boolean
+}
+
+scalar HexColor
+
+scalar Url
+
+type Organization {
+  organization_id: ID!
+  organization_name: String
+  address1: String
+  address2: String
+  phone: String
+  shortCode: String
+  status: Status
+  branding: Branding
+
+  """
+  'owner' is the User that created this Organization
+  """
+  owner: User @deprecated(reason: "Use 'organization_ownerships'.")
+  primary_contact: User
+  roles: [Role]
+  memberships: [OrganizationMembership]
+  teachers: [OrganizationMembership]
+  students: [OrganizationMembership]
+  schools: [School]
+  classes: [Class] @deprecated(reason: "Use 'getClasses'.")
+  getClasses: [Class]
+  ageRanges: [AgeRange!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  grades: [Grade!]
+  categories: [Category!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  subcategories: [Subcategory!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  subjects: [Subject!]
+  programs: [Program!]
+  membersWithPermission(
+    permission_name: String!
+    search_query: String
+  ): [OrganizationMembership]
+  findMembers(search_query: String!): [OrganizationMembership]
+  set(
+    organization_name: String
+    address1: String
+    address2: String
+    phone: String
+    shortCode: String
+  ): Organization
+  setPrimaryContact(user_id: ID!): User
+  addUser(user_id: ID!, shortcode: String): OrganizationMembership
+    @deprecated(
+      reason: "Sunset Date: 01/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/UserService/pages/2462417870/"
+    )
+  inviteUser(
+    email: String
+    phone: String
+    given_name: String!
+    family_name: String!
+    date_of_birth: String
+    username: String
+    gender: String!
+    shortcode: String
+    organization_role_ids: [ID!]!
+    school_ids: [ID!]
+    school_role_ids: [ID!]
+    alternate_email: String
+    alternate_phone: String
+  ): MembershipUpdate
+  editMembership(
+    user_id: ID!
+    given_name: String!
+    family_name: String!
+    email: String
+    phone: String
+    date_of_birth: String
+    username: String
+    gender: String!
+    shortcode: String!
+    organization_role_ids: [ID!]!
+    school_ids: [ID!]
+    school_role_ids: [ID!]
+    alternate_email: String
+    alternate_phone: String
+  ): MembershipUpdate
+    @deprecated(
+      reason: "Sunset Date: 01/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2433581057"
+    )
+  createRole(role_name: String!, role_description: String!): Role
+    @deprecated(
+      reason: "Sunset Date: 29/03/2022 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q"
+    )
+  createSchool(school_name: String, shortcode: String): School
+  createClass(class_name: String, shortcode: String): Class
+    @deprecated(
+      reason: "Sunset Date: 10/04/2022 https://calmisland.atlassian.net/l/c/GSPr3XYb"
+    )
+  createOrUpdateAgeRanges(age_ranges: [AgeRangeDetail]!): [AgeRange]
+  createOrUpdateGrades(grades: [GradeDetail]!): [Grade]
+  createOrUpdateCategories(categories: [CategoryDetail]!): [Category]
+    @deprecated(
+      reason: "Sunset Date: 22/02/22 Details: https://calmisland.atlassian.net/l/c/kY3S0K0h"
+    )
+  createOrUpdateSubcategories(
+    subcategories: [SubcategoryDetail]!
+  ): [Subcategory]
+    @deprecated(
+      reason: "Sunset Date: 22/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2457174175"
+    )
+  createOrUpdateSubjects(subjects: [SubjectDetail]!): [Subject]
+    @deprecated(
+      reason: "Sunset Date: 11/04/2022 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q"
+    )
+  createOrUpdatePrograms(programs: [ProgramDetail]!): [Program]
+    @deprecated(
+      reason: "Sunset Date: 24/04/2022 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q"
+    )
+  delete(_: Int): Boolean
+}
+
+type OrganizationMembership {
+  user_id: ID!
+  organization_id: ID!
+  shortcode: String
+  join_timestamp: Date
+  status: Status
+  organization: Organization
+  user: User
+  roles: [Role]
+  classes: [Class]
+    @deprecated(reason: "Use User.classesStudying and User.classesTeaching")
+  schoolMemberships(permission_name: String): [SchoolMembership]
+  checkAllowed(permission_name: ID!): Boolean
+  classesTeaching: [Class]
+  addRole(role_id: ID!): Role
+    @deprecated(
+      reason: "Sunset Date: 01/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2433482757"
+    )
+  addRoles(role_ids: [ID!]!): [Role]
+    @deprecated(
+      reason: "Sunset Date: 01/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2433482757"
+    )
+  removeRole(role_id: ID!): OrganizationMembership
+    @deprecated(
+      reason: "Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2440790112"
+    )
+  leave(_: Int): Boolean
+    @deprecated(
+      reason: "Sunset Date: 13/03/22 Details: https://calmisland.atlassian.net/wiki/spaces/UserService/pages/2484240385/"
+    )
+}
+
+type OrganizationOwnership {
+  user_id: ID!
+  organization_id: ID!
+  status: Status
+  organization: Organization
+  user: User
+}
+
+type Branding {
+  iconImageURL: Url
+  primaryColor: HexColor
+}
+
+enum BrandingImageTag {
+  ICON
+}
+
+input CreateOrganizationInput {
+  """
+  A user who will become the organization's owner.
+  Must not already own an organization.
+  """
+  userId: ID!
+  organizationName: String!
+  address1: String
+  address2: String
+  phone: String
+  shortcode: String
+}
+
+input AddUsersToOrganizationInput {
+  organizationId: ID!
+  organizationRoleIds: [ID!]!
+  userIds: [ID!]!
+  shortcode: String
+}
+
+input RemoveUsersFromOrganizationInput {
+  organizationId: ID!
+  userIds: [ID!]!
+}
+
+input DeleteUsersFromOrganizationInput {
+  organizationId: ID!
+  userIds: [ID!]!
+}
+
+input ReactivateUsersFromOrganizationInput {
+  organizationId: ID!
+  userIds: [ID!]!
+}
+
+type OrganizationsMutationResult {
+  organizations: [OrganizationConnectionNode!]!
+}
+
+enum OrganizationSortBy {
+  name
+  ownerEmail
+}
+
+input OrganizationSortInput {
+  field: [OrganizationSortBy!]!
+  order: SortOrder!
+}
+
+input OrganizationFilter {
+  id: UUIDFilter
+  name: StringFilter
+  phone: StringFilter
+  shortCode: StringFilter
+  status: StringFilter
+  ownerUserId: UUIDFilter
+  ownerUserEmail: StringFilter
+  ownerUsername: StringFilter
+  userId: UUIDFilter
+  AND: [OrganizationFilter!]
+  OR: [OrganizationFilter!]
+}
+
+type OrganizationsConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [OrganizationsConnectionEdge]
+}
+
+type OrganizationsConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: OrganizationConnectionNode
+}
+
+type OrganizationContactInfo {
+  address1: String
+  address2: String
+  phone: String
+}
+
+type UserSummaryNode {
+  id: String
+  email: String
+}
+
+type OrganizationConnectionNode {
+  id: ID!
+  name: String
+  contactInfo: OrganizationContactInfo
+  shortCode: String
+  status: Status
+  owners: [UserSummaryNode]
+  branding: Branding
+  organizationMembershipsConnection(
+    count: PageSize
+    cursor: String
+    filter: OrganizationMembershipFilter
+    sort: OrganizationMembershipSortBy
+    direction: ConnectionDirection
+  ): OrganizationMembershipsConnectionResponse
+  schoolsConnection(
+    count: PageSize
+    cursor: String
+    filter: SchoolFilter
+    sort: SchoolSortInput
+    direction: ConnectionDirection
+  ): SchoolsConnectionResponse
+  rolesConnection(
+    count: PageSize
+    cursor: String
+    filter: RoleFilter
+    sort: RoleSortInput
+    direction: ConnectionDirection
+  ): RolesConnectionResponse
+  classesConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: ClassFilter
+    sort: ClassSortInput
+  ): ClassesConnectionResponse
+  categoriesConnection(
+    count: PageSize
+    cursor: String
+    filter: CategoryFilter
+    sort: CategorySortInput
+    direction: ConnectionDirection
+  ): CategoriesConnectionResponse
+  subcategoriesConnection(
+    count: PageSize
+    cursor: String
+    filter: SubcategoryFilter
+    sort: SubcategorySortInput
+    direction: ConnectionDirection
+  ): SubcategoriesConnectionResponse
+  ageRangesConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection!
+    filter: AgeRangeFilter
+    sort: AgeRangeSortInput
+  ): AgeRangesConnectionResponse
+}
+
+type Permission {
+  permission_id: ID
+  permission_name: ID!
+  permission_category: String
+  permission_group: String
+  permission_level: String
+  permission_description: String
+  allow: Boolean
+}
+
+type PermissionsConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [PermissionsConnectionEdge]
+}
+
+type PermissionsConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: PermissionsConnectionNode
+}
+
+type PermissionsConnectionNode {
+  id: ID!
+  name: String!
+  category: String
+  group: String
+  level: String
+  description: String
+  allow: Boolean!
+  rolesConnection(
+    count: PageSize
+    cursor: String
+    filter: RoleFilter
+    sort: RoleSortInput
+    direction: ConnectionDirection
+  ): RolesConnectionResponse
+}
+
+enum PermissionSortBy {
+  id
+  name
+  category
+  group
+  level
+}
+
+input PermissionSortInput {
+  field: PermissionSortBy!
+  order: SortOrder!
+}
+
+input PermissionFilter {
+  roleId: UUIDFilter
+  name: StringFilter
+  allow: BooleanFilter
+  AND: [PermissionFilter!]
+  OR: [PermissionFilter!]
+}
+
+type ProgramsConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [ProgramsConnectionEdge]
+}
+
+type ProgramsConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: ProgramConnectionNode
+}
+
+enum ProgramSortBy {
+  id
+  name
+}
+
+input ProgramSortInput {
+  field: [ProgramSortBy!]!
+  order: SortOrder!
+}
+
+input ProgramFilter {
+  id: UUIDFilter
+  name: StringFilter
+  status: StringFilter
+  system: BooleanFilter
+  organizationId: UUIDFilter
+  gradeId: UUIDFilter
+  ageRangeFrom: AgeRangeTypeFilter
+  ageRangeTo: AgeRangeTypeFilter
+  subjectId: UUIDFilter
+  schoolId: UUIDFilter
+  classId: UUIDFilter
+  AND: [ProgramFilter!]
+  OR: [ProgramFilter!]
+}
+
+type ProgramConnectionNode {
+  id: ID!
+  name: String
+  status: Status!
+  system: Boolean!
+  ageRanges: [AgeRangeConnectionNode!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  grades: [GradeSummaryNode!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  subjects: [CoreSubjectConnectionNode!]
+    @deprecated(
+      reason: "Sunset Date: 07/03/2022 Details: https://calmisland.atlassian.net/l/c/Ts9fp60C"
+    )
+  subjectsConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: SubjectFilter
+    sort: SubjectSortInput
+  ): SubjectsConnectionResponse
+  gradesConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: GradeFilter
+    sort: GradeSortInput
+  ): GradesConnectionResponse
+  ageRangesConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: AgeRangeFilter
+    sort: AgeRangeSortInput
+  ): AgeRangesConnectionResponse
+}
+
+type GradeSummaryNode {
+  id: ID!
+  name: String
+  status: Status!
+  system: Boolean!
+}
+
+type CoreSubjectConnectionNode {
+  id: ID!
+  name: String
+  status: Status!
+  system: Boolean!
+}
+
+type Program {
+  id: ID!
+  name: String!
+  system: Boolean!
+  status: Status
+  age_ranges: [AgeRange!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  grades: [Grade!]
+  subjects: [Subject!]
+  editAgeRanges(age_range_ids: [ID!]): [AgeRange]
+  editGrades(grade_ids: [ID!]): [Grade]
+  editSubjects(subject_ids: [ID!]): [Subject]
+  delete(_: Int): Boolean
+    @deprecated(
+      reason: "Sunset Date: 28/04/2022 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q"
+    )
+}
+
+input ProgramDetail {
+  id: ID
+  name: String
+  system: Boolean
+  age_ranges: [ID!]
+  grades: [ID!]
+  subjects: [ID!]
+  status: Status
+}
+
+input CreateProgramInput {
+  name: String!
+  organizationId: ID!
+  ageRangeIds: [ID!]!
+  gradeIds: [ID!]!
+  subjectIds: [ID!]!
+}
+
+input UpdateProgramInput {
+  id: ID!
+  name: String
+  ageRangeIds: [ID!]
+  gradeIds: [ID!]
+  subjectIds: [ID!]
+}
+
+input DeleteProgramInput {
+  id: ID!
+}
+
+type ProgramsMutationResult {
+  programs: [ProgramConnectionNode!]!
+}
+
+type RolesConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [RolesConnectionEdge]
+}
+
+type RolesConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: RoleConnectionNode
+}
+
+enum RoleSortBy {
+  id
+  name
+}
+
+input RoleSortInput {
+  field: RoleSortBy!
+  order: SortOrder!
+}
+
+input RoleFilter {
+  name: StringFilter
+  status: StringFilter
+  system: BooleanFilter
+  organizationId: UUIDFilter
+  schoolId: UUIDFilter
+  schoolUserId: UUIDFilter
+  membershipOrganizationUserId: UUIDFilter
+  membershipOrganizationId: UUIDFilter
+  AND: [RoleFilter]
+  OR: [RoleFilter]
+}
+
+type RoleConnectionNode {
+  id: ID!
+  name: String
+  description: String!
+  status: Status!
+  system: Boolean!
+  permissionsConnection(
+    direction: ConnectionDirection!
+    count: PageSize
+    cursor: String
+    sort: PermissionSortInput
+    filter: PermissionFilter
+  ): PermissionsConnectionResponse
+}
+
+type Role {
+  role_id: ID!
+  role_name: String
+  role_description: String!
+  status: Status!
+  system_role: Boolean!
+  organization: Organization
+  memberships: [OrganizationMembership]
+  permissions: [Permission]
+    @deprecated(
+      reason: "Sunset Date: 26/02/2022 Details: https://calmisland.atlassian.net/l/c/1nEk2YHE"
+    )
+  permission(permission_name: String!): Permission
+  set(role_name: String, role_description: String, system_role: Boolean): Role
+    @deprecated(
+      reason: "Sunset Date: 03/04/2022 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q"
+    )
+  grant(permission_name: String!): Permission
+  revoke(permission_name: String!): Boolean
+  edit_permissions(permission_names: [String!]): [Permission]
+  deny(permission_name: String!): Permission
+  delete_role(_: Int): Boolean
+    @deprecated(
+      reason: "Sunset Date: 27/03/2022 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q"
+    )
+}
+
+input CreateRoleInput {
+  organizationId: ID!
+  roleName: String!
+  roleDescription: String!
+}
+
+input UpdateRoleInput {
+  id: ID!
+  roleName: String
+  roleDescription: String
+  permissionIds: [ID!]
+}
+
+input DeleteRoleInput {
+  id: ID!
+}
+
+type RolesMutationResult {
+  roles: [RoleConnectionNode!]!
+}
+
+type School {
+  school_id: ID!
+  school_name: String
+  shortcode: String
+  status: Status
+  organization: Organization
+  memberships: [SchoolMembership]
+  membership(user_id: ID!): SchoolMembership
+  classes: [Class]
+  programs: [Program!]
+  set(school_name: String, shortcode: String): School
+  addUser(user_id: ID!): SchoolMembership
+  editPrograms(program_ids: [ID!]): [Program]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/l/c/av1p2bKY"
+    )
+  delete(_: Int): Boolean
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/l/c/av1p2bKY"
+    )
+}
+
+type SchoolMembership {
+  user_id: ID!
+  school_id: ID!
+  join_timestamp: Date
+  status: Status
+  user: User
+  school: School
+  roles: [Role]
+  checkAllowed(permission_name: ID!): Boolean
+  addRole(role_id: ID!): Role
+  addRoles(role_ids: [ID!]!): [Role]
+  removeRole(role_id: ID!): SchoolMembership
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/l/c/ezmgXfSg"
+    )
+  leave(_: Int): Boolean
+    @deprecated(
+      reason: "Sunset Date: 21/03/22 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q"
+    )
+}
+
+type MembershipUpdate {
+  user: User
+  membership: OrganizationMembership
+  schoolMemberships: [SchoolMembership]
+}
+
+type SchoolsConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [SchoolsConnectionEdge]
+}
+
+type SchoolsConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: SchoolConnectionNode
+}
+
+type SchoolConnectionNode {
+  id: ID!
+  name: String!
+  status: Status!
+  shortCode: String
+  organizationId: ID!
+  schoolMembershipsConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: SchoolMembershipFilter
+    sort: SchoolMembershipSortInput
+  ): SchoolMembershipsConnectionResponse
+  classesConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: ClassFilter
+    sort: ClassSortInput
+  ): ClassesConnectionResponse
+  programsConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: ProgramFilter
+    sort: ProgramSortInput
+  ): ProgramsConnectionResponse
+}
+
+input AddClassesToSchoolInput {
+  schoolId: ID!
+  classIds: [ID!]!
+}
+
+input AddProgramsToSchoolInput {
+  schoolId: ID!
+  programIds: [ID!]!
+}
+
+input RemoveClassesFromSchoolInput {
+  schoolId: ID!
+  classIds: [ID!]!
+}
+
+input SchoolFilter {
+  schoolId: UUIDFilter
+  name: StringFilter
+  shortCode: StringFilter
+  status: StringFilter
+  organizationId: UUIDFilter
+  userId: UUIDFilter
+  programId: UUIDFilter
+  AND: [SchoolFilter!]
+  OR: [SchoolFilter!]
+}
+
+enum SchoolSortBy {
+  id
+  name
+  shortCode
+}
+
+input SchoolSortInput {
+  field: [SchoolSortBy!]!
+  order: SortOrder!
+}
+
+input CreateSchoolInput {
+  name: String!
+  shortCode: String
+  organizationId: String!
+}
+
+input UpdateSchoolInput {
+  id: ID!
+  organizationId: ID!
+  name: String!
+  shortCode: String!
+}
+
+input DeleteSchoolInput {
+  id: ID!
+}
+
+input AddUsersToSchoolInput {
+  schoolId: ID!
+  schoolRoleIds: [ID!]
+  userIds: [ID!]!
+}
+
+input RemoveUsersFromSchoolInput {
+  schoolId: ID!
+  userIds: [ID!]!
+}
+
+input DeleteUsersFromSchoolInput {
+  schoolId: ID!
+  userIds: [ID!]!
+}
+
+input ReactivateUsersFromSchoolInput {
+  schoolId: ID!
+  userIds: [ID!]!
+}
+
+type SchoolsMutationResult {
+  schools: [SchoolConnectionNode!]!
+}
+
+input RemoveProgramsFromSchoolInput {
+  schoolId: ID!
+  programIds: [ID!]!
+}
+
+type Subcategory {
+  id: ID!
+  name: String!
+  system: Boolean!
+  status: Status
+  delete(_: Int): Boolean
+    @deprecated(
+      reason: "Sunset Date: 10/02/2022 Details: https://github.com/KL-Engineering/user-service/tree/main/documents/rfc/mutations/050-Subcategory-toplevel-mutations.md"
+    )
+}
+
+input SubcategoryDetail {
+  id: ID
+  name: String
+  system: Boolean
+}
+
+type SubcategoriesConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [SubcategoriesConnectionEdge]
+}
+
+type SubcategoriesConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: SubcategoryConnectionNode
+}
+
+type SubcategoryConnectionNode {
+  id: ID!
+  name: String!
+  status: Status!
+  system: Boolean!
+}
+
+enum SubcategorySortBy {
+  id
+  name
+}
+
+input SubcategorySortInput {
+  field: SubcategorySortBy!
+  order: SortOrder!
+}
+
+input SubcategoryFilter {
+  status: StringFilter
+  system: BooleanFilter
+  organizationId: UUIDFilter
+  categoryId: UUIDFilter
+  AND: [SubcategoryFilter]
+  OR: [SubcategoryFilter]
+}
+
+input DeleteSubcategoryInput {
+  id: ID!
+}
+
+input UpdateSubcategoryInput {
+  id: ID!
+  name: String
+}
+
+type SubcategoriesMutationResult {
+  subcategories: [SubcategoryConnectionNode!]!
+}
+
+input CreateSubcategoryInput {
+  name: String!
+  organizationId: ID!
+}
+
+type SubjectsConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [SubjectsConnectionEdge]
+}
+
+type SubjectsConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: SubjectConnectionNode
+}
+
+enum SubjectSortBy {
+  id
+  name
+  system
+}
+
+input SubjectSortInput {
+  field: SubjectSortBy!
+  order: SortOrder!
+}
+
+input SubjectFilter {
+  id: UUIDFilter
+  name: StringFilter
+  status: StringFilter
+  system: BooleanFilter
+  organizationId: UUIDFilter
+  categoryId: UUIDFilter
+  classId: UUIDFilter
+  programId: UUIDFilter
+  AND: [SubjectFilter]
+  OR: [SubjectFilter]
+}
+
+type SubjectConnectionNode {
+  id: ID!
+  name: String
+  status: Status!
+  system: Boolean!
+  categories: [CategoryConnectionNode!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  categoriesConnection(
+    count: PageSize
+    cursor: String
+    filter: CategoryFilter
+    sort: CategorySortInput
+    direction: ConnectionDirection
+  ): CategoriesConnectionResponse
+}
+
+type Subject {
+  id: ID!
+  name: String!
+  categories: [Category!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  subcategories: [Subcategory!]
+    @deprecated(
+      reason: "Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840"
+    )
+  system: Boolean!
+  status: Status
+  delete(_: Int): Boolean
+    @deprecated(
+      reason: "Sunset Date: 20/04/2022 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q"
+    )
+}
+
+input SubjectDetail {
+  id: ID
+  name: String
+  categories: [ID!]
+  system: Boolean
+}
+
+input CreateSubjectInput {
+  name: String!
+  organizationId: ID!
+  categoryIds: [ID!]
+}
+
+input UpdateSubjectInput {
+  id: ID!
+  name: String
+  categoryIds: [ID!]
+}
+
+input DeleteSubjectInput {
+  id: ID!
+}
+
+type SubjectsMutationResult {
+  subjects: [SubjectConnectionNode!]!
+}
+
+input UpdateUserInput {
+  id: ID!
+  givenName: String
+  familyName: String
+  email: String
+  phone: String
+  username: String
+  dateOfBirth: String
+  gender: String
+  avatar: String
+  alternateEmail: String
+  alternatePhone: String
+  primaryUser: Boolean
+}
+
+input AddOrganizationRolesToUserInput {
+  userId: ID!
+  organizationId: ID!
+  roleIds: [ID!]!
+}
+
+input RemoveOrganizationRolesFromUserInput {
+  userId: ID!
+  organizationId: ID!
+  roleIds: [ID!]!
+}
+
+input AddSchoolRolesToUserInput {
+  userId: ID!
+  schoolId: ID!
+  roleIds: [ID!]!
+}
+
+input RemoveSchoolRolesFromUserInput {
+  userId: ID!
+  schoolId: ID!
+  roleIds: [ID!]!
+}
+
+type UsersConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [UsersConnectionEdge]
+}
+
+type UsersConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: UserConnectionNode
+}
+
+input CreateUserInput {
+  givenName: String!
+  familyName: String!
+  contactInfo: ContactInfoInput
+  dateOfBirth: String
+  username: String
+  gender: String!
+  alternateEmail: String
+  alternatePhone: String
+}
+
+input ContactInfoInput {
+  email: String
+  phone: String
+}
+
+type UsersMutationResult {
+  users: [UserConnectionNode!]!
+}
+
+enum UserSortBy {
+  givenName
+  familyName
+}
+
+input UserSortInput {
+  field: [UserSortBy!]!
+  order: SortOrder!
+}
+
+input EligibleMembersFilter {
+  givenName: StringFilter
+  familyName: StringFilter
+  email: StringFilter
+  phone: StringFilter
+  username: StringFilter
+  AND: [EligibleMembersFilter!]
+  OR: [EligibleMembersFilter!]
+}
+
+input UserFilter {
+  userId: UUIDFilter
+  userStatus: StringFilter
+  givenName: StringFilter
+  familyName: StringFilter
+  avatar: StringFilter
+  email: StringFilter
+  phone: StringFilter
+  username: StringFilter
+  organizationId: UUIDFilter
+  roleId: UUIDFilter
+  schoolId: UUIDExclusiveFilter
+
+  """
+  Note: use organizationUserStatus with organizationId filter to avoid duplicating users
+  """
+  organizationUserStatus: StringFilter
+  classId: UUIDExclusiveFilter
+
+  """
+  Filter users on the grades assigned to the classes they're a member of
+  """
+  gradeId: UUIDFilter
+  AND: [UserFilter!]
+  OR: [UserFilter!]
+}
+
+type UserConnectionNode {
+  id: ID!
+  givenName: String
+  familyName: String
+  avatar: String
+  contactInfo: ContactInfo
+  alternateContactInfo: ContactInfo
+  status: Status!
+  dateOfBirth: String
+  username: String
+  gender: String
+  organizationMembershipsConnection(
+    count: PageSize
+    cursor: String
+    filter: OrganizationMembershipFilter
+    sort: OrganizationMembershipSortBy
+    direction: ConnectionDirection
+  ): OrganizationMembershipsConnectionResponse
+  schoolMembershipsConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: SchoolMembershipFilter
+    sort: SchoolMembershipSortInput
+  ): SchoolMembershipsConnectionResponse
+  classesStudyingConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: ClassFilter
+    sort: ClassSortInput
+  ): ClassesConnectionResponse
+  classesTeachingConnection(
+    count: PageSize
+    cursor: String
+    direction: ConnectionDirection
+    filter: ClassFilter
+    sort: ClassSortInput
+  ): ClassesConnectionResponse
+  roles: [RoleSummaryNode!]
+    @deprecated(
+      reason: "Sunset Date: 31/01/22 Details: https://calmisland.atlassian.net/l/c/7Ry00nhw"
+    )
+  schools: [SchoolSummaryNode!]
+    @deprecated(
+      reason: "Sunset Date: 31/01/22 Details: https://calmisland.atlassian.net/l/c/7Ry00nhw"
+    )
+  organizations: [OrganizationSummaryNode!]
+    @deprecated(
+      reason: "Sunset Date: 31/01/22 Details: https://calmisland.atlassian.net/l/c/7Ry00nhw"
+    )
+}
+
+type ContactInfo {
+  email: String
+  phone: String
+  username: String
+}
+
+type OrganizationSummaryNode {
+  id: ID!
+  name: String
+  joinDate: Date
+  userStatus: Status
+  status: Status
+  userShortCode: String
+}
+
+type RoleSummaryNode {
+  id: ID!
+  name: String
+  organizationId: String
+  schoolId: String
+  status: Status
+}
+
+type SchoolSummaryNode {
+  id: ID!
+  name: String
+  organizationId: String
+  status: Status
+  userStatus: Status
+}
+
+type User {
+  user_id: ID!
+  user_name: String @deprecated(reason: "Use 'full_name'.")
+  full_name: String
+  given_name: String
+  family_name: String
+  email: String
+  phone: String
+  date_of_birth: String
+  avatar: String
+  username: String
+  primary: Boolean
+  alternate_email: String
+  alternate_phone: String
+  gender: String
+
+  """
+  'my_organization' is the Organization that this user has created
+  """
+  my_organization: Organization
+    @deprecated(reason: "Use 'organization_ownerships'.")
+  organization_ownerships: [OrganizationOwnership]
+  memberships: [OrganizationMembership]
+  membership(organization_id: ID!): OrganizationMembership
+  school_memberships: [SchoolMembership]
+  school_membership(school_id: ID!): SchoolMembership
+  classesTeaching: [Class]
+  classesStudying: [Class]
+  organizationsWithPermission(
+    permission_name: String!
+  ): [OrganizationMembership]
+  schoolsWithPermission(permission_name: String!): [SchoolMembership]
+  subjectsTeaching: [Subject]
+  set(
+    given_name: String
+    family_name: String
+    email: String
+    phone: String
+    username: String
+    date_of_birth: String
+    gender: String
+    avatar: String
+    alternate_email: String
+    alternate_phone: String
+  ): User
+  createOrganization(
+    organization_name: String
+    email: String
+    address1: String
+    address2: String
+    phone: String
+    shortCode: String
+  ): Organization
+    @deprecated(
+      reason: "Sunset Date: 01/05/22 Details: https://calmisland.atlassian.net/l/c/hKbcoRyx"
+    )
+  merge(other_id: String): User
+  addOrganization(organization_id: ID!): OrganizationMembership
+    @deprecated(
+      reason: "Sunset Date: 01/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/UserService/pages/2462417870/"
+    )
+  addSchool(school_id: ID!): SchoolMembership
+  setPrimary(_: Int): Boolean
+}
+
+type UserPermissionStatus {
+  permissionId: String!
+  allowed: Boolean!
+}
+
+type MyUser {
+  node: UserConnectionNode
+
+  """
+  Finds user profiles matching the username/email/phone provided in the token.
+  Properties are checked in the following order of precedence: username>email>phone.
+  e.g. email & phone won't be checked if username is provided.
+  """
+  profiles: [UserConnectionNode!]!
+  hasPermissionsInOrganization(
+    organizationId: ID!
+    permissionIds: [String!]!
+  ): [UserPermissionStatus!]!
+  hasPermissionsInSchool(
+    schoolId: ID!
+    permissionIds: [String!]!
+  ): [UserPermissionStatus!]!
+
+  """
+  Returns a paginated response of the permissions the user has in a given organization.
+  """
+  permissionsInOrganization(
+    organizationId: ID!
+    direction: ConnectionDirection
+    count: PageSize
+    cursor: String
+    sort: PermissionSortInput
+    filter: PermissionFilter
+  ): PermissionsConnectionResponse
+
+  """
+  Returns a paginated response of the permissions the user has in a given school.
+  """
+  permissionsInSchool(
+    schoolId: ID!
+    direction: ConnectionDirection
+    count: PageSize
+    cursor: String
+    sort: PermissionSortInput
+    filter: PermissionFilter
+  ): PermissionsConnectionResponse
+
+  """
+  'operator' default = 'AND'
+  """
+  organizationsWithPermissions(
+    permissionIds: [String!]!
+    operator: LogicalOperator
+    direction: ConnectionDirection
+    count: PageSize
+    cursor: String
+    sort: OrganizationSortInput
+    filter: OrganizationFilter
+  ): OrganizationsConnectionResponse
+
+  """
+  'operator' default = 'AND'
+  """
+  schoolsWithPermissions(
+    permissionIds: [String!]!
+    operator: LogicalOperator
+    direction: ConnectionDirection
+    count: PageSize
+    cursor: String
+    sort: SchoolSortInput
+    filter: SchoolFilter
+  ): SchoolsConnectionResponse
+}
+
+type SchoolMembershipsConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [SchoolMembershipsConnectionEdge]
+}
+
+type SchoolMembershipsConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: SchoolMembershipConnectionNode
+}
+
+input SchoolMembershipFilter {
+  userId: UUIDFilter
+  schoolId: UUIDFilter
+  status: StringFilter
+  roleId: UUIDFilter
+  AND: [SchoolMembershipFilter]
+  OR: [SchoolMembershipFilter]
+}
+
+input SchoolMembershipSortInput {
+  field: SchoolMembershipSortBy!
+  order: SortOrder!
+}
+
+enum SchoolMembershipSortBy {
+  userId
+  schoolId
+}
+
+type SchoolMembershipConnectionNode {
+  userId: String!
+  schoolId: String!
+  status: Status!
+  joinTimestamp: Date
+  user: UserConnectionNode
+  school: SchoolConnectionNode
+  rolesConnection(
+    count: PageSize
+    cursor: String
+    filter: RoleFilter
+    sort: RoleSortInput
+    direction: ConnectionDirection
+  ): RolesConnectionResponse
+}
+
+type OrganizationMembershipsConnectionResponse implements iConnectionResponse {
+  totalCount: Int
+  pageInfo: ConnectionPageInfo
+  edges: [OrganizationMembershipsConnectionEdge]
+}
+
+type OrganizationMembershipsConnectionEdge implements iConnectionEdge {
+  cursor: String
+  node: OrganizationMembershipConnectionNode
+}
+
+input OrganizationMembershipFilter {
+  shortCode: StringFilter
+  organizationId: UUIDFilter
+  userId: UUIDFilter
+  status: StringFilter
+  roleId: UUIDFilter
+  AND: [OrganizationMembershipFilter]
+  OR: [OrganizationMembershipFilter]
+}
+
+input OrganizationMembershipSortInput {
+  field: OrganizationMembershipSortBy!
+  order: SortOrder!
+}
+
+enum OrganizationMembershipSortBy {
+  userId
+  organizationId
+}
+
+type OrganizationMembershipConnectionNode {
+  userId: String!
+  organizationId: String!
+  status: Status!
+  shortCode: String
+  joinTimestamp: Date
+  user: UserConnectionNode
+  organization: OrganizationConnectionNode
+  rolesConnection(
+    count: PageSize
+    cursor: String
+    filter: RoleFilter
+    sort: RoleSortInput
+    direction: ConnectionDirection
+  ): RolesConnectionResponse
+}
+
+enum AgeRangeUnit {
+  year
+  month
+}
+
+enum Status {
+  active
+  inactive
+  deleted
+}
+
+scalar Upload
+
+scalar Date
+
+"""
+The `UUID` scalar type represents UUID values as specified by [RFC 4122](https://tools.ietf.org/html/rfc4122).
+"""
+scalar UUID
+
+type MyType {
+  myField: UUID
+}
+
+"""
+The number of results to return per page
+"""
+scalar PageSize
+
+type Mutation {
+  age_range(id: ID!): AgeRange
+  uploadAgeRangesFromCSV(file: Upload!): File
+  category(id: ID!): Category
+    @deprecated(
+      reason: "Sunset Date: 24/02/2022 Details: [https://calmisland.atlassian.net/l/c/RKcPTt1p, https://calmisland.atlassian.net/l/c/mTni58mA]"
+    )
+  uploadCategoriesFromCSV(file: Upload!): File
+  createCategories(input: [CreateCategoryInput!]!): CategoriesMutationResult
+  deleteCategories(input: [DeleteCategoryInput!]!): CategoriesMutationResult
+  updateCategories(input: [UpdateCategoryInput!]!): CategoriesMutationResult
+  addSubcategoriesToCategories(
+    input: [AddSubcategoriesToCategoryInput!]!
+  ): CategoriesMutationResult
+  removeSubcategoriesFromCategories(
+    input: [RemoveSubcategoriesFromCategoryInput!]!
+  ): CategoriesMutationResult
+  classes: [Class]
+  class(class_id: ID!): Class
+  uploadClassesFromCSV(file: Upload!): File
+  createClasses(input: [CreateClassInput!]!): ClassesMutationResult
+  updateClasses(input: [UpdateClassInput!]!): ClassesMutationResult
+  deleteClasses(input: [DeleteClassInput!]!): ClassesMutationResult
+  addProgramsToClasses(
+    input: [AddProgramsToClassInput!]!
+  ): ClassesMutationResult
+  removeProgramsFromClasses(
+    input: [RemoveProgramsFromClassInput!]!
+  ): ClassesMutationResult
+  addStudentsToClasses(
+    input: [AddStudentsToClassInput!]!
+  ): ClassesMutationResult
+  removeStudentsFromClasses(
+    input: [RemoveStudentsFromClassInput!]!
+  ): ClassesMutationResult
+  addTeachersToClasses(
+    input: [AddTeachersToClassInput!]!
+  ): ClassesMutationResult
+  removeTeachersFromClasses(
+    input: [RemoveTeachersFromClassInput!]!
+  ): ClassesMutationResult
+  grade(id: ID!): Grade
+  uploadGradesFromCSV(file: Upload!): File
+  renameDuplicateGrades: Boolean
+
+  """
+  Creates a new organization, and makes the user its
+  owner as well as a member of the organization.
+  """
+  createOrganizations(
+    input: [CreateOrganizationInput!]!
+  ): OrganizationsMutationResult
+  addUsersToOrganizations(
+    input: [AddUsersToOrganizationInput!]!
+  ): OrganizationsMutationResult
+
+  """
+  Inactivates users in an organization. Their membership data
+  will be maintained and can be restored with reactivateUsersFromOrganizations.
+  """
+  removeUsersFromOrganizations(
+    input: [RemoveUsersFromOrganizationInput!]!
+  ): OrganizationsMutationResult
+
+  """
+  Reactivates users for an organization who were inactivated via removeUsersFromOrganizations
+  They will have the same roles they had at the time of removal.
+  """
+  reactivateUsersFromOrganizations(
+    input: [ReactivateUsersFromOrganizationInput!]!
+  ): OrganizationsMutationResult
+
+  """
+  Deletes users from an organization. They will
+  be treated as if they had never been part of the organizaton.
+  Membership data may not be maintained.
+  """
+  deleteUsersFromOrganizations(
+    input: [DeleteUsersFromOrganizationInput!]!
+  ): OrganizationsMutationResult
+  organization(
+    organization_id: ID!
+    organization_name: String
+    address1: String
+    address2: String
+    phone: String
+    shortCode: String
+  ): Organization
+  uploadOrganizationsFromCSV(file: Upload!): File
+  renameDuplicateOrganizations: Boolean
+  setBranding(
+    organizationId: ID!
+    iconImage: Upload
+    primaryColor: HexColor
+  ): Branding
+  deleteBrandingImage(organizationId: ID!, type: BrandingImageTag!): Boolean
+  deleteBrandingColor(organizationId: ID!): Boolean
+  program(id: ID!): Program
+  uploadProgramsFromCSV(file: Upload!): File
+  createPrograms(input: [CreateProgramInput!]!): ProgramsMutationResult
+  updatePrograms(input: [UpdateProgramInput!]!): ProgramsMutationResult
+  deletePrograms(input: [DeleteProgramInput!]!): ProgramsMutationResult
+  role(role_id: ID!): Role
+  roles: [Role]
+  uploadRolesFromCSV(file: Upload!): File
+  replaceRole(old_role_id: ID!, new_role_id: ID!, organization_id: ID!): Role
+  createRoles(input: [CreateRoleInput!]!): RolesMutationResult
+  updateRoles(input: [UpdateRoleInput!]!): RolesMutationResult
+  deleteRoles(input: [DeleteRoleInput!]!): RolesMutationResult
+  school(school_id: ID!): School
+  uploadSchoolsFromCSV(file: Upload!): File
+  createSchools(input: [CreateSchoolInput!]!): SchoolsMutationResult
+  updateSchools(input: [UpdateSchoolInput!]!): SchoolsMutationResult
+  deleteSchools(input: [DeleteSchoolInput!]!): SchoolsMutationResult
+  addUsersToSchools(input: [AddUsersToSchoolInput!]!): SchoolsMutationResult
+
+  """
+  Inactivates users in a School. Their membership data
+  will be maintained and can be restored with reactivateUsersFromSchools.
+  """
+  removeUsersFromSchools(
+    input: [RemoveUsersFromSchoolInput!]!
+  ): SchoolsMutationResult
+
+  """
+  Reactivates users in a school who were previously removed via removeUsersFromSchools.
+  They will have the same roles they had at the time of removal.
+  """
+  reactivateUsersFromSchools(
+    input: [ReactivateUsersFromSchoolInput!]!
+  ): SchoolsMutationResult
+
+  """
+  Deletes users from a School. They will
+  be treated as if they had never been part of the school.
+  Membership data may not be maintained.
+  """
+  deleteUsersFromSchools(
+    input: [DeleteUsersFromSchoolInput!]!
+  ): SchoolsMutationResult
+  addClassesToSchools(input: [AddClassesToSchoolInput!]!): SchoolsMutationResult
+  addProgramsToSchools(
+    input: [AddProgramsToSchoolInput!]!
+  ): SchoolsMutationResult
+  removeProgramsFromSchools(
+    input: [RemoveProgramsFromSchoolInput!]!
+  ): SchoolsMutationResult
+  removeClassesFromSchools(
+    input: [RemoveClassesFromSchoolInput!]!
+  ): SchoolsMutationResult
+  subcategory(id: ID!): Subcategory
+    @deprecated(
+      reason: "Sunset Date: 22/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2457174175"
+    )
+  uploadSubCategoriesFromCSV(file: Upload!): File
+  deleteSubcategories(
+    input: [DeleteSubcategoryInput!]!
+  ): SubcategoriesMutationResult
+  updateSubcategories(
+    input: [UpdateSubcategoryInput!]!
+  ): SubcategoriesMutationResult
+  createSubcategories(
+    input: [CreateSubcategoryInput!]!
+  ): SubcategoriesMutationResult
+  subject(id: ID!): Subject
+  uploadSubjectsFromCSV(file: Upload!): File
+  renameDuplicateSubjects: Boolean
+  createSubjects(input: [CreateSubjectInput!]!): SubjectsMutationResult
+  updateSubjects(input: [UpdateSubjectInput!]!): SubjectsMutationResult
+  deleteSubjects(input: [DeleteSubjectInput!]!): SubjectsMutationResult
+  addOrganizationRolesToUsers(
+    input: [AddOrganizationRolesToUserInput!]!
+  ): UsersMutationResult
+  removeOrganizationRolesFromUsers(
+    input: [RemoveOrganizationRolesFromUserInput!]!
+  ): UsersMutationResult
+  addSchoolRolesToUsers(
+    input: [AddSchoolRolesToUserInput!]!
+  ): UsersMutationResult
+  removeSchoolRolesFromUsers(
+    input: [RemoveSchoolRolesFromUserInput!]!
+  ): UsersMutationResult
+  me: User
+  user(
+    user_id: ID!
+    given_name: String
+    family_name: String
+    email: String
+    phone: String
+    avatar: String
+    date_of_birth: String
+    username: String
+    alternate_email: String
+    alternate_phone: String
+    gender: String
+  ): User
+  newUser(
+    given_name: String
+    family_name: String
+    email: String
+    phone: String
+    avatar: String
+    date_of_birth: String
+    username: String
+    gender: String
+  ): User @deprecated(reason: "Use the inviteUser() method")
+  switch_user(user_id: ID!): User @deprecated(reason: "Moved to auth service")
+  uploadUsersFromCSV(file: Upload!, isDryRun: Boolean): File
+  createUsers(input: [CreateUserInput!]!): UsersMutationResult
+  updateUsers(input: [UpdateUserInput!]!): UsersMutationResult
+}
+
+type Query {
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
+  age_range(id: ID!): AgeRange
+    @deprecated(
+      reason: "Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554"
+    )
+  ageRangeNode(id: ID!): AgeRangeConnectionNode
+  ageRangesConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: AgeRangeFilter
+    sort: AgeRangeSortInput
+  ): AgeRangesConnectionResponse
+  category(id: ID!): Category
+    @deprecated(
+      reason: "Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554"
+    )
+  categoryNode(id: ID!): CategoryConnectionNode
+  categoriesConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: CategoryFilter
+    sort: CategorySortInput
+  ): CategoriesConnectionResponse
+  classes: [Class] @deprecated(reason: "Use 'classesConnection'.")
+  class(class_id: ID!): Class
+    @deprecated(
+      reason: "Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554"
+    )
+  classNode(id: ID!): ClassConnectionNode
+  classesConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: ClassFilter
+    sort: ClassSortInput
+  ): ClassesConnectionResponse
+  queryComplexity: Complexity
+  grade(id: ID!): Grade
+    @deprecated(
+      reason: "Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554"
+    )
+  gradesConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: GradeFilter
+    sort: GradeSortInput
+  ): GradesConnectionResponse
+  gradeNode(id: ID!): GradeConnectionNode
+  organization(organization_id: ID!): Organization
+    @deprecated(
+      reason: "Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554"
+    )
+  organizations(organization_ids: [ID!]): [Organization]
+    @deprecated(reason: "Use 'organizationsConnection'.")
+  organizationsConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: OrganizationFilter
+    sort: OrganizationSortInput
+  ): OrganizationsConnectionResponse
+  organizationNode(id: ID!): OrganizationConnectionNode
+  permissionsConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    sort: PermissionSortInput
+    filter: PermissionFilter
+  ): PermissionsConnectionResponse
+  permissionNode(id: ID!): PermissionsConnectionNode
+  program(id: ID!): Program
+    @deprecated(
+      reason: "Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554"
+    )
+  programNode(id: ID!): ProgramConnectionNode
+  programsConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: ProgramFilter
+    sort: ProgramSortInput
+  ): ProgramsConnectionResponse
+  role(role_id: ID!): Role
+    @deprecated(
+      reason: "Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554"
+    )
+  roles: [Role]
+  rolesConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: RoleFilter
+    sort: RoleSortInput
+  ): RolesConnectionResponse
+  roleNode(id: ID!): RoleConnectionNode
+  school(school_id: ID!): School
+    @deprecated(
+      reason: "Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554"
+    )
+  schoolNode(id: ID!): SchoolConnectionNode
+  schoolsConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: SchoolFilter
+    sort: SchoolSortInput
+  ): SchoolsConnectionResponse
+  subcategory(id: ID!): Subcategory
+    @deprecated(
+      reason: "Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554"
+    )
+  subcategoryNode(id: ID!): SubcategoryConnectionNode
+  subcategoriesConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    sort: SubcategorySortInput
+    filter: SubcategoryFilter
+  ): SubcategoriesConnectionResponse
+  subject(id: ID!): Subject
+    @deprecated(
+      reason: "Sunset Date: 09/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554"
+    )
+  subjectsConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: SubjectFilter
+    sort: SubjectSortInput
+  ): SubjectsConnectionResponse
+  subjectNode(id: ID!): SubjectConnectionNode
+  me: User
+    @deprecated(
+      reason: "Use myUser.node. Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2437513558"
+    )
+  user(user_id: ID!): User
+    @deprecated(
+      reason: "Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554"
+    )
+  userNode(id: ID!): UserConnectionNode
+  usersConnection(
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: UserFilter
+    sort: UserSortInput
+  ): UsersConnectionResponse
+  eligibleStudentsConnection(
+    classId: ID!
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: EligibleMembersFilter
+    sort: UserSortInput
+  ): UsersConnectionResponse
+  eligibleTeachersConnection(
+    classId: ID!
+    direction: ConnectionDirection!
+    directionArgs: ConnectionsDirectionArgs
+    filter: EligibleMembersFilter
+    sort: UserSortInput
+  ): UsersConnectionResponse
+  users: [User] @deprecated(reason: "Unused")
+  my_users: [User!]
+    @deprecated(
+      reason: "Use myUser.profiles. Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2437513558"
+    )
+  myUser: MyUser
+}
+
+union _Entity = UserConnectionNode | User
+
+scalar _Any
+
+type _Service {
+  """
+  The sdl representing the federated service capabilities. Includes federation directives, removes federation types, and includes rest of full schema after schema directives have been applied
+  """
+  sdl: String
+}

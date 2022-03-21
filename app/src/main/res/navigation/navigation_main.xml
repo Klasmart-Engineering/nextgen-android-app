@@ -98,6 +98,6 @@
 
     <fragment
         android:id="@+id/profile_fragment"
-        android:name="uk.co.kidsloop.features.profile.ProfileFragment"
+        android:name="uk.co.kidsloop.features.profile.ui.ProfileFragment"
         tools:layout="@layout/fragment_profile">
     </fragment></navigation>

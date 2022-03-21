@@ -44,4 +44,23 @@
     <string name="other_students_number_label">%d other</string>
     <string name="others_students_number_label">%d others</string>
     <string name="welcome_to_kidsloop">Welcome to KidsLoop</string>
+    <string name="query_profiles">
+         query profiles {
+            myUser {
+                profiles {
+                ..ProfileFragment
+                _typename
+                }
+                _typename
+            }
+        }
+
+        fragment ProfileFragment on UserConnectionNode {
+        id
+        givenName
+        familyName
+        dateOfBirth
+        _typename
+        }
+    </string>
 </resources>
