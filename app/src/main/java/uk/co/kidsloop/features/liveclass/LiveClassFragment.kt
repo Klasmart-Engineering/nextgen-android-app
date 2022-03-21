@@ -291,7 +291,7 @@ class LiveClassFragment :
         binding.toggleMicrophoneBtn.isActivated = false
         binding.toggleMicrophoneBtn.isChecked = false
 
-        studentsFeedAdapter.updateMicAndCameraStatus(MicStatus.MUTED, CameraStatus.OFF, 0)
+        studentsFeedAdapter.updateMicAndCameraStatus(MicStatus.DISABLED, CameraStatus.OFF, 0)
         binding.teacherVideoFeedBackground.visible()
         binding.leavingStateTextview.visible()
         binding.showingByeImageView.visible()
