@@ -34,6 +34,11 @@ class LocalViewHolder(private val binding: LayoutFeedLocalBinding) : GenericFeed
             MicStatus.INITIAL -> binding.localVideoFeed.showMicMuted()
         }
 
+        when (item.isOrientationDefault) {
+            true -> { binding.localVideoFeed.updateLocalMediaViewOrientationDefault() }
+            false -> { binding.localVideoFeed.updateLocalMediaViewOrientationReverse() }
+        }
+
         videoFeedContainer.addLocalMediaView(videoFeed)
     }
 

@@ -279,6 +279,9 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
     }
 
     fun updateMediaViewOrientationDefault(position: Int) {
+        if(position <= currentList().size)
+            return
+
         val element = (currentList()[position]).copy()
         element.isOrientationDefault = true
 
@@ -287,6 +290,9 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
     }
 
     fun updateMediaViewOrientationReverse(position: Int) {
+        if(position <= currentList().size)
+            return
+
         val element = (currentList()[position]).copy()
         element.isOrientationDefault = false
 
