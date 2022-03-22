@@ -279,6 +279,7 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
     }
 
     fun updateMediaViewOrientationDefault(position: Int) {
+        // TODO: this fixes the crash when the function is called before the RecyclerView is laid out, not the bug in itself
         if(position <= currentList().size)
             return
 
@@ -290,6 +291,7 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
     }
 
     fun updateMediaViewOrientationReverse(position: Int) {
+        // TODO: this fixes the crash when the function is called before the RecyclerView is laid out, not the bug in itself
         if(position <= currentList().size)
             return
 
