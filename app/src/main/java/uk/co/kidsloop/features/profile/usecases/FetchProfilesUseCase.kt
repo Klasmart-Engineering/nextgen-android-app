@@ -14,7 +14,7 @@ class FetchProfilesUseCase @Inject constructor(
     private val authManager: AuthenticationManager,
     private val sharedPrefsWrapper: SharedPrefsWrapper,
     private val tokenTransferApi: TokenTransferApi,
-    private val appoloClient: ApolloClient
+    private val apolloClient: ApolloClient
 ) {
 
     sealed class ProfilesResult {
@@ -34,7 +34,7 @@ class FetchProfilesUseCase @Inject constructor(
                     if (!TextUtils.isEmpty(accessToken)) {
                         val accessToken2 = accessToken!!.split(";")[0]
                         sharedPrefsWrapper.saveAccessToken2(accessToken2)
-                        val profiles = appoloClient.query(ProfilesQuery()).execute().data
+                        val profiles = apolloClient.query(ProfilesQuery()).execute().data
                         profiles?.myUser?.let {
                             return@withContext ProfilesResult.Success(it)
                         }
