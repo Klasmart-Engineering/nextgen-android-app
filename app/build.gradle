@@ -157,6 +157,8 @@ dependencies {
     implementation 'com.apollographql.apollo3:apollo-api:3.0.0'
     implementation 'com.apollographql.apollo3:apollo-runtime:3.0.0'
 
+    implementation "com.airbnb.android:lottie:5.0.3"
+
     //Microsoft dependencies
     if (findProject(':msal') != null) {
         // For developer team only.
