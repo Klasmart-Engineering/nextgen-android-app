@@ -1,70 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/light_gray">
 
     <TextView
         android:id="@+id/title_textview"
+        style="@style/LeaveSubTitleLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:background="@drawable/bg_top_view_profiles"
-        android:paddingBottom="54dp"
-        android:paddingTop="54dp"
-        style="@style/LeaveSubTitleLabel"
         android:gravity="center"
-        android:text="@string/welcome_to_kidsloop"/>
+        android:paddingTop="54dp"
+        android:paddingBottom="54dp"
+        android:text="@string/welcome_to_kidsloop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/sign_out_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/ic_sign_out"
-        android:backgroundTint="@color/transparent"
+        android:layout_marginTop="@dimen/space_20"
         android:layout_marginEnd="@dimen/space_20"
-        android:layout_marginTop="@dimen/space_20"/>
+        android:backgroundTint="@color/transparent"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_sign_out"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/loading_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:lottie_rawRes="@raw/loading_animation"
         app:lottie_autoPlay="true"
-        app:lottie_loop="true"/>
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading_animation" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/title_textview"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/ic_progress_bar_dummy"
+        android:layout_marginEnd="28dp"
         android:layout_marginBottom="@dimen/space_10"
-        android:layout_marginEnd="28dp"/>
+        android:contentDescription="@null"
+        android:src="@drawable/ic_progress_bar_dummy"
+        app:layout_constraintBottom_toBottomOf="@id/title_textview"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/profiles_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/title_textview"
-        android:layout_marginTop="33dp"
         android:layout_marginHorizontal="@dimen/space_25"
+        android:layout_marginTop="33dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/title_textview" />
 
     <ImageView
         android:id="@+id/owl_imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_100"
+        android:contentDescription="@null"
         android:src="@drawable/ic_owl"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="@dimen/space_100"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
