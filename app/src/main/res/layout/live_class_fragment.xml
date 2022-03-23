@@ -64,8 +64,8 @@
             app:cardBackgroundColor="@color/dark_blue"
             app:cardCornerRadius="@dimen/space_21"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_weight="0.85"
             app:layout_constraintEnd_toStartOf="@+id/student_feeds_recyclerview"
+            app:layout_constraintHorizontal_weight="0.85"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -134,16 +134,6 @@
                 android:visibility="gone" />
         </androidx.cardview.widget.CardView>
 
-<!--        <uk.co.kidsloop.features.liveclass.localmedia.LocalMediaCustomContainer-->
-<!--            android:id="@+id/local_media_feed"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginEnd="@dimen/space_8"-->
-<!--            app:cardCornerRadius="@dimen/space_12"-->
-<!--            android:visibility="gone"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/more_btn"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/student_feeds_recyclerview"
             android:layout_width="0dp"
@@ -151,10 +141,10 @@
             android:layout_marginEnd="@dimen/space_8"
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never"
-            app:layout_constraintHorizontal_weight="0.2"
             app:layout_constraintBottom_toTopOf="@id/others_label"
-            app:layout_constraintStart_toEndOf="@id/teacher_video_feed"
             app:layout_constraintEnd_toStartOf="@+id/more_btn"
+            app:layout_constraintHorizontal_weight="0.2"
+            app:layout_constraintStart_toEndOf="@id/teacher_video_feed"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -162,12 +152,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/rooney_sans_bold"
-            android:textSize="17sp"
             android:textColor="@color/soft_blue"
+            android:textSize="17sp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/student_feeds_recyclerview"
-            app:layout_constraintStart_toStartOf="@id/student_feeds_recyclerview"
-            android:visibility="gone"/>
+            app:layout_constraintStart_toStartOf="@id/student_feeds_recyclerview" />
 
         <ProgressBar
             android:id="@+id/loading_indication"
@@ -186,6 +176,54 @@
             android:layout_height="wrap_content"
             android:visibility="invisible"
             app:constraint_referenced_ids="student_feeds_recyclerview, teacher_video_feed, more_btn, raise_hand_btn" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/no_internet_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/overlay"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/space_15"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/more_btn_no_internet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_round_white_ripple"
+            android:clickable="true"
+            android:contentDescription="@null"
+            android:focusable="true"
+            android:src="@drawable/ic_more_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/no_internet_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_no_internet_connection"
+            app:layout_constraintBottom_toTopOf="@id/no_internet_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/no_internet_text"
+            style="@style/TextRooneySansBold.White"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_20"
+            android:text="@string/live_class_no_internet_connection"
+            android:textSize="22sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/no_internet_image" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <RelativeLayout

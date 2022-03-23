@@ -18,15 +18,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fm.liveswitch.* // ktlint-disable no-wildcard-imports
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.UiThreadPoster
 import uk.co.kidsloop.app.common.BaseFragment
 import uk.co.kidsloop.app.common.DialogsManager
-import uk.co.kidsloop.app.common.LeaveClassDialog
+import uk.co.kidsloop.features.liveclass.dialogs.LeaveClassDialog
 import uk.co.kidsloop.app.common.ToastHelper
 import uk.co.kidsloop.app.utils.* // ktlint-disable no-wildcard-imports
 import uk.co.kidsloop.databinding.LiveClassFragmentBinding
+import uk.co.kidsloop.features.connectivity.NetworkFetchState
 import uk.co.kidsloop.features.liveclass.enums.CameraStatus
 import uk.co.kidsloop.features.liveclass.enums.MicStatus
 import uk.co.kidsloop.features.liveclass.feeds.FeedsAdapter
@@ -76,6 +78,8 @@ class LiveClassFragment :
 
     private lateinit var studentsFeedAdapter: FeedsAdapter
     private var isMainTeacher: Boolean = false
+
+    private var shouldShowNoInternetOverlay: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,6 +143,7 @@ class LiveClassFragment :
         }
 
         setControls()
+        observe()
         observeAdapter()
 
         viewModel.classroomStateLiveData.observe(
@@ -155,6 +160,9 @@ class LiveClassFragment :
                     is LiveClassViewModel.LiveClassUiState.LiveClassStarted -> onLiveClassStarted()
                     is LiveClassViewModel.LiveClassUiState.LiveClassRestarted -> onLiveClassRestarted()
                     is LiveClassViewModel.LiveClassUiState.LiveClassEnded -> onLiveClassEnded()
+                    is LiveClassViewModel.LiveClassUiState.NetworkConnectionLost -> onConnectionLost()
+                    is LiveClassViewModel.LiveClassUiState.NetworkConnectionEstablishedWifi -> onConnectionEstablished(isWifi = true)
+                    is LiveClassViewModel.LiveClassUiState.NetworkConnectionEstablishedMobileData -> onConnectionEstablished(isWifi = false)
                 }
             }
         )
@@ -368,11 +376,18 @@ class LiveClassFragment :
         }
 
         binding.exitMenu.setOnClickListener {
-            binding.liveClassOverlay.isVisible = false
+            binding.liveClassOverlay.gone()
+            if(shouldShowNoInternetOverlay)
+                binding.noInternetOverlay.visible()
         }
 
         binding.moreBtn.setOnClickListener {
-            binding.liveClassOverlay.isVisible = true
+            binding.liveClassOverlay.visible()
+        }
+
+        binding.moreBtnNoInternet.setOnClickListener {
+            binding.liveClassOverlay.visible()
+            binding.noInternetOverlay.gone()
         }
 
         binding.toggleStudentsVideo.setOnClickListener { view ->
@@ -404,7 +419,19 @@ class LiveClassFragment :
         }
     }
 
-    private fun observeAdapter() = with(FeedsAdapter) {
+    @ExperimentalCoroutinesApi
+    private fun observe() {
+        viewModel.networkState.observe(viewLifecycleOwner,
+            Observer {
+                when(it) {
+                    NetworkFetchState.FETCHED_WIFI -> { viewModel.notifyInternetReconnection(isWifi = true) }
+                    NetworkFetchState.FETCHED_MOBILE_DATA -> { viewModel.notifyInternetReconnection(isWifi = false) }
+                    NetworkFetchState.ERROR -> { viewModel.notifyInternetDisconnection() }
+                }
+            })
+    }
+
+    private fun observeAdapter() {
         studentsFeedAdapter.itemCount.observe(
             viewLifecycleOwner,
             Observer {
@@ -678,5 +705,24 @@ class LiveClassFragment :
 
     private fun onLiveClassEnded() {
         viewModel.leaveLiveClass()
+    }
+
+    private fun onConnectionLost() {
+        binding.noInternetOverlay.visible()
+        binding.liveClassOverlay.gone()
+        shouldShowNoInternetOverlay = true
+    }
+
+    private fun onConnectionEstablished(isWifi: Boolean) {
+        when(isWifi) {
+            true -> {
+                binding.noInternetOverlay.gone()
+                shouldShowNoInternetOverlay = false
+            }
+            false -> {
+                binding.noInternetOverlay.gone()
+                shouldShowNoInternetOverlay = false
+            }
+        }
     }
 }

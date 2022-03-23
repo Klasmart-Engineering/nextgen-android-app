@@ -57,6 +57,9 @@ class LiveClassViewModel @Inject constructor(
         object LiveClassEnded : LiveClassUiState()
         object UnregisterSuccessful : LiveClassUiState()
         object UnregisterFailed : LiveClassUiState()
+        object NetworkConnectionLost : LiveClassUiState()
+        object NetworkConnectionEstablishedMobileData : LiveClassUiState()
+        object NetworkConnectionEstablishedWifi : LiveClassUiState()
     }
 
     fun joinLiveClass() {
@@ -153,6 +156,17 @@ class LiveClassViewModel @Inject constructor(
                 _classroomStateLiveData.postValue(LiveClassUiState.UnregisterFailed)
             }
         )
+    }
+
+    fun notifyInternetDisconnection() {
+        _classroomStateLiveData.postValue(LiveClassUiState.NetworkConnectionLost)
+    }
+
+    fun notifyInternetReconnection(isWifi: Boolean) {
+        when(isWifi) {
+            true -> { _classroomStateLiveData.postValue(LiveClassUiState.NetworkConnectionEstablishedWifi) }
+            false -> { _classroomStateLiveData.postValue(LiveClassUiState.NetworkConnectionEstablishedMobileData) }
+        }
     }
 
     fun openSfuDownstreamConnection(

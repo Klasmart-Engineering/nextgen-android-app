@@ -44,6 +44,7 @@
     <string name="other_students_number_label">%d other</string>
     <string name="others_students_number_label">%d others</string>
     <string name="welcome_to_kidsloop">Welcome to KidsLoop</string>
+    <string name="live_class_no_internet_connection">Oops! It looks like your internet is not connected.</string>
     <string name="query_profiles">
          query profiles {
             myUser {

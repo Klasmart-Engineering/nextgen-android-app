@@ -1,15 +1,19 @@
-package uk.co.kidsloop.app.common
+package uk.co.kidsloop.features.liveclass.dialogs
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import uk.co.kidsloop.R
 import uk.co.kidsloop.databinding.LeaveClassDialogFragmentBinding
+import uk.co.kidsloop.features.connectivity.NetworkFetchState
 
+@AndroidEntryPoint
 class LeaveClassDialog : DialogFragment() {
     companion object {
         val TAG = LeaveClassDialog::class.qualifiedName
@@ -17,6 +21,7 @@ class LeaveClassDialog : DialogFragment() {
 
     private val binding by viewBinding(LeaveClassDialogFragmentBinding::bind)
     private lateinit var timer: Timer
+    private val viewModel by viewModels<LeaveClassDialogViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,17 +38,7 @@ class LeaveClassDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setControls()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        setTimerForDialogToDismiss()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        dismissAllowingStateLoss()
-        timer.cancel()
+        observe()
     }
 
     private fun setControls() {
@@ -55,6 +50,28 @@ class LeaveClassDialog : DialogFragment() {
         binding.backBtn.setOnClickListener {
             dismiss()
         }
+    }
+
+    private fun observe() {
+        viewModel.networkState.observe(viewLifecycleOwner,
+            {
+                when (it) {
+                    NetworkFetchState.FETCHED_WIFI -> {}
+                    NetworkFetchState.FETCHED_MOBILE_DATA -> {}
+                    NetworkFetchState.ERROR -> dismiss()
+                }
+            })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setTimerForDialogToDismiss()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        dismissAllowingStateLoss()
+        timer.cancel()
     }
 
     private fun setTimerForDialogToDismiss() {
