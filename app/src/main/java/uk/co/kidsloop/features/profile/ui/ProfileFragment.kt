@@ -10,6 +10,7 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.common.BaseFragment
+import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.databinding.FragmentProfileBinding
 
 @AndroidEntryPoint
@@ -30,10 +31,19 @@ class ProfileFragment : BaseFragment(R.layout.fragment_profile) {
             viewLifecycleOwner,
             Observer {
                 if (it is ProfileViewModel.ProfilesUiState.Success) {
+                    dismissLoading()
                     profileAdapter.refresh(it.profiles)
+                    if (profileAdapter.itemCount > 1) {
+                        binding.owlImageView.gone()
+                    }
                 }
             }
         )
+    }
+
+    private fun dismissLoading() {
+        binding.loadingView.pauseAnimation()
+        binding.loadingView.gone()
     }
 
     private fun onProfileClicked() {
