@@ -38,9 +38,9 @@ class SharedPrefsWrapper(private val sharedPref: SharedPreferences) {
 
     fun getAccessToken2(): String = sharedPref.getString(ACCESS_TOKEN2, "")!!
 
-    fun saveAccessToken(accessToken: String) {
+    fun saveAccessToken1(accessToken: String) {
         sharedPref.edit().putString(ACCESS_TOKEN1, accessToken).apply()
     }
 
-    fun getAccessToken(): String = sharedPref.getString(ACCESS_TOKEN1, "")!!
+    fun getAccessToken1(): String = sharedPref.getString(ACCESS_TOKEN1, "")!!
 }

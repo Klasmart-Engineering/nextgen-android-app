@@ -24,7 +24,7 @@ class FetchProfilesUseCase @Inject constructor(
 
     suspend fun fetchProfiles(): ProfilesResult {
         return withContext(Dispatchers.IO) {
-            val authToken = authManager.getAccessToken()
+            val authToken = authManager.getAccessToken1()
             val bearerToken = "Bearer $authToken"
             if (!authToken.isNullOrEmpty()) {
                 val response = tokenTransferApi.transferToken(bearerToken)
