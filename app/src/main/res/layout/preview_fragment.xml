@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/setup_label"
+        android:id="@+id/welcome_label"
         style="@style/TitleLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -9,9 +9,9 @@ import fm.liveswitch.IAction1
 import fm.liveswitch.SfuDownstreamConnection
 import fm.liveswitch.SfuUpstreamConnection
 import fm.liveswitch.VideoStream
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.co.kidsloop.data.enums.DataChannelActionsType
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper

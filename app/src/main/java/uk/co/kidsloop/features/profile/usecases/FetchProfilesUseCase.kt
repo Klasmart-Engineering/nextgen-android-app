@@ -5,7 +5,7 @@ import com.apollographql.apollo3.ApolloClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.co.kidsloop.ProfilesQuery
-import uk.co.kidsloop.app.network.TokenTransferApi
+import uk.co.kidsloop.app.network.AuthAlphaKidsLoopApi
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.features.authentication.AuthenticationManager
 import javax.inject.Inject
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class FetchProfilesUseCase @Inject constructor(
     private val authManager: AuthenticationManager,
     private val sharedPrefsWrapper: SharedPrefsWrapper,
-    private val tokenTransferApi: TokenTransferApi,
+    private val kidsloopApi: AuthAlphaKidsLoopApi,
     private val apolloClient: ApolloClient
 ) {
 
@@ -27,7 +27,7 @@ class FetchProfilesUseCase @Inject constructor(
             val authToken = authManager.getAccessToken1()
             val bearerToken = "Bearer $authToken"
             if (!authToken.isNullOrEmpty()) {
-                val response = tokenTransferApi.transferToken(bearerToken)
+                val response = kidsloopApi.transferToken(bearerToken)
                 if (response.isSuccessful) {
                     val accessToken = response.headers().toMultimap()["set-cookie"]?.get(0)
                     val refreshToken = response.headers().toMultimap()["set-cookie"]?.get(1)

@@ -7,7 +7,7 @@ import uk.co.kidsloop.ProfilesQuery
 import uk.co.kidsloop.app.utils.getInitials
 import uk.co.kidsloop.databinding.ItemProfileBinding
 
-class ProfileAdapter(private val onProfileClicked: () -> Unit) :
+class ProfileAdapter(private val onProfileClicked: (String, String) -> Unit) :
     RecyclerView.Adapter<ProfileAdapter.ViewHolder>() {
 
     private var dataSet: List<ProfilesQuery.Profile> = emptyList()
@@ -30,7 +30,7 @@ class ProfileAdapter(private val onProfileClicked: () -> Unit) :
         holder.binding.nameTextView.text = fullName
         holder.binding.initialsTextView.text = fullName.getInitials()
         holder.itemView.setOnClickListener {
-            onProfileClicked.invoke()
+            onProfileClicked.invoke(fullName, dataSet[position].id)
         }
     }
 
