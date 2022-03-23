@@ -27,7 +27,7 @@ class ProfileAdapter(private val onProfileClicked: () -> Unit) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val fullName = dataSet[position].familyName + " " + dataSet[position].givenName
+        val fullName = dataSet[position].givenName + " " + dataSet[position].familyName
         holder.nameTextView.text = fullName
         holder.initialsTextView.text = getInitials(fullName)
         holder.itemView.setOnClickListener {
@@ -37,7 +37,12 @@ class ProfileAdapter(private val onProfileClicked: () -> Unit) :
 
     override fun getItemCount() = dataSet.size
 
+    fun sortAlphabetically(dataSet: List<ProfilesQuery.Profile>) {
+        dataSet.sortedBy { it.givenName }
+    }
+
     fun refresh(dataSet: List<ProfilesQuery.Profile>) {
+        sortAlphabetically(dataSet)
         this.dataSet = dataSet
         notifyDataSetChanged()
     }
