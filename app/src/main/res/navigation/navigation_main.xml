@@ -108,6 +108,9 @@
             <argument
                 android:name="profileName"
                 app:argType="string" />
+            <argument
+                android:name="userId"
+                app:argType="string" />
         </action>
     </fragment>
 

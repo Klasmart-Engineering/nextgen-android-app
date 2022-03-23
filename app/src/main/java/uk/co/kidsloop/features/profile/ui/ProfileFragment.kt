@@ -15,7 +15,7 @@ import uk.co.kidsloop.databinding.FragmentProfileBinding
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment(R.layout.fragment_profile) {
 
-    private val profileAdapter = ProfileAdapter { profileName -> onProfileClicked(profileName) }
+    private val profileAdapter = ProfileAdapter { profileName, id -> onProfileClicked(profileName, id) }
 
     private val binding by viewBinding(FragmentProfileBinding::bind)
 
@@ -36,7 +36,7 @@ class ProfileFragment : BaseFragment(R.layout.fragment_profile) {
         )
     }
 
-    private fun onProfileClicked(profileName: String) {
-        findNavController().navigate(ProfileFragmentDirections.profileToSchedule(profileName))
+    private fun onProfileClicked(profileName: String, userId: String) {
+        findNavController().navigate(ProfileFragmentDirections.profileToSchedule(profileName, userId))
     }
 }

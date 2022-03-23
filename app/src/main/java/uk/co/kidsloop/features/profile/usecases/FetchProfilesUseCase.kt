@@ -6,15 +6,15 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.co.kidsloop.ProfilesQuery
-import uk.co.kidsloop.app.network.TokenTransferApi
+import uk.co.kidsloop.app.network.AuthAlphaKidsLoopApi
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.features.authentication.AuthenticationManager
 
 class FetchProfilesUseCase @Inject constructor(
     private val authManager: AuthenticationManager,
     private val sharedPrefsWrapper: SharedPrefsWrapper,
-    private val tokenTransferApi: TokenTransferApi,
-    private val appoloClient: ApolloClient
+    private val kidsloopApi: AuthAlphaKidsLoopApi,
+    private val apolloClient: ApolloClient
 ) {
 
     sealed class ProfilesResult {
@@ -27,14 +27,14 @@ class FetchProfilesUseCase @Inject constructor(
             val authToken = authManager.getAccessToken()
             val bearerToken = "Bearer $authToken"
             if (!authToken.isNullOrEmpty()) {
-                val response = tokenTransferApi.transferToken(bearerToken)
+                val response = kidsloopApi.transferToken(bearerToken)
                 if (response.isSuccessful) {
                     val accessToken = response.headers().toMultimap()["set-cookie"]?.get(0)
                     val refreshToken = response.headers().toMultimap()["set-cookie"]?.get(1)
                     if (!TextUtils.isEmpty(accessToken)) {
                         val accessToken2 = accessToken!!.split(";")[0]
                         sharedPrefsWrapper.saveAccessToken2(accessToken2)
-                        val profiles = appoloClient.query(ProfilesQuery()).execute().data
+                        val profiles = apolloClient.query(ProfilesQuery()).execute().data
                         profiles?.myUser?.let {
                             return@withContext ProfilesResult.Success(it)
                         }

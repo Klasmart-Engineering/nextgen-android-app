@@ -3,10 +3,13 @@ package uk.co.kidsloop.features.schedule
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.IOException
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -16,17 +19,20 @@ import uk.co.kidsloop.app.utils.getInitials
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.databinding.FragmentScheduleBinding
-import java.io.IOException
 
 @AndroidEntryPoint
 class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
+
     private val binding by viewBinding(FragmentScheduleBinding::bind)
 
     companion object {
+
         const val MAX_CLASSES_VISIBLE: Int = 6
         const val FIVE_MIN_IN_MILLIS = (5 * 60 * 1000).toLong()
         const val PROFILE_NAME = "profileName"
     }
+
+    private val viewModel by viewModels<SchedulesViewModel>()
 
     private var profileName = ""
 
@@ -38,6 +44,13 @@ class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.schedulesLiveData.observe(
+            viewLifecycleOwner,
+            Observer {
+            }
+        )
+
         val classes: MutableList<Class> = mutableListOf()
 
         try {

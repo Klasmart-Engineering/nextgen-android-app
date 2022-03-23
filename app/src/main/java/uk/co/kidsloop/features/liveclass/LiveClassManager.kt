@@ -21,7 +21,7 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
 
     private var upstreamConnection: SfuUpstreamConnection? = null
 
-    // Data Channels & Streams
+    // uk.co.kidsloop.features.schedule.network.response.Data Channels & Streams
     // Upstream
     private var upstreamDataChannel: DataChannel? = null
     private var upstreamDataStream: DataStream? = null
@@ -61,7 +61,7 @@ class LiveClassManager @Inject constructor(private val moshi: Moshi) {
         return client
     }
 
-    // For the Downstreams, it needs to be an unique DataChannel and Data Stream for every connection,
+    // For the Downstreams, it needs to be an unique DataChannel and uk.co.kidsloop.features.schedule.network.response.Data Stream for every connection,
     // so we will instantiate each one when we will open the DownstreamConnection.
     fun getNewDownstreamDataStream(): DataStream {
         val dataChannel = DataChannel("testDataChannel")
