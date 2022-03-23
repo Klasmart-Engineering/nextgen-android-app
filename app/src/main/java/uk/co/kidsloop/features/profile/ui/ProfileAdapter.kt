@@ -38,8 +38,7 @@ class ProfileAdapter(private val onProfileClicked: () -> Unit) :
     override fun getItemCount() = dataSet.size
 
     fun refresh(dataSet: List<ProfilesQuery.Profile>) {
-        val sortedData = dataSet.sortedBy { it.givenName }
-        this.dataSet = sortedData
+        this.dataSet = dataSet.sortedBy { it.givenName }
         notifyDataSetChanged()
     }
 }
