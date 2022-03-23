@@ -87,10 +87,10 @@ fun getInitials(string: String): String {
     return initials
 }
 
-fun convertTimestampConsideringTimeZone(time: Long, pattern: String): String {
+fun convertTimestampConsideringTimeZone(time: Int, pattern: String): String {
     val cal: Calendar = Calendar.getInstance()
     val tz = TimeZone.getDefault()
-    cal.timeInMillis = time * 1000
+    cal.timeInMillis = (time * 1000).toLong()
     cal.add(Calendar.MILLISECOND, tz.getOffset(cal.timeInMillis))
     val dateFormat: DateFormat = SimpleDateFormat(pattern)
     val currentTimeZone = cal.time as Date

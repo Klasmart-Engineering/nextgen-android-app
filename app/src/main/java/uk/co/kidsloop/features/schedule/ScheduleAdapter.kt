@@ -12,13 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.utils.clickable
 import uk.co.kidsloop.app.utils.convertTimestampConsideringTimeZone
-import uk.co.kidsloop.app.utils.getInitials
 import uk.co.kidsloop.app.utils.visible
+import uk.co.kidsloop.features.schedule.usecases.DataEntity
 
 class ScheduleAdapter(
-    private val onClassClicked: () -> Unit,
-    private val dataSet: Array<Class>
+    private val onClassClicked: () -> Unit
 ) : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
+
+    private var dataSet: List<DataEntity> = emptyList()
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemClass: ConstraintLayout = itemView.findViewById(R.id.item_class)
@@ -39,7 +40,7 @@ class ScheduleAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        when (dataSet[position].classStatus) {
+        when (dataSet[position].status) {
             "Started" -> {
                 viewHolder.classStatus.setBackgroundResource(R.drawable.ic_class_live)
                 viewHolder.joinClassBtn.visible()
@@ -54,9 +55,9 @@ class ScheduleAdapter(
                 viewHolder.itemClass.setBackgroundResource(R.drawable.rounded_gray_corners)
             }
         }
-        viewHolder.className.text = dataSet[position].classTitle
-        viewHolder.teacherName.text = dataSet[position].teacherName
-        viewHolder.teacherInitials.text = getInitials(dataSet[position].teacherName)
+        viewHolder.className.text = dataSet[position].title
+        // viewHolder.teacherName.text = dataSet[position].teacherName
+        // viewHolder.teacherInitials.text = getInitials(dataSet[position].teacherName)
         val startAt = convertTimestampConsideringTimeZone(dataSet[position].startAt, "hh:mm")
         val endAt = convertTimestampConsideringTimeZone(dataSet[position].endAt, "hh:mma")
 
@@ -69,4 +70,12 @@ class ScheduleAdapter(
     }
 
     override fun getItemCount() = dataSet.size
+
+    fun refresh(dataSet: List<DataEntity>) {
+        val sortedData = dataSet
+            .sortedBy { it.startAt }
+            .take(ScheduleFragment.MAX_CLASSES_VISIBLE)
+        this.dataSet = sortedData
+        notifyDataSetChanged()
+    }
 }

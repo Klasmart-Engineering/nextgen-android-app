@@ -6,10 +6,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.co.kidsloop.features.schedule.usecases.DataEntity
 import uk.co.kidsloop.features.schedule.usecases.FetchScheduleUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class SchedulesViewModel @Inject constructor(
@@ -17,8 +17,8 @@ class SchedulesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private var _schedulesLiveData = MutableLiveData<SchedulesViewModel.SchedulesUiState>()
-    val schedulesLiveData: LiveData<SchedulesViewModel.SchedulesUiState> get() = _schedulesLiveData
+    private var _schedulesLiveData = MutableLiveData<SchedulesUiState>()
+    val schedulesLiveData: LiveData<SchedulesUiState> get() = _schedulesLiveData
 
     private val userId = savedStateHandle.get<String>("userId")
 
@@ -30,10 +30,13 @@ class SchedulesViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             if (userId != null) {
-                val scheduleResult = scheduleUseCase.fetchSchedule(userId)
-                when (scheduleResult) {
-                    is FetchScheduleUseCase.ScheduleResult.Success -> _schedulesLiveData.value = SchedulesUiState.Success(scheduleResult.entity.data)
-                    is FetchScheduleUseCase.ScheduleResult.Failure -> _schedulesLiveData.value = SchedulesUiState.Failure
+                when (val scheduleResult = scheduleUseCase.fetchSchedule(userId)) {
+                    is FetchScheduleUseCase.ScheduleResult.Success ->
+                        _schedulesLiveData.value =
+                            SchedulesUiState.Success(scheduleResult.entity.data)
+                    is FetchScheduleUseCase.ScheduleResult.Failure ->
+                        _schedulesLiveData.value =
+                            SchedulesUiState.Failure
                 }
             }
         }

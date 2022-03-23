@@ -67,7 +67,7 @@
         android:drawablePadding="@dimen/space_12"
         android:gravity="center"
         android:text="@string/there_are_no_live_classes_scheduled_please_refresh"
-        android:visibility="gone"
+        android:visibility="visible"
         app:drawableTopCompat="@drawable/ic_no_classes_scheduled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
