@@ -67,11 +67,19 @@
         android:drawablePadding="@dimen/space_12"
         android:gravity="center"
         android:text="@string/there_are_no_live_classes_scheduled_please_refresh"
-        android:visibility="visible"
+        android:visibility="gone"
         app:drawableTopCompat="@drawable/ic_no_classes_scheduled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/owl_loading_landscape_animation" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/classes_recyclerView"

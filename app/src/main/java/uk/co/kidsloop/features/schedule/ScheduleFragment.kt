@@ -52,6 +52,7 @@ class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
             viewLifecycleOwner
         ) {
             if (it is SchedulesViewModel.SchedulesUiState.Success) {
+                dismissLoading()
                 if (it.scheduleEntity.isEmpty()) {
                     binding.noClassTextview.visible()
                 } else {
@@ -62,6 +63,11 @@ class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
         }
         binding.initials.text = profileName.getInitials()
         binding.welcomeLabel.text = getString(R.string.welcome_comma_first_name_of_user, profileName.split(" ")[0])
+    }
+
+    private fun dismissLoading() {
+        binding.loadingView.pauseAnimation()
+        binding.loadingView.gone()
     }
 
     private fun onClassClicked() {
