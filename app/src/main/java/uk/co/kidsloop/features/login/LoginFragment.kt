@@ -42,7 +42,7 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.accessTokenTextview.text = authManager.getAccessToken()
+        binding.accessTokenTextview.text = authManager.getAccessToken1()
 
         if (sharedPrefsWrapper.getChannelID() != CHANNEL_ID) {
             binding.channelID.setText(sharedPrefsWrapper.getChannelID())

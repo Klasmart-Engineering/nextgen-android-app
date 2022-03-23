@@ -7,8 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
-
+import java.util.* // ktlint-disable no-wildcard-imports
 /**
  *  Created by paulbisioc on 07.01.2022
  */
@@ -79,14 +78,6 @@ fun View?.unclickable() {
 // String functions
 fun emptyString(): String = ""
 
-fun getInitials(string: String): String {
-    var initials = ""
-    for (s in string.split(" ")) {
-        initials += s[0]
-    }
-    return initials
-}
-
 fun convertTimestampConsideringTimeZone(time: Int, pattern: String): String {
     val cal: Calendar = Calendar.getInstance()
     val tz = TimeZone.getDefault()
@@ -95,4 +86,8 @@ fun convertTimestampConsideringTimeZone(time: Int, pattern: String): String {
     val dateFormat: DateFormat = SimpleDateFormat(pattern)
     val currentTimeZone = cal.time as Date
     return dateFormat.format(currentTimeZone)
+}
+
+fun getCurrentTimeInMillis(): Long {
+    return System.currentTimeMillis() / 1000
 }

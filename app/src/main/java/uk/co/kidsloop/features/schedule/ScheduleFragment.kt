@@ -8,6 +8,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import uk.co.kidsloop.app.utils.getInitials
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.common.BaseFragment
 import uk.co.kidsloop.app.utils.getInitials
@@ -59,7 +60,7 @@ class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
                 scheduleAdapter.refresh(it.scheduleEntity)
             }
         }
-        binding.initials.text = getInitials(profileName)
+        binding.initials.text = profileName.getInitials()
         binding.welcomeLabel.text = getString(R.string.welcome_comma_first_name_of_user, profileName.split(" ")[0])
     }
 

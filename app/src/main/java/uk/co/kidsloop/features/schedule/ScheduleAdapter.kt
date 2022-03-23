@@ -73,6 +73,7 @@ class ScheduleAdapter(
 
     fun refresh(dataSet: List<DataEntity>) {
         val sortedData = dataSet
+            .filter { it.status != "Closed" }
             .sortedBy { it.startAt }
             .take(ScheduleFragment.MAX_CLASSES_VISIBLE)
         this.dataSet = sortedData

@@ -2,13 +2,13 @@ package uk.co.kidsloop.features.profile.usecases
 
 import android.text.TextUtils
 import com.apollographql.apollo3.ApolloClient
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.co.kidsloop.ProfilesQuery
 import uk.co.kidsloop.app.network.AuthAlphaKidsLoopApi
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
 import uk.co.kidsloop.features.authentication.AuthenticationManager
+import javax.inject.Inject
 
 class FetchProfilesUseCase @Inject constructor(
     private val authManager: AuthenticationManager,
@@ -24,7 +24,7 @@ class FetchProfilesUseCase @Inject constructor(
 
     suspend fun fetchProfiles(): ProfilesResult {
         return withContext(Dispatchers.IO) {
-            val authToken = authManager.getAccessToken()
+            val authToken = authManager.getAccessToken1()
             val bearerToken = "Bearer $authToken"
             if (!authToken.isNullOrEmpty()) {
                 val response = kidsloopApi.transferToken(bearerToken)
