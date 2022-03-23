@@ -11,7 +11,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import uk.co.kidsloop.app.utils.getInitials
 import uk.co.kidsloop.R
 import uk.co.kidsloop.app.common.BaseFragment
-import uk.co.kidsloop.app.utils.getInitials
 import uk.co.kidsloop.app.utils.gone
 import uk.co.kidsloop.app.utils.visible
 import uk.co.kidsloop.databinding.FragmentScheduleBinding
@@ -22,9 +21,6 @@ class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
     private val binding by viewBinding(FragmentScheduleBinding::bind)
 
     companion object {
-
-        const val MAX_CLASSES_VISIBLE: Int = 6
-        const val FIVE_MIN_IN_MILLIS = (5 * 60 * 1000).toLong()
         const val PROFILE_NAME = "profileName"
     }
 

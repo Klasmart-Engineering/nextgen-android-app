@@ -63,7 +63,6 @@
         app:layout_constraintTop_toTopOf="@id/teacher_initials" />
 
     <RelativeLayout
-        android:id="@+id/enter_class"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/space_20"
