@@ -29,7 +29,7 @@ class ProfileAdapter(private val onProfileClicked: () -> Unit) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val fullName = dataSet[position].givenName + " " + dataSet[position].familyName
         holder.nameTextView.text = fullName
-        holder.initialsTextView.text = getInitials(fullName)
+        holder.initialsTextView.text = fullName.getInitials()
         holder.itemView.setOnClickListener {
             onProfileClicked.invoke()
         }

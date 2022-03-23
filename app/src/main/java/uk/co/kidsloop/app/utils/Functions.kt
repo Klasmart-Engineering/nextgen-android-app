@@ -78,9 +78,9 @@ fun View?.unclickable() {
 // String functions
 fun emptyString(): String = ""
 
-fun getInitials(string: String): String {
+fun String.getInitials(): String {
     var initials = ""
-    for (s in string.split(" ")) {
+    for (s in this.split(" ")) {
         initials += s[0]
     }
     return initials
