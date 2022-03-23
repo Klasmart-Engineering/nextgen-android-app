@@ -78,14 +78,6 @@ fun View?.unclickable() {
 // String functions
 fun emptyString(): String = ""
 
-fun String.getInitials(): String {
-    var initials = ""
-    for (s in this.split(" ")) {
-        initials += s[0]
-    }
-    return initials
-}
-
 fun convertTimestampConsideringTimeZone(time: Long, pattern: String): String {
     val cal: Calendar = Calendar.getInstance()
     val tz = TimeZone.getDefault()
