@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import uk.co.kidsloop.ProfilesQuery
 import uk.co.kidsloop.R
+import uk.co.kidsloop.app.utils.getInitials
 
 class ProfileAdapter(private val onProfileClicked: () -> Unit) :
     RecyclerView.Adapter<ProfileAdapter.ViewHolder>() {
@@ -14,7 +15,8 @@ class ProfileAdapter(private val onProfileClicked: () -> Unit) :
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val textView: TextView = view.findViewById(R.id.name_textView)
+        val nameTextView: TextView = view.findViewById(R.id.name_textView)
+        val initialsTextView: TextView = view.findViewById(R.id.initials_textView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,7 +28,8 @@ class ProfileAdapter(private val onProfileClicked: () -> Unit) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val fullName = dataSet[position].familyName + " " + dataSet[position].givenName
-        holder.textView.text = fullName
+        holder.nameTextView.text = fullName
+        holder.initialsTextView.text = getInitials(fullName)
         holder.itemView.setOnClickListener {
             onProfileClicked.invoke()
         }

@@ -17,12 +17,12 @@ class AuthenticationManager @Inject constructor(val sharedPrefsWrapper: SharedPr
 
     fun getB2CClientApp(): IMultipleAccountPublicClientApplication = b2cClientApp
 
-    fun saveAccessToken(accessToken: String?) {
-        this.accessToken = accessToken
+    fun saveAccessToken(accessToken: String) {
+        sharedPrefsWrapper.saveAccessToken(accessToken)
     }
 
-    fun getAccessToken(): String? {
-        return accessToken
+    fun getAccessToken(): String {
+        return sharedPrefsWrapper.getAccessToken()
     }
 
     fun saveAccountId(accountId: String) {

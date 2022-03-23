@@ -5,6 +5,7 @@ import com.apollographql.apollo3.ApolloClient
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import uk.co.kidsloop.ProfilesQuery
 import uk.co.kidsloop.app.network.TokenTransferApi
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper

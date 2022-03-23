@@ -11,6 +11,7 @@ class SharedPrefsWrapper(private val sharedPref: SharedPreferences) {
         const val CHANNEL_ID = "channel_id"
         const val ACCOUNT_ID = "account_id"
         const val ACCESS_TOKEN2 = "access_token2"
+        const val ACCESS_TOKEN = "access_token"
     }
 
     fun saveRole(role: String) {
@@ -36,4 +37,10 @@ class SharedPrefsWrapper(private val sharedPref: SharedPreferences) {
     }
 
     fun getAccessToken2(): String = sharedPref.getString(ACCESS_TOKEN2, "")!!
+
+    fun saveAccessToken(accessToken: String) {
+        sharedPref.edit().putString(ACCESS_TOKEN, accessToken).apply()
+    }
+
+    fun getAccessToken(): String = sharedPref.getString(ACCESS_TOKEN, "")!!
 }

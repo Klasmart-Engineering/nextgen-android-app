@@ -30,6 +30,7 @@ class ProfileFragment : BaseFragment(R.layout.fragment_profile) {
         viewModel.profilesLiveData.observe(
             viewLifecycleOwner,
             Observer {
+                println("it is $it")
                 if (it is ProfileViewModel.ProfilesUiState.Success) {
                     dismissLoading()
                     profileAdapter.refresh(it.profiles)
