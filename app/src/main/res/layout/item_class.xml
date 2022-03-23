@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_class"
+    android:layout_width="464dp"
+    android:layout_height="match_parent"
+    android:background="@drawable/rounded_blue_corners"
+    app:cardCornerRadius="@dimen/space_21"
+    app:layout_constraintCircleRadius="@dimen/space_16">
+
+    <ImageView
+        android:id="@+id/class_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_29"
+        android:layout_marginTop="@dimen/space_25"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/class_time"
+        style="@style/ClassTime"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/space_6"
+        app:layout_constraintBottom_toBottomOf="@id/class_status"
+        app:layout_constraintStart_toEndOf="@id/class_status"
+        app:layout_constraintTop_toTopOf="@id/class_status" />
+
+    <TextView
+        android:id="@+id/class_name"
+        style="@style/ClassName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_32"
+        android:layout_marginTop="@dimen/space_7"
+        android:maxEms="6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/class_time" />
+
+    <TextView
+        android:id="@+id/teacher_initials"
+        style="@style/NameInitials"
+        android:layout_width="@dimen/space_48"
+        android:layout_height="@dimen/space_48"
+        android:layout_marginStart="@dimen/space_32"
+        android:layout_marginBottom="@dimen/space_27"
+        android:background="@drawable/bg_round_pink_ripple"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/teacher_name"
+        style="@style/TeacherName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_8"
+        android:maxEms="5"
+        app:layout_constraintBottom_toBottomOf="@id/teacher_initials"
+        app:layout_constraintStart_toEndOf="@id/teacher_initials"
+        app:layout_constraintTop_toTopOf="@id/teacher_initials" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/space_20"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_class_image_placeholder" />
+
+        <ImageView
+            android:id="@+id/join_class_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/image"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/space_3"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_join_class"
+            android:visibility="gone" />
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

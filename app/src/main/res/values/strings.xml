@@ -64,4 +64,6 @@
         _typename
         }
     </string>
+    <string name="welcome_comma_first_name_of_user">Welcome, %s</string>
+    <string name="there_are_no_live_classes_scheduled_please_refresh">There are no Live Classes scheduled.\nPlease refresh!</string>
 </resources>

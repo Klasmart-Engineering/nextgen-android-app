@@ -1,10 +1,12 @@
 package uk.co.kidsloop.app.utils
 
 import android.content.Context
+import android.text.format.DateFormat
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import java.util.* // ktlint-disable no-wildcard-imports
 
 /**
  *  Created by paulbisioc on 07.01.2022
@@ -75,3 +77,9 @@ fun View?.unclickable() {
 
 // String functions
 fun emptyString(): String = ""
+
+fun convertTimestampIntoDate(time: Int, pattern: String): String {
+    val cal: Calendar = Calendar.getInstance(Locale.ENGLISH) // TODO : change to Calendar.getInstance()
+    cal.timeInMillis = time * 1000L
+    return DateFormat.format(pattern, cal).toString()
+}

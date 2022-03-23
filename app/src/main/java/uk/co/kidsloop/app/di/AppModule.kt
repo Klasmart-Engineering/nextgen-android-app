@@ -24,9 +24,11 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import uk.co.kidsloop.app.network.ProfilesApi
-import uk.co.kidsloop.app.network.TokenTransferApi
+import uk.co.kidsloop.app.network.AuthAlphaKidsLoopApi
+import uk.co.kidsloop.app.network.NetworkConstants
 import uk.co.kidsloop.data.enums.SharedPrefsWrapper
+import uk.co.kidsloop.features.schedule.network.ApiAlphaKidsLoopApi
+import uk.co.kidsloop.features.schedule.network.SchedulesApi
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -34,7 +36,11 @@ annotation class TransferApi
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class ProfileApi
+annotation class UserApi
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class ScheduleApi
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -89,26 +95,54 @@ object AppModule {
         okHttpClient: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(TokenTransferApi.TRANSFER_API_BASE_URL)
+            .baseUrl(AuthAlphaKidsLoopApi.TRANSFER_API_BASE_URL)
             .addConverterFactory(moshiConverterFactory)
             .client(okHttpClient)
             .build()
     }
 
     @Provides
-    fun providesProfileRetrofit(
+    @UserApi
+    fun providesUsersRetrofit(
+        moshiConverterFactory: MoshiConverterFactory,
+        okHttpClient: OkHttpClient
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(NetworkConstants.USER_BASE_URL)
+            .addConverterFactory(moshiConverterFactory)
+            .client(okHttpClient)
+            .build()
+    }
+
+    @Provides
+    @ScheduleApi
+    fun providesSchedulesRetrofit(
+        moshiConverterFactory: MoshiConverterFactory,
+        okHttpClient: OkHttpClient
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(SchedulesApi.SCHEDULES_BASE_URL)
+            .addConverterFactory(moshiConverterFactory)
+            .client(okHttpClient)
+            .build()
+    }
+
+    @Provides
+    fun providesApolloClient(
         okHttpClient: OkHttpClient,
         sharedPrefsWrapper: SharedPrefsWrapper
     ): ApolloClient {
         return ApolloClient.Builder()
-            .serverUrl(ProfilesApi.PROFILES_BASE_URL)
+            .serverUrl(NetworkConstants.PROFILES_BASE_URL)
             .okHttpClient(okHttpClient)
+            .enableAutoPersistedQueries(true)
             .addInterceptor(object : ApolloInterceptor {
                 override fun <D : Operation.Data> intercept(
                     request: ApolloRequest<D>,
                     chain: ApolloInterceptorChain
                 ): Flow<ApolloResponse<D>> {
-                    val newRequest = request.newBuilder().addHttpHeader("cookie", sharedPrefsWrapper.getAccessToken2()).build()
+                    val newRequest =
+                        request.newBuilder().addHttpHeader("cookie", sharedPrefsWrapper.getAccessToken2()).build()
                     return chain.proceed(newRequest)
                 }
             })
@@ -116,12 +150,17 @@ object AppModule {
     }
 
     @Provides
-    fun providesTransferApi(@TransferApi retrofit: Retrofit): TokenTransferApi {
-        return retrofit.create(TokenTransferApi::class.java)
+    fun providesTransferApi(@TransferApi retrofit: Retrofit): AuthAlphaKidsLoopApi {
+        return retrofit.create(AuthAlphaKidsLoopApi::class.java)
     }
 
     @Provides
-    fun providesProfilesApi(@ProfileApi retrofit: Retrofit): ProfilesApi {
-        return retrofit.create(ProfilesApi::class.java)
+    fun providesUserApi(@UserApi retrofit: Retrofit): ApiAlphaKidsLoopApi {
+        return retrofit.create(ApiAlphaKidsLoopApi::class.java)
+    }
+
+    @Provides
+    fun providesSchedulesApi(@ScheduleApi retrofit: Retrofit): SchedulesApi {
+        return retrofit.create(SchedulesApi::class.java)
     }
 }

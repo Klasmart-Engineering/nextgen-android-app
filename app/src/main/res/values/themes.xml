@@ -109,4 +109,47 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="NameInitials">
+        <item name="fontFamily">@font/source_sans_pro</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="fontWeight">500</item>
+        <item name="lineHeight">@dimen/space_25</item>
+    </style>
+
+    <style name="TeacherName">
+        <item name="fontFamily">@font/rooney_sans_bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="fontWeight">800</item>
+        <item name="android:letterSpacing">-0.03</item>
+        <item name="lineHeight">@dimen/space_20</item>
+    </style>
+
+    <style name="ClassName">
+        <item name="fontFamily">@font/rooney_sans_blk</item>
+        <item name="android:textSize">27sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="fontWeight">900</item>
+        <item name="android:letterSpacing">-0.026</item>
+        <item name="lineHeight">@dimen/space_27</item>
+    </style>
+
+    <style name="NoClassesLabel">
+        <item name="fontFamily">@font/rooney_sans_bold</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/dark_gray</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="fontWeight">800</item>
+        <item name="lineHeight">24dp</item>
+    </style>
+
+    <style name="ClassTime">
+        <item name="fontFamily">@font/rooney_sans_hv</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/more_light_blue</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="lineHeight">@dimen/space_25</item>
+    </style>
 </resources>
