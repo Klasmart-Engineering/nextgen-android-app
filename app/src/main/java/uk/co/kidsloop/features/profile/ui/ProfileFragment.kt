@@ -34,6 +34,9 @@ class ProfileFragment : BaseFragment(R.layout.fragment_profile) {
                 if (it is ProfileViewModel.ProfilesUiState.Success) {
                     dismissLoading()
                     profileAdapter.refresh(it.profiles)
+                    if (profileAdapter.itemCount > 1) {
+                        binding.owlImageView.gone()
+                    }
                 }
             }
         )
