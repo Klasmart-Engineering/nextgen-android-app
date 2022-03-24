@@ -433,7 +433,8 @@ class LiveClassFragment :
                     NetworkFetchState.FETCHED_MOBILE_DATA -> { viewModel.notifyInternetReconnection(isWifi = false) }
                     NetworkFetchState.ERROR -> { viewModel.notifyInternetDisconnection() }
                 }
-            })
+            }
+        )
     }
 
     private fun observeAdapter() {

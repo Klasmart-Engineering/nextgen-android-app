@@ -63,7 +63,8 @@ class LeaveClassDialog : DialogFragment() {
                     NetworkFetchState.FETCHED_MOBILE_DATA -> {}
                     NetworkFetchState.ERROR -> dismiss()
                 }
-            })
+            }
+        )
     }
 
     override fun onStart() {
