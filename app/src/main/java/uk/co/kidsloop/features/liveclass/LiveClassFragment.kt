@@ -425,7 +425,8 @@ class LiveClassFragment :
 
     @ExperimentalCoroutinesApi
     private fun observe() {
-        viewModel.networkState.observe(viewLifecycleOwner,
+        viewModel.networkState.observe(
+            viewLifecycleOwner,
             Observer {
                 when (it) {
                     NetworkFetchState.FETCHED_WIFI -> { viewModel.notifyInternetReconnection(isWifi = true) }

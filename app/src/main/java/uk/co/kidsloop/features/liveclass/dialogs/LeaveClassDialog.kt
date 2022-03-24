@@ -55,7 +55,8 @@ class LeaveClassDialog : DialogFragment() {
 
     @ExperimentalCoroutinesApi
     private fun observe() {
-        viewModel.networkState.observe(viewLifecycleOwner,
+        viewModel.networkState.observe(
+            viewLifecycleOwner,
             {
                 when (it) {
                     NetworkFetchState.FETCHED_WIFI -> {}
