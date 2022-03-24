@@ -161,8 +161,12 @@ class LiveClassFragment :
                     is LiveClassViewModel.LiveClassUiState.LiveClassRestarted -> onLiveClassRestarted()
                     is LiveClassViewModel.LiveClassUiState.LiveClassEnded -> onLiveClassEnded()
                     is LiveClassViewModel.LiveClassUiState.NetworkConnectionLost -> onConnectionLost()
-                    is LiveClassViewModel.LiveClassUiState.NetworkConnectionEstablishedWifi -> onConnectionEstablished(isWifi = true)
-                    is LiveClassViewModel.LiveClassUiState.NetworkConnectionEstablishedMobileData -> onConnectionEstablished(isWifi = false)
+                    is LiveClassViewModel.LiveClassUiState.NetworkConnectionEstablishedWifi -> onConnectionEstablished(
+                        isWifi = true
+                    )
+                    is LiveClassViewModel.LiveClassUiState.NetworkConnectionEstablishedMobileData -> onConnectionEstablished(
+                        isWifi = false
+                    )
                 }
             }
         )
@@ -377,7 +381,7 @@ class LiveClassFragment :
 
         binding.exitMenu.setOnClickListener {
             binding.liveClassOverlay.gone()
-            if(shouldShowNoInternetOverlay)
+            if (shouldShowNoInternetOverlay)
                 binding.noInternetOverlay.visible()
         }
 
@@ -423,7 +427,7 @@ class LiveClassFragment :
     private fun observe() {
         viewModel.networkState.observe(viewLifecycleOwner,
             Observer {
-                when(it) {
+                when (it) {
                     NetworkFetchState.FETCHED_WIFI -> { viewModel.notifyInternetReconnection(isWifi = true) }
                     NetworkFetchState.FETCHED_MOBILE_DATA -> { viewModel.notifyInternetReconnection(isWifi = false) }
                     NetworkFetchState.ERROR -> { viewModel.notifyInternetDisconnection() }
@@ -714,7 +718,7 @@ class LiveClassFragment :
     }
 
     private fun onConnectionEstablished(isWifi: Boolean) {
-        when(isWifi) {
+        when (isWifi) {
             true -> {
                 binding.noInternetOverlay.gone()
                 shouldShowNoInternetOverlay = false

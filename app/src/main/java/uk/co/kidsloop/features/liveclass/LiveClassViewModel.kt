@@ -163,7 +163,7 @@ class LiveClassViewModel @Inject constructor(
     }
 
     fun notifyInternetReconnection(isWifi: Boolean) {
-        when(isWifi) {
+        when (isWifi) {
             true -> { _classroomStateLiveData.postValue(LiveClassUiState.NetworkConnectionEstablishedWifi) }
             false -> { _classroomStateLiveData.postValue(LiveClassUiState.NetworkConnectionEstablishedMobileData) }
         }
