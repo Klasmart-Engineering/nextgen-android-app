@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.map
 
 /**
  *  Created by paulbisioc on 21.03.2022
+ *
+ *  Used to detect when there is an existing network connection and whether it is WiFi or Mobile Data
  */
 class NetworkStatusTracker(context: Context) {
     private val connectivityManager =
