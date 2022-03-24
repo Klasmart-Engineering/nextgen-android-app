@@ -8,6 +8,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 import uk.co.kidsloop.R
 import uk.co.kidsloop.databinding.LeaveClassDialogFragmentBinding
@@ -52,6 +53,7 @@ class LeaveClassDialog : DialogFragment() {
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun observe() {
         viewModel.networkState.observe(viewLifecycleOwner,
             {
