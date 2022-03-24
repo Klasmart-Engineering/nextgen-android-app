@@ -25,13 +25,16 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         const val IS_MIC_MUTED = "is_mic_muted"
         const val IS_ORIENTATION_DEFAULT = "is_orientation_default"
 
+        // Local Media should be always present, placed on the 1st position.
         const val LOCAL_MEDIA_POSITION = 0
+        // Whenever the Assistant Teacher is present, it is placed right below the Local Media, on the 2nd position
         const val ASSISTANT_TEACHER_POSITION = 1
 
         const val VIEW_TYPE_LOCAL = 10
         const val VIEW_TYPE_STUDENT = 11
     }
 
+    // Used for monitoring the number displayed in the Others label on the LiveClassFragment
     // TODO: find a better way of monitoring the elements' number
     private var _itemCount = MutableLiveData<Int>()
     val itemCount: LiveData<Int> get() = _itemCount
@@ -47,6 +50,11 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
 
     override fun getItemCount() = currentList().size
 
+    /**
+     *  View types:
+     *  1. VIEW_TYPE_LOCAL - used by the Local Media
+     *  2. VIEW_TYPE_STUDENT - used by both the Student and the Assistant Teacher
+     */
     override fun getItemViewType(position: Int): Int {
         return when (position) {
             0 -> VIEW_TYPE_LOCAL
@@ -86,6 +94,10 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         }
     }
 
+    /**
+     *  ViewHolders need to be made un-recyclable when they detach from the window in order to avoid it's elements
+     *  to disappear when the holder is bonded again (e.g. a student that is not visible and raises it's hand)
+     */
     override fun onViewAttachedToWindow(holder: GenericFeedViewHolder) {
         holder.setIsRecyclable(true)
         super.onViewAttachedToWindow(holder)
@@ -115,6 +127,9 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         }
     }
 
+    /**
+     *  Feeds are added in the Adapter based on their client's role.
+     */
     fun addVideoFeed(clientId: String, remoteMediaView: View, role: String) {
         when (role) {
             Config.LOCAL_ROLE -> addLocalVideoFeed(clientId, remoteMediaView)
@@ -194,6 +209,16 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
         }
     }
 
+    /**
+     *  A reordering has to be done in some cases to maintain the precedence logic of the feeds:
+     *
+     *  1. Local feed always on the 1st position
+     *  2. Assistant Teacher, if present, always on the 2nd position
+     *  3. Student that firstly raises the hand is put below the assistant teacher
+     *  4. Student that secondly raises the hand is put below the student that firstly raised the hand, and so on
+     *  5. Student that lowers the hand is put below the last student that raised the hand
+     *  6. Student that joins the class is placed below the last student that raised it's hand
+     */
     private fun reorderRaisedHands(list: List<FeedItem>): List<FeedItem> {
         val newList = mutableListOf<FeedItem>()
         val isAssistantPresent = isAssistantTeacherPresent()
@@ -279,7 +304,7 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
     }
 
     fun updateMediaViewOrientationDefault(position: Int) {
-        // TODO: this fixes the crash when the function is called before the RecyclerView is laid out, not the bug in itself
+        // TODO: this check fixes the crash when the function is called before the RecyclerView is laid out, not the bug in itself
         if(position <= currentList().size)
             return
 
@@ -291,7 +316,7 @@ class FeedsAdapter : RecyclerView.Adapter<GenericFeedViewHolder>() {
     }
 
     fun updateMediaViewOrientationReverse(position: Int) {
-        // TODO: this fixes the crash when the function is called before the RecyclerView is laid out, not the bug in itself
+        // TODO: this check fixes the crash when the function is called before the RecyclerView is laid out, not the bug in itself
         if(position <= currentList().size)
             return
 
