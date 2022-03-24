@@ -49,16 +49,16 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.cameraPreviewContainer.clipToOutline = true
-        // 1. Check if both are granted
-        // 2. Check if CAMERA is not granted, in this case show rationale if you should
-        // 3. Check if RECORD_AUDIO is not granted, in this case show rationale if you should
-        // 4. Request the initial permissions
+        /**
+         *  Check the permissions following this logic:
+         *  1. Check if both CAMERA & RECORD_AUDIO are granted
+         *  2. Check if CAMERA is not granted, in this case show rationale if you should
+         *  3. Check if RECORD_AUDIO is not granted, in this case show rationale if you should
+         *  4. Request the initial permissions
+         */
         when {
             isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type) &&
-                isPermissionGranted(
-                    requireContext(),
-                    KidsloopPermissions.RECORD_AUDIO.type
-                ) -> {
+                    isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type) -> {
                 viewModel.havePermissionsBeenPreviouslyDenied = false
                 handleCameraFeed()
                 startRecording()
@@ -66,10 +66,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                 handleToggles()
             }
             isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type).not() ||
-                isPermissionGranted(
-                    requireContext(),
-                    KidsloopPermissions.RECORD_AUDIO.type
-                ).not() -> {
+                    isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type).not() -> {
                 if (shouldShowRequestPermissionRationale(KidsloopPermissions.CAMERA.type) ||
                     shouldShowRequestPermissionRationale(KidsloopPermissions.RECORD_AUDIO.type)
                 ) {
@@ -81,10 +78,12 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                     handleNoPermissionViews()
                     handleToggles()
                 } else
-                    requestPermissionsLauncher.launch(KidsloopPermissions.getPreviewPermissions()) // Asking for @Permissions directly
+                // Asking for permissions directly
+                    requestPermissionsLauncher.launch(KidsloopPermissions.getPreviewPermissions())
             }
             else -> {
-                requestPermissionsLauncher.launch(KidsloopPermissions.getPreviewPermissions()) // Asking for @Permissions directly
+                // Asking for permissions directly
+                requestPermissionsLauncher.launch(KidsloopPermissions.getPreviewPermissions())
             }
         }
         setControls()
@@ -95,10 +94,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         super.onResume()
         // Handle return in the app from settings only when the user has previously denied the permissions
         if (isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type) &&
-            isPermissionGranted(
-                    requireContext(),
-                    KidsloopPermissions.RECORD_AUDIO.type
-                )
+            isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type)
         ) {
             if (isMicRecording) {
                 isRecordingAudio = true
@@ -130,9 +126,9 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         binding.allowBtn.setOnClickListener {
             if (shouldShowRequestPermissionRationale(KidsloopPermissions.CAMERA.type) ||
                 shouldShowRequestPermissionRationale(KidsloopPermissions.RECORD_AUDIO.type)
-            )
+            ) {
                 requestPermissionsLauncher.launch(KidsloopPermissions.getPreviewPermissions())
-            else {
+            } else {
                 showSettingsDialog(activity as KidsloopActivity)
             }
         }
@@ -140,13 +136,12 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
         binding.joinBtn.setOnClickListener {
             val isCameraTurnedOn = binding.cameraBtn.isChecked.not()
             val isMicrophoneTurnedOn = binding.microphoneBtn.isChecked.not()
-            Navigation.findNavController(requireView())
-                .navigate(
-                    PreviewFragmentDirections.previewToLiveclass(
-                        isCameraTurnedOn,
-                        isMicrophoneTurnedOn
-                    )
+            Navigation.findNavController(requireView()).navigate(
+                PreviewFragmentDirections.previewToLiveclass(
+                    isCameraTurnedOn,
+                    isMicrophoneTurnedOn
                 )
+            )
         }
     }
 
@@ -154,10 +149,8 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     }
 
     private fun handleNoPermissionViews() {
-        if (!isPermissionGranted(
-                requireContext(),
-                KidsloopPermissions.CAMERA.type
-            ) && !isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type)
+        if (!isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type) &&
+            !isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type)
         ) {
             binding.cameraPreview.invisible()
             binding.permissionsLayout.visible()
@@ -180,10 +173,8 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     private fun handleToggles() {
         // In one of the permissions is not enabled, do not enable any toggle
-        if (!isPermissionGranted(
-                requireContext(),
-                KidsloopPermissions.RECORD_AUDIO.type
-            ) || !isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type)
+        if (!isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type) ||
+            !isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type)
         ) {
             binding.microphoneBtn.isEnabled = false
             binding.microphoneBtn.setBackgroundResource(R.drawable.ic_mic_off)
@@ -201,7 +192,7 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
     }
 
     init {
-        // this is a callback that handles permissions results
+        // This is a callback that handles permissions' results
         this.requestPermissionsLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { result ->
@@ -225,33 +216,14 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
                     )
                 }
 
-                // Handle UI
-                when (
-                    isPermissionGranted(
-                        requireContext(),
-                        KidsloopPermissions.CAMERA.type
-                    )
-                ) {
-                    true -> {
-                        viewModel.havePermissionsBeenPreviouslyDenied = false
-                    }
-                    false -> {
-                        viewModel.havePermissionsBeenPreviouslyDenied = true
-                    }
+                when (isPermissionGranted(requireContext(), KidsloopPermissions.CAMERA.type)) {
+                    true -> viewModel.havePermissionsBeenPreviouslyDenied = false
+                    false -> viewModel.havePermissionsBeenPreviouslyDenied = true
                 }
 
-                when (
-                    isPermissionGranted(
-                        requireContext(),
-                        KidsloopPermissions.RECORD_AUDIO.type
-                    )
-                ) {
-                    true -> {
-                        startRecording()
-                    }
-                    false -> {
-                        viewModel.havePermissionsBeenPreviouslyDenied = true
-                    }
+                when (isPermissionGranted(requireContext(), KidsloopPermissions.RECORD_AUDIO.type)) {
+                    true -> startRecording()
+                    false -> viewModel.havePermissionsBeenPreviouslyDenied = true
                 }
             }
 
@@ -404,10 +376,10 @@ class PreviewFragment : BaseFragment(R.layout.preview_fragment) {
 
     companion object {
         val TAG = PreviewFragment::class.qualifiedName
+        // These are values recommended by LiveSwitch
         private const val SAMPLE_RATE = 44100
         private const val CHANNEL_CONFIG_IN = AudioFormat.CHANNEL_IN_MONO
         private const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_8BIT
-        private val BUFFER_SIZE_RECORDING =
-            AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG_IN, AUDIO_FORMAT)
+        private val BUFFER_SIZE_RECORDING = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG_IN, AUDIO_FORMAT)
     }
 }

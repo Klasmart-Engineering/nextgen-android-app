@@ -11,6 +11,7 @@ import uk.co.kidsloop.app.utils.permissions.PermissionsDialogButtonsListener
  */
 open class BaseFragment(@LayoutRes layoutId: Int) : Fragment(layoutId), PermissionsDialogButtonsListener {
 
+    // Function to show the permissions rationale when needed
     protected fun showRationaleDialog(permissions: Array<String>, title: String, message: String) {
         AlertDialog.Builder(requireActivity()).apply {
             setTitle(title)
