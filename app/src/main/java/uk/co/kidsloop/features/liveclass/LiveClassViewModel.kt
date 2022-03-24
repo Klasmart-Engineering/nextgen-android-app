@@ -42,6 +42,9 @@ class LiveClassViewModel @Inject constructor(
     private var _classroomStateLiveData = MutableLiveData<LiveClassUiState>()
     val classroomStateLiveData: LiveData<LiveClassUiState> get() = _classroomStateLiveData
 
+    /**
+     *  Use the Flow exposed through the NetworkStatusTracker as LiveData and observe it inside the Fragment.
+     */
     @ExperimentalCoroutinesApi
     val networkState = networkStatusTracker.networkStatus.map(
         onWiFi = { NetworkFetchState.FETCHED_WIFI },
