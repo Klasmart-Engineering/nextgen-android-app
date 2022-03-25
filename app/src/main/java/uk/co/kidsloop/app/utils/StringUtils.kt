@@ -1,5 +1,7 @@
 package uk.co.kidsloop.app.utils
 
+fun emptyString(): String = ""
+
 fun String.getInitials(): String {
     var initials = ""
     for (s in this.split(" ")) {
