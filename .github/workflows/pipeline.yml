@@ -83,29 +83,18 @@ jobs:
           name: Detekt_reports
           path: app/build/reports/detekt/*  
 
-      - if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
+      - if: ${{ (github.ref == 'refs/heads/develop'  || github.event.pull_request.base.ref == 'develop') }}
         name: Create Debug APK
         run: ./gradlew -Pci --console=plain :app:assembleDebug
 
-      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
+      - if: ${{ github.ref == 'refs/heads/develop' || github.event.pull_request.base.ref == 'develop'}}
         name: Upload Debug APK
         uses: actions/upload-artifact@v2
         with:
           name: debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-
-      - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
-        name: Create Release APK
-        run: ./gradlew -Pci --console=plain :app:assembleRelease
-
-      - if: ${{ github.ref == 'refs/heads/main'  || github.event.pull_request.base.ref == 'main'}}
-        name: Upload Release APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: release-apk
-          path: app/build/outputs/apk/release/app-release-unsigned.apk 
-          
-      - if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'}}
+        
+      - if: ${{ github.ref == 'refs/heads/develop'}}
         name: Stop Gradle
         run: ./gradlew --stop
       
@@ -115,16 +104,8 @@ jobs:
             rm -rf  "${GITHUB_WORKSPACE}"/kidsloopdebug.jks
             rm -rf  "${GITHUB_WORKSPACE}"/keystore.properties      
 
-      - if: ${{ github.ref == 'refs/heads/main' }}
-        name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          draft: false
-          tag_name: latest
-          files: app/build/outputs/apk/release/app-release-unsigned.apk
-
       - name: Publish to Slack 
-        if: ${{ always() && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') }} 
+        if: ${{ always() && (github.ref == 'refs/heads/develop') }} 
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
